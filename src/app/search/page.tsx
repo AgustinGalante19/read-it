@@ -5,9 +5,11 @@ import { GoogleBookItem } from '@/types/Book';
 import { getBooks } from '@/services/GoogleBooks';
 import { useDebounce } from '@uidotdev/usehooks';
 import { Input } from '@/components/ui/input';
+import { SearchIcon } from 'lucide-react';
+import BookCard from '@/components/book/book-card';
 
 function Search() {
-  const [searchTerm, setSearchTerm] = React.useState('js');
+  const [searchTerm, setSearchTerm] = React.useState('');
   const [results, setResults] = React.useState<GoogleBookItem[]>([]);
   const [isSearching, setIsSearching] = React.useState(false);
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
@@ -22,9 +24,7 @@ function Search() {
       setIsSearching(true);
       if (debouncedSearchTerm) {
         const data = await getBooks(debouncedSearchTerm);
-        console.log(data);
         results = data?.items || [];
-        console.log('TODO: call google books api', results);
       }
 
       setIsSearching(false);
@@ -35,26 +35,27 @@ function Search() {
   }, [debouncedSearchTerm]);
 
   return (
-    <form className='container mx-auto'>
-      <div className='relative flex justify-between items-center'>
+    <form className='container mx-auto p-4'>
+      <div className='relative flex justify-between items-center my-4'>
         <Input
           placeholder='Search Books...'
-          className='rounded-t'
+          className='p-4'
           onChange={handleChange}
         />
-        {/* <div className='h-5 w-5 absolute top-[6.5px] right-4 transition-colors duration-200 focus:outline-none bg-transparent hover:bg-transparent'>
-          {isSearching ? '...' : <Search />}
-        </div> */}
-        {results.length > 0 && (
-          <ul className='absolute bg-cgray p-2 rounded-b text-white top-9 overflow-y-auto w-full max-h-48'>
-            {results.map((book) => (
-              <li key={book.id} className='text-primary my-2'>
-                {book.volumeInfo.authors.join(' ')}
-              </li>
-            ))}
-          </ul>
-        )}
+        <div className='h-5 w-5 absolute top-[14px] right-5 transition-colors duration-200 focus:outline-none bg-transparent hover:bg-transparent'>
+          {isSearching ? '...' : <SearchIcon />}
+        </div>
       </div>
+      <span className='text-lg text-white font-semibold px-2'>
+        Search Results
+      </span>
+      <ul className='p-2 rounded-b text-white w-full'>
+        {results.map((book) => (
+          <li key={book.id} className='my-4'>
+            <BookCard book={book} />
+          </li>
+        ))}
+      </ul>
     </form>
   );
 }
