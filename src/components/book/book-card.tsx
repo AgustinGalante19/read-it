@@ -1,3 +1,4 @@
+import { formatDate } from '@/lib/date-utils';
 import { cn } from '@/lib/utils';
 import { GoogleBookItem } from '@/types/Book';
 import { BookText, Calendar } from 'lucide-react';
@@ -34,7 +35,7 @@ function BookCard({
       >
         <Image
           alt={`${book.volumeInfo.title} cover`}
-          src={book.volumeInfo.imageLinks.smallThumbnail}
+          src={book.volumeInfo.imageLinks?.smallThumbnail || '/1793-img.jpg'}
           width={imageSize.width}
           height={imageSize.height}
           style={imageSize}
@@ -61,7 +62,7 @@ function BookCard({
               <span className='text-xs text-nowrap'>
                 {!book.volumeInfo.publishedDate
                   ? 'Not provided'
-                  : book.volumeInfo.publishedDate}
+                  : formatDate(book.volumeInfo.publishedDate)}
               </span>
             </div>
             <div className='flex gap-1 items-center'>
