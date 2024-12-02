@@ -5,9 +5,11 @@ import {
   CarouselItem,
 } from '@/components/ui/carousel';
 import BookCard from '@/components/book/book-card';
-import MOCK_BOOK from '@/lib/mockbook';
+import { getReadList } from '@/services/Library';
 
-export default function Home() {
+export default async function Home() {
+  const readList = await getReadList();
+
   return (
     <main>
       <Topbar />
@@ -22,15 +24,15 @@ export default function Home() {
             className='w-full max-w-sm'
           >
             <CarouselContent className='-ml-16'>
-              {Array.from({ length: 5 }).map((_, index) => (
+              {readList.result.map((book, index) => (
                 <CarouselItem key={index} className='basis-1/3 pl-16'>
-                  <BookCard book={MOCK_BOOK} mode='vertical' />
+                  <BookCard book={book} mode='vertical' />
                 </CarouselItem>
               ))}
             </CarouselContent>
           </Carousel>
         </section>
-        <section>
+        {/* <section>
           <h3 className='font-semibold text-2xl'>Readed</h3>
           <Carousel
             opts={{
@@ -46,7 +48,7 @@ export default function Home() {
               ))}
             </CarouselContent>
           </Carousel>
-        </section>
+        </section> */}
       </div>
     </main>
   );
