@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import twAnimate from 'tailwindcss-animate';
 
 export default {
   darkMode: ['class'],
@@ -13,6 +14,7 @@ export default {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         cgray: '#272828',
+        'dark-blue': '#232538',
         white: 'hsl(var(--white))',
         card: {
           DEFAULT: 'hsl(var(--card))',
@@ -60,5 +62,5 @@ export default {
       },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [twAnimate],
 } satisfies Config;
