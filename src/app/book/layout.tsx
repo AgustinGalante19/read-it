@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Geist } from 'next/font/google';
 import '@/app/globals.css';
 import Container from '@/components/ui/container';
+import { Toaster } from '@/components/ui/sonner';
 
 export const metadata: Metadata = {
   title: 'Read It',
@@ -18,7 +19,10 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={`${GeistFont.className} antialiased`}>
-        <Container>{children}</Container>
+        <Container>
+          {children}
+          <Toaster />
+        </Container>
       </body>
     </html>
   );
