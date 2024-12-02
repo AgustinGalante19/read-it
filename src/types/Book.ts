@@ -1,3 +1,15 @@
+export interface Book {
+  id: number;
+  google_id: string;
+  title: string;
+  thumbnail_url: string;
+  authors: string;
+  publish_date: string;
+  is_readed: boolean;
+  page_count: number;
+  inserted_at: Date;
+}
+
 export interface GoogleBooksResponse {
   kind: string;
   totalItems: number;
