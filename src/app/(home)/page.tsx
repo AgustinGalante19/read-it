@@ -3,7 +3,7 @@ import MOCK_BOOK from '@/lib/mockbook';
 
 export default async function Home() {
   return (
-    <div className='container mx-auto max-sm:p-4 space-y-8'>
+    <div className='container mx-auto p-4 space-y-8'>
       <section>
         <h3 className='font-semibold text-2xl'>My Readlist</h3>
         <div className='flex gap-4 my-2'>

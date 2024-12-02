@@ -6,7 +6,7 @@ function Topbar() {
   const timeDesc = getTimeDescOfDay();
 
   return (
-    <header className='py-4 w-full flex justify-between items-center container mx-auto px-6'>
+    <header className='w-full flex p-4 justify-between items-center container mx-auto'>
       <span className='text-2xl font-bold text-white flex items-center gap-2'>
         {timeDesc === 'Morning' ? (
           <Sun className='text-primary' />
