@@ -1,11 +1,11 @@
 import BackButton from '@/components/ui/back-button';
-import { Button } from '@/components/ui/button';
 import { getDateString } from '@/lib/date-utils';
 import { getBook } from '@/services/GoogleBooks';
-import { BookText, Calendar, Minus, Plus } from 'lucide-react';
+import { BookText, Calendar, Minus } from 'lucide-react';
 import Image from 'next/image';
 import DOMPurify from 'isomorphic-dompurify';
 import getAuthorsString from '@/lib/getAuthorsString';
+import AddBook from '../components/AddBook';
 
 async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
   const slug = (await params).slug;
@@ -51,9 +51,7 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
           <span className='font-semibold'>
             {getAuthorsString(book.volumeInfo?.authors)}
           </span>
-          <Button size='sm' className='rounded-full'>
-            <Plus />
-          </Button>
+          <AddBook book={book} />
         </div>
         <div className='flex flex-wrap gap-2 mt-3  my-6'>
           {book.volumeInfo?.categories?.map((cat: string) => (
