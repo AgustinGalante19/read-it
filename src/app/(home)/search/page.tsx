@@ -7,6 +7,7 @@ import { useDebounce } from '@uidotdev/usehooks';
 import { Input } from '@/components/ui/input';
 import { SearchIcon } from 'lucide-react';
 import BookCard from '@/components/book/book-card';
+import getAuthorsString from '@/lib/getAuthorsString';
 
 function Search() {
   const [searchTerm, setSearchTerm] = React.useState('');
@@ -52,7 +53,19 @@ function Search() {
       <ul className='p-2 rounded-b text-white w-full'>
         {results.map((book) => (
           <li key={book.id} className='my-4'>
-            <BookCard book={book} />
+            <BookCard
+              book={{
+                title: book.volumeInfo.title,
+                authors: getAuthorsString(book.volumeInfo.authors),
+                google_id: book.id,
+                id: 0,
+                inserted_at: new Date(),
+                is_readed: false,
+                page_count: book.volumeInfo.pageCount,
+                publish_date: book.volumeInfo.publishedDate || '',
+                thumbnail_url: book.volumeInfo.imageLinks?.thumbnail || '',
+              }}
+            />
           </li>
         ))}
       </ul>
