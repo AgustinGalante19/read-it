@@ -1,7 +1,6 @@
 import { getDateString } from '@/lib/date-utils';
-import getAuthorsString from '@/lib/getAuthorsString';
 import { cn } from '@/lib/utils';
-import { GoogleBookItem } from '@/types/Book';
+import { Book } from '@/types/Book';
 import { BookText, Calendar } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -13,7 +12,7 @@ function BookCard({
   book,
   mode = 'horizontal',
 }: {
-  book: GoogleBookItem;
+  book: Book;
   mode?: CardMode;
 }) {
   const imageSize = useMemo(
@@ -35,11 +34,8 @@ function BookCard({
         )}
       >
         <Image
-          alt={`${book.volumeInfo.title} cover`}
-          src={
-            book.volumeInfo.imageLinks?.smallThumbnail ||
-            '/small-thumbnail-fallback.jpg'
-          }
+          alt={`${book.title} cover`}
+          src={book.thumbnail_url || '/small-thumbnail-fallback.jpg'}
           width={imageSize.width}
           height={imageSize.height}
           style={imageSize}
@@ -51,10 +47,10 @@ function BookCard({
           )}
         >
           <span className='font-semibold truncate w-full max-w-full'>
-            {book.volumeInfo.title}
+            {book.title}
           </span>
           <span className='font-light truncate w-full max-w-full'>
-            {getAuthorsString(book.volumeInfo?.authors)}
+            {book.authors}
           </span>
           <div
             className={cn('flex', mode === 'horizontal' ? 'gap-4' : 'gap-1')}
@@ -62,12 +58,12 @@ function BookCard({
             <div className='flex gap-1 items-center'>
               <Calendar size={14} />
               <span className='text-xs text-nowrap'>
-                {getDateString(book.volumeInfo.publishedDate)}
+                {getDateString(book.publish_date)}
               </span>
             </div>
             <div className='flex gap-1 items-center'>
               <BookText size={14} />
-              <span className='text-xs'>{book.volumeInfo.pageCount}</span>
+              <span className='text-xs'>{book.page_count}</span>
             </div>
           </div>
         </div>
