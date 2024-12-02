@@ -1,4 +1,5 @@
-import { formatDate } from '@/lib/date-utils';
+import { getDateString } from '@/lib/date-utils';
+import getAuthorsString from '@/lib/getAuthorsString';
 import { cn } from '@/lib/utils';
 import { GoogleBookItem } from '@/types/Book';
 import { BookText, Calendar } from 'lucide-react';
@@ -53,9 +54,7 @@ function BookCard({
             {book.volumeInfo.title}
           </span>
           <span className='font-light truncate w-full max-w-full'>
-            {book.volumeInfo?.authors?.join(' ') ||
-              book.volumeInfo?.authors ||
-              'Not provided'}
+            {getAuthorsString(book.volumeInfo?.authors)}
           </span>
           <div
             className={cn('flex', mode === 'horizontal' ? 'gap-4' : 'gap-1')}
@@ -63,9 +62,7 @@ function BookCard({
             <div className='flex gap-1 items-center'>
               <Calendar size={14} />
               <span className='text-xs text-nowrap'>
-                {!book.volumeInfo.publishedDate
-                  ? 'Not provided'
-                  : formatDate(book.volumeInfo.publishedDate)}
+                {getDateString(book.volumeInfo.publishedDate)}
               </span>
             </div>
             <div className='flex gap-1 items-center'>

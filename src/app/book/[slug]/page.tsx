@@ -1,10 +1,11 @@
 import BackButton from '@/components/ui/back-button';
 import { Button } from '@/components/ui/button';
-import { formatDate } from '@/lib/date-utils';
+import { getDateString } from '@/lib/date-utils';
 import { getBook } from '@/services/GoogleBooks';
 import { BookText, Calendar, Minus, Plus } from 'lucide-react';
 import Image from 'next/image';
 import DOMPurify from 'isomorphic-dompurify';
+import getAuthorsString from '@/lib/getAuthorsString';
 
 async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
   const slug = (await params).slug;
@@ -48,9 +49,7 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
         </div>
         <div className='flex justify-between items-center'>
           <span className='font-semibold'>
-            {book.volumeInfo?.authors?.join(' ') ||
-              book.volumeInfo?.authors ||
-              'Not provided'}
+            {getAuthorsString(book.volumeInfo?.authors)}
           </span>
           <Button size='sm' className='rounded-full'>
             <Plus />
@@ -69,9 +68,7 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
         <div className='grid grid-cols-3 bg-dark-blue items-center justify-between rounded-lg px-8 py-2 mb-6'>
           <span className='text-center text-sm font-bold flex items-center justify-center gap-2'>
             <Calendar size={20} />
-            {!book.volumeInfo.publishedDate
-              ? 'Not provided'
-              : formatDate(book.volumeInfo.publishedDate)}
+            {getDateString(book.volumeInfo.publishedDate)}
           </span>
           <span className='text-center'>
             <Minus className='mx-auto rotate-90' size={30} />

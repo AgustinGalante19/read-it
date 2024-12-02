@@ -18,3 +18,9 @@ export function formatDate(value: string) {
     year: 'numeric',
   }).format(parsedDate);
 }
+
+export function getDateString(date: string | undefined) {
+  if (!date) return 'Not Provided';
+
+  return formatDate(date);
+}
