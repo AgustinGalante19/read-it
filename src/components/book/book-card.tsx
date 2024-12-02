@@ -35,7 +35,10 @@ function BookCard({
       >
         <Image
           alt={`${book.volumeInfo.title} cover`}
-          src={book.volumeInfo.imageLinks?.smallThumbnail || '/1793-img.jpg'}
+          src={
+            book.volumeInfo.imageLinks?.smallThumbnail ||
+            '/small-thumbnail-fallback.jpg'
+          }
           width={imageSize.width}
           height={imageSize.height}
           style={imageSize}

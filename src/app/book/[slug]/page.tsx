@@ -22,13 +22,19 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
       <header className='flex h-[320px] justify-center items-end relative w-full pb-4'>
         <div
           style={{
-            backgroundImage: `url(${book.volumeInfo.imageLinks.thumbnail})`,
+            backgroundImage: `url(${
+              book.volumeInfo.imageLinks?.thumbnail ||
+              '/small-thumbnail-fallback.jpg'
+            })`,
           }}
           className={`absolute w-full h-full bg-center bg-cover bg-no-repeat filter blur-[10px] brightness-75 z-[-1] top-0 left-0 mask-image-[linear-gradient(#393b3b_90%,_transparent)]`}
         />
         <Image
           alt={`${book.volumeInfo.title} cover`}
-          src={book.volumeInfo.imageLinks.smallThumbnail}
+          src={
+            book.volumeInfo.imageLinks?.smallThumbnail ||
+            '/small-thumbnail-fallback.jpg'
+          }
           width={128}
           height={194}
           style={{ width: 128, height: 194 }}
