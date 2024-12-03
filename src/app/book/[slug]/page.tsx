@@ -12,7 +12,7 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
   const book = await getBook(slug);
 
   const sanitizedContent = DOMPurify.sanitize(
-    book.volumeInfo.description || '<p>Description not provided</p>',
+    book.volumeInfo?.description || '<p>Description not provided</p>',
     {
       USE_PROFILES: { html: true },
     }
