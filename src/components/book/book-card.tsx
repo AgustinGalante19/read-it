@@ -11,11 +11,9 @@ type CardMode = 'vertical' | 'horizontal';
 function BookCard({
   book,
   mode = 'horizontal',
-  urlId,
 }: {
   book: Book;
   mode?: CardMode;
-  urlId: string | number;
 }) {
   const imageSize = useMemo(
     () =>
@@ -26,7 +24,7 @@ function BookCard({
   );
 
   return (
-    <Link href={`/book/${urlId}`}>
+    <Link href={`/book/${book.google_id}`}>
       <article
         className={cn(
           'my-2 text-white',

@@ -65,7 +65,6 @@ function Search() {
                 publish_date: book.volumeInfo.publishedDate || '',
                 thumbnail_url: book.volumeInfo.imageLinks?.thumbnail || '',
               }}
-              urlId={book.id}
             />
           </li>
         ))}

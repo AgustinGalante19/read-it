@@ -28,7 +28,7 @@ export default async function Home() {
               {readList.result.map((book) => (
                 <div key={book.id} className='px-2'>
                   <CarouselItem className='pl-2 basis-1/3'>
-                    <BookCard book={book} mode='vertical' urlId={book.id} />
+                    <BookCard book={book} mode='vertical' />
                   </CarouselItem>
                 </div>
               ))}
@@ -46,7 +46,7 @@ export default async function Home() {
             <CarouselContent className='-ml-8'>
               {readedBooks.result.map((book) => (
                 <CarouselItem key={book.id} className='pl-8'>
-                  <BookCard book={book} urlId={book.id} />
+                  <BookCard book={book} />
                 </CarouselItem>
               ))}
             </CarouselContent>
