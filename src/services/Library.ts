@@ -35,9 +35,9 @@ export async function addBook(book: GoogleBookItem): Promise<Response<string>> {
   }
 }
 
-export async function getReadList(): Promise<Response<Book[]>> {
+export async function getReadList(isReaded = false): Promise<Response<Book[]>> {
   const books: QueryResult<Book> =
-    await sql`SELECT * FROM public.books WHERE is_readed = false`;
+    await sql`SELECT * FROM public.books WHERE is_readed = ${isReaded}`;
 
-  return { result: books.rows, status: false };
+  return { result: books.rows, status: true };
 }

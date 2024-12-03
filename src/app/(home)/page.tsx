@@ -9,6 +9,7 @@ import { getReadList } from '@/services/Library';
 
 export default async function Home() {
   const readList = await getReadList();
+  const readedBooks = await getReadList(true);
 
   return (
     <main>
@@ -21,18 +22,20 @@ export default async function Home() {
               align: 'start',
               dragFree: true,
             }}
-            className='w-full max-w-sm'
+            className='w-full'
           >
-            <CarouselContent className='-ml-16'>
-              {readList.result.map((book, index) => (
-                <CarouselItem key={index} className='basis-1/3 pl-16'>
-                  <BookCard book={book} mode='vertical' />
-                </CarouselItem>
+            <CarouselContent className='-ml-2'>
+              {readList.result.map((book) => (
+                <div key={book.id} className='px-2'>
+                  <CarouselItem className='pl-2 basis-1/3'>
+                    <BookCard book={book} mode='vertical' urlId={book.id} />
+                  </CarouselItem>
+                </div>
               ))}
             </CarouselContent>
           </Carousel>
         </section>
-        {/* <section>
+        <section>
           <h3 className='font-semibold text-2xl'>Readed</h3>
           <Carousel
             opts={{
@@ -41,14 +44,14 @@ export default async function Home() {
             className='w-full max-w-sm'
           >
             <CarouselContent className='-ml-8'>
-              {Array.from({ length: 5 }).map((_, index) => (
-                <CarouselItem key={index} className='pl-8'>
-                  <BookCard book={MOCK_BOOK} />
+              {readedBooks.result.map((book) => (
+                <CarouselItem key={book.id} className='pl-8'>
+                  <BookCard book={book} urlId={book.id} />
                 </CarouselItem>
               ))}
             </CarouselContent>
           </Carousel>
-        </section> */}
+        </section>
       </div>
     </main>
   );
