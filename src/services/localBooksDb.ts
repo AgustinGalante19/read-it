@@ -29,3 +29,11 @@ export const getIDBBooks = async (): Promise<Book[]> => {
   const db = await initIDB();
   return await db.getAll(IDB_STORE_NAME);
 };
+
+export const removeIDBBooks = async (): Promise<void> => {
+  const db = await initIDB();
+  const tx = db.transaction(IDB_STORE_NAME, 'readwrite');
+  const store = tx.objectStore(IDB_STORE_NAME);
+  await store.clear();
+  await tx.done;
+};

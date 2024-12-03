@@ -9,7 +9,11 @@ import { SearchIcon } from 'lucide-react';
 import BookCard from '@/components/book/book-card';
 import mapBookObject from '@/lib/mapBookObject';
 import { useRouter } from 'next/navigation';
-import { addIDBBook, getIDBBooks } from '@/services/localBooksDb';
+import {
+  addIDBBook,
+  getIDBBooks,
+  removeIDBBooks,
+} from '@/services/localBooksDb';
 
 function Search() {
   const [searchTerm, setSearchTerm] = React.useState('');
@@ -69,6 +73,11 @@ function Search() {
     }
   };
 
+  const handleRemoveRecenSearches = async () => {
+    await removeIDBBooks();
+    setRecentSearches([]);
+  };
+
   return (
     <form className='container mx-auto p-4'>
       <div className='relative flex justify-between items-center my-4'>
@@ -90,6 +99,7 @@ function Search() {
             <button
               type='button'
               className='underline text-sm font-semibold text-gray-400'
+              onClick={handleRemoveRecenSearches}
             >
               Clear all
             </button>
