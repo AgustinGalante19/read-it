@@ -1,26 +1,31 @@
 'use client';
 
-import React, { ChangeEvent } from 'react';
-import { GoogleBookItem } from '@/types/Book';
+import React, { ChangeEvent, useState } from 'react';
+import { Book, GoogleBookItem } from '@/types/Book';
 import { getBooks } from '@/services/GoogleBooks';
 import { useDebounce } from '@uidotdev/usehooks';
 import { Input } from '@/components/ui/input';
 import { SearchIcon } from 'lucide-react';
 import BookCard from '@/components/book/book-card';
-import getAuthorsString from '@/lib/getAuthorsString';
+import mapBookObject from '@/lib/mapBookObject';
+import { useRouter } from 'next/navigation';
+import { addIDBBook, getIDBBooks } from '@/services/localBooksDb';
 
 function Search() {
   const [searchTerm, setSearchTerm] = React.useState('');
-  const [results, setResults] = React.useState<GoogleBookItem[]>([]);
+  const [results, setResults] = React.useState<GoogleBookItem[] | null>(null);
   const [isSearching, setIsSearching] = React.useState(false);
+  const [recentSearches, setRecentSearches] = useState<Book[]>([]);
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  };
+  const router = useRouter();
 
   React.useEffect(() => {
     const searchBooks = async () => {
+      if (debouncedSearchTerm === '') {
+        return setResults(null);
+      }
+
       let results: GoogleBookItem[] = [];
       setIsSearching(true);
       if (debouncedSearchTerm) {
@@ -35,6 +40,35 @@ function Search() {
     searchBooks();
   }, [debouncedSearchTerm]);
 
+  React.useEffect(() => {
+    const getRecentSearches = async () => {
+      const results = await getIDBBooks();
+      setRecentSearches(results);
+    };
+    getRecentSearches();
+  }, []);
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleClickSearch = async (book: Book) => {
+    try {
+      const recentSearchesResult = await getIDBBooks();
+      const alreadyExists = recentSearchesResult.find(
+        (el) => el.google_id === book.google_id
+      );
+      if (alreadyExists) {
+        return;
+      }
+      addIDBBook(book);
+    } catch (err) {
+      console.log('Error on save data: ', err);
+    } finally {
+      router.push(`/book/${book.google_id}`);
+    }
+  };
+
   return (
     <form className='container mx-auto p-4'>
       <div className='relative flex justify-between items-center my-4'>
@@ -47,28 +81,52 @@ function Search() {
           {isSearching ? '...' : <SearchIcon />}
         </div>
       </div>
-      <span className='text-lg text-white font-semibold px-2'>
-        Search Results
-      </span>
-      <ul className='p-2 rounded-b text-white w-full'>
-        {results.map((book) => (
-          <li key={book.id} className='my-4'>
-            <BookCard
-              book={{
-                title: book.volumeInfo.title,
-                authors: getAuthorsString(book.volumeInfo.authors),
-                google_id: book.id,
-                id: 0,
-                inserted_at: new Date(),
-                is_readed: false,
-                page_count: book.volumeInfo.pageCount,
-                publish_date: book.volumeInfo.publishedDate || '',
-                thumbnail_url: book.volumeInfo.imageLinks?.thumbnail || '',
-              }}
-            />
-          </li>
-        ))}
-      </ul>
+      {results === null ? (
+        <>
+          <div className='flex justify-between items-center'>
+            <span className='text-lg text-white font-semibold px-2'>
+              Recent Searches
+            </span>
+            <button
+              type='button'
+              className='underline text-sm font-semibold text-gray-400'
+            >
+              Clear all
+            </button>
+          </div>
+          <ul className='p-2 rounded-b text-white w-full'>
+            {recentSearches.map((book) => (
+              <li
+                key={book.google_id}
+                className='my-4'
+                onClick={() => handleClickSearch(book)}
+              >
+                <BookCard book={book} />
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : (
+        <>
+          <span className='text-lg text-white font-semibold px-2'>
+            Search Results
+          </span>
+          <ul className='p-2 rounded-b text-white w-full'>
+            {results.map((book) => {
+              const mappedBook = mapBookObject(book);
+              return (
+                <li
+                  key={book.id}
+                  className='my-4'
+                  onClick={() => handleClickSearch(mappedBook)}
+                >
+                  <BookCard book={mappedBook} />
+                </li>
+              );
+            })}
+          </ul>
+        </>
+      )}
     </form>
   );
 }
