@@ -73,3 +73,19 @@ export async function removeFromLibrary(
   revalidatePath('/book');
   return { result: true, status: true };
 }
+
+export async function getMyBooks(
+  status: 'all' | 'readed' | 'notReaded' = 'all'
+): Promise<Response<Book[]>> {
+  let books: QueryResult<Book>;
+
+  if (status === 'readed') {
+    books = await sql`SELECT * FROM public.books WHERE is_readed = true`;
+  } else if (status === 'notReaded') {
+    books = await sql`SELECT * FROM public.books WHERE is_readed = false`;
+  } else {
+    books = await sql`SELECT * FROM public.books`;
+  }
+  const { rows } = books;
+  return { status: true, result: rows };
+}

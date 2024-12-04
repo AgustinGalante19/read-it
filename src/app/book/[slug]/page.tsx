@@ -5,7 +5,7 @@ import { BookText, Calendar, Minus } from 'lucide-react';
 import Image from 'next/image';
 import DOMPurify from 'isomorphic-dompurify';
 import getAuthorsString from '@/lib/getAuthorsString';
-import AddBook from '../components/AddBook';
+import AddBook from './components/AddBook';
 import Categories from './components/categories';
 import { existsOnLibrary } from '@/services/Library';
 import LibraryActions from './components/library-actions';
