@@ -14,6 +14,7 @@ import {
   getIDBBooks,
   removeIDBBooks,
 } from '@/services/localBooksDb';
+import { Button } from '@/components/ui/button';
 
 function Search() {
   const [searchTerm, setSearchTerm] = React.useState('');
@@ -96,13 +97,13 @@ function Search() {
             <span className='text-lg text-white font-semibold px-2'>
               Recent Searches
             </span>
-            <button
-              type='button'
-              className='underline text-sm font-semibold text-gray-400'
+            <Button
+              className='underline'
               onClick={handleRemoveRecenSearches}
+              variant='link'
             >
               Clear all
-            </button>
+            </Button>
           </div>
           <ul className='p-2 rounded-b text-white w-full'>
             {recentSearches.map((book) => (
