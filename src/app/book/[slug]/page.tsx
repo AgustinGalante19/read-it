@@ -6,6 +6,7 @@ import Image from 'next/image';
 import DOMPurify from 'isomorphic-dompurify';
 import getAuthorsString from '@/lib/getAuthorsString';
 import AddBook from '../components/AddBook';
+import Categories from './sections/categories';
 
 async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
   const slug = (await params).slug;
@@ -53,16 +54,7 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
           </span>
           <AddBook book={book} />
         </div>
-        <div className='flex flex-wrap gap-2 mt-3  my-6'>
-          {book.volumeInfo?.categories?.map((cat: string) => (
-            <span
-              key={cat}
-              className='bg-[#313333] text-white py-2 px-4 rounded-lg'
-            >
-              {cat}
-            </span>
-          ))}
-        </div>
+        <Categories categories={book.volumeInfo?.categories} />
         <div className='grid grid-cols-3 bg-dark-blue items-center justify-between rounded-lg px-8 py-2 mb-6'>
           <span className='text-center text-sm font-bold flex items-center justify-center gap-2'>
             <Calendar size={20} />
