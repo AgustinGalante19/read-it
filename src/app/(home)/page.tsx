@@ -46,7 +46,7 @@ export default async function Home() {
             <CarouselContent className='-ml-2'>
               {readedBooks.result.map((book) => (
                 <div className='pr-2' key={book.id}>
-                  <CarouselItem className='pl-2 basis-1/3'>
+                  <CarouselItem className='pl-2'>
                     <BookCard book={book} />
                   </CarouselItem>
                 </div>
