@@ -6,11 +6,14 @@ import Image from 'next/image';
 import DOMPurify from 'isomorphic-dompurify';
 import getAuthorsString from '@/lib/getAuthorsString';
 import AddBook from '../components/AddBook';
-import Categories from './sections/categories';
+import Categories from './components/categories';
+import { existsOnLibrary } from '@/services/Library';
+import LibraryActions from './components/library-actions';
 
 async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
   const slug = (await params).slug;
   const book = await getBook(slug);
+  const dbBook = await existsOnLibrary(book.id);
 
   const sanitizedContent = DOMPurify.sanitize(
     book.volumeInfo?.description || '<p>Description not provided</p>',
@@ -52,7 +55,11 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
           <span className='font-semibold'>
             {getAuthorsString(book.volumeInfo?.authors)}
           </span>
-          <AddBook book={book} />
+          {!dbBook.result ? (
+            <AddBook book={book} />
+          ) : (
+            <LibraryActions book={dbBook.result} />
+          )}
         </div>
         <Categories categories={book.volumeInfo?.categories} />
         <div className='grid grid-cols-3 bg-dark-blue items-center justify-between rounded-lg px-8 py-2 mb-6'>
