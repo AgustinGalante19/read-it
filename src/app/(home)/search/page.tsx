@@ -1,6 +1,6 @@
 'use client';
 
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { Book, GoogleBookItem } from '@/types/Book';
 import { getBooks } from '@/services/GoogleBooks';
 import { useDebounce } from '@uidotdev/usehooks';
@@ -17,15 +17,15 @@ import {
 import { Button } from '@/components/ui/button';
 
 function Search() {
-  const [searchTerm, setSearchTerm] = React.useState('');
-  const [results, setResults] = React.useState<GoogleBookItem[] | null>(null);
-  const [isSearching, setIsSearching] = React.useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [results, setResults] = useState<GoogleBookItem[] | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
   const [recentSearches, setRecentSearches] = useState<Book[]>([]);
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   const router = useRouter();
 
-  React.useEffect(() => {
+  useEffect(() => {
     const searchBooks = async () => {
       if (debouncedSearchTerm === '') {
         return setResults(null);
@@ -88,7 +88,7 @@ function Search() {
           onChange={handleChange}
         />
         <div className='h-5 w-5 absolute top-[14px] right-5 transition-colors duration-200 focus:outline-none bg-transparent hover:bg-transparent'>
-          {isSearching ? '...' : <SearchIcon />}
+          <button>{isSearching ? '...' : <SearchIcon />}</button>
         </div>
       </div>
       {results === null ? (
