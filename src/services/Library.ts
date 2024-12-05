@@ -2,7 +2,7 @@
 
 import { getDateString } from '@/lib/date-utils';
 import getAuthorsString from '@/lib/getAuthorsString';
-import { Book, GoogleBookItem } from '@/types/Book';
+import { Book, BookStatus, GoogleBookItem } from '@/types/Book';
 import { QueryResult, sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
 
@@ -75,7 +75,7 @@ export async function removeFromLibrary(
 }
 
 export async function getMyBooks(
-  status: 'all' | 'readed' | 'notReaded' = 'all'
+  status: BookStatus
 ): Promise<Response<Book[]>> {
   let books: QueryResult<Book>;
 
@@ -87,5 +87,7 @@ export async function getMyBooks(
     books = await sql`SELECT * FROM public.books`;
   }
   const { rows } = books;
+
+  // revalidatePath('/library');
   return { status: true, result: rows };
 }

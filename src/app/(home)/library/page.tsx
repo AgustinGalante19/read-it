@@ -6,13 +6,15 @@ import {
 import { getDateString } from '@/lib/date-utils';
 import { cn } from '@/lib/utils';
 import { getMyBooks } from '@/services/Library';
-import { Book, BookCheck, BookMarked, BookText, Calendar } from 'lucide-react';
+import { BookStatus } from '@/types/Book';
+import { BookCheck, BookMarked, BookText, BookX, Calendar } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import React from 'react';
 
 interface Option {
   id: number;
-  value: 'readed' | 'notReaded' | 'all';
+  value: BookStatus;
   icon: React.ReactNode;
   label: string;
 }
@@ -20,13 +22,16 @@ interface Option {
 const options: Option[] = [
   { id: 3, value: 'all', label: 'Saved Books', icon: <BookMarked size={18} /> },
   { id: 1, value: 'readed', label: 'Readed', icon: <BookCheck size={18} /> },
-  { id: 2, value: 'notReaded', label: 'Not Readed', icon: <Book size={18} /> },
+  { id: 2, value: 'notReaded', label: 'Not Readed', icon: <BookX size={18} /> },
 ];
 
-const idSelected = 3;
-
-async function LibraryPage() {
-  const books = await getMyBooks(options[0].value);
+async function LibraryPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const status = (await searchParams).status || 'all';
+  const books = await getMyBooks(status as BookStatus);
 
   return (
     <div>
@@ -35,7 +40,7 @@ async function LibraryPage() {
           My Library
         </span>
       </header>
-      <section>
+      <section className='px-4'>
         <Carousel
           opts={{
             align: 'start',
@@ -46,17 +51,18 @@ async function LibraryPage() {
             {options.map((opt) => (
               <div key={opt.label} className='pr-1'>
                 <CarouselItem className='pl-1'>
-                  <button
+                  <Link
+                    href={`/library?status=${opt.value}`}
                     className={cn(
-                      'px-4 py-3 text-white rounded-full flex items-center gap-1 text-sm font-semibold',
-                      opt.id === idSelected
+                      'px-4 py-3 text-white rounded-full flex items-center gap-1 text-sm font-semibold text-nowrap',
+                      opt.value === status
                         ? 'bg-primary text-cgray'
                         : 'border border-gray-500'
                     )}
                   >
                     {opt.icon}
                     {opt.label}
-                  </button>
+                  </Link>
                 </CarouselItem>
               </div>
             ))}

@@ -10,6 +10,8 @@ export interface Book {
   inserted_at: Date;
 }
 
+export type BookStatus = 'readed' | 'notReaded' | 'all';
+
 export interface GoogleBooksResponse {
   kind: string;
   totalItems: number;
