@@ -10,7 +10,6 @@ import { BookStatus } from '@/types/Book';
 import { BookCheck, BookMarked, BookText, BookX, Calendar } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import React from 'react';
 
 interface Option {
   id: number;
@@ -69,40 +68,41 @@ async function LibraryPage({
           </CarouselContent>
         </Carousel>
       </section>
-      <section className='grid grid-cols-2 gap-2 mt-4'>
+      <section className='grid grid-cols-2 gap-2 py-4'>
         {books.result.map((book) => (
-          <article
-            className={'my-2 text-white flex flex-col h-64 w-32 mx-auto'}
-            key={book.id}
-          >
-            <Image
-              alt={`${book.title} cover`}
-              src={book.thumbnail_url || '/small-thumbnail-fallback.jpg'}
-              width={128}
-              height={194}
-              style={{ width: 128, height: 194 }}
-            />
-            <div className={'flex flex-col '}>
-              <span className='font-semibold truncate w-full max-w-full'>
-                {book.title}
-              </span>
-              <span className='font-light truncate w-full max-w-full'>
-                {book.authors}
-              </span>
-              <div className={'flex gap-1'}>
-                <div className='flex gap-1 items-center'>
-                  <Calendar size={14} />
-                  <span className='text-xs text-nowrap'>
-                    {getDateString(book.publish_date)}
-                  </span>
-                </div>
-                <div className='flex gap-1 items-center'>
-                  <BookText size={14} />
-                  <span className='text-xs'>{book.page_count}</span>
+          <Link key={book.id} href={`/book/${book.google_id}`}>
+            <article
+              className={'my-2 text-white flex flex-col h-64 w-32 mx-auto'}
+            >
+              <Image
+                alt={`${book.title} cover`}
+                src={book.thumbnail_url || '/small-thumbnail-fallback.jpg'}
+                width={128}
+                height={194}
+                style={{ width: 128, height: 194 }}
+              />
+              <div className={'flex flex-col '}>
+                <span className='font-semibold truncate w-full max-w-full'>
+                  {book.title}
+                </span>
+                <span className='font-light truncate w-full max-w-full'>
+                  {book.authors}
+                </span>
+                <div className={'flex gap-1'}>
+                  <div className='flex gap-1 items-center'>
+                    <Calendar size={14} />
+                    <span className='text-xs text-nowrap'>
+                      {getDateString(book.publish_date)}
+                    </span>
+                  </div>
+                  <div className='flex gap-1 items-center'>
+                    <BookText size={14} />
+                    <span className='text-xs'>{book.page_count}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          </article>
+            </article>
+          </Link>
         ))}
       </section>
     </div>
