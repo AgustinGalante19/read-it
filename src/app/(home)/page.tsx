@@ -5,11 +5,11 @@ import {
   CarouselItem,
 } from '@/components/ui/carousel';
 import BookCard from '@/components/book/book-card';
-import { getReadList } from '@/services/Library';
+import { getMyBooks } from '@/services/Library';
 
 export default async function Home() {
-  const readList = await getReadList();
-  const readedBooks = await getReadList(true);
+  const readList = await getMyBooks('notReaded');
+  const readedBooks = await getMyBooks('readed');
 
   return (
     <main>

@@ -37,13 +37,6 @@ export async function addBook(book: GoogleBookItem): Promise<Response<string>> {
   }
 }
 
-export async function getReadList(isReaded = false): Promise<Response<Book[]>> {
-  const books: QueryResult<Book> =
-    await sql`SELECT * FROM public.books WHERE is_readed = ${isReaded}`;
-
-  return { result: books.rows, status: true };
-}
-
 export async function existsOnLibrary(
   id: string
 ): Promise<Response<Book | null>> {
@@ -63,6 +56,7 @@ export async function updateReadStatus(
   await sql`UPDATE public.books SET is_readed = ${newStatus} WHERE google_id = ${id}`;
 
   revalidatePath('/book');
+  revalidatePath('/');
   return { status: true, result: 'Status updated successfully' };
 }
 
@@ -71,6 +65,7 @@ export async function removeFromLibrary(
 ): Promise<Response<boolean>> {
   await sql`DELETE FROM public.books WHERE google_id = ${id}`;
   revalidatePath('/book');
+  revalidatePath('/');
   return { result: true, status: true };
 }
 
@@ -88,6 +83,5 @@ export async function getMyBooks(
   }
   const { rows } = books;
 
-  // revalidatePath('/library');
   return { status: true, result: rows };
 }
