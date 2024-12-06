@@ -19,7 +19,7 @@ function BookCard({
     () =>
       mode === 'horizontal'
         ? { width: 53, height: 77 }
-        : { width: 128, height: 194 },
+        : { width: 128, height: 205 },
     [mode]
   );
 
@@ -38,7 +38,7 @@ function BookCard({
           src={book.thumbnail_url || '/small-thumbnail-fallback.jpg'}
           width={imageSize.width}
           height={imageSize.height}
-          style={imageSize}
+          className={cn(mode === 'vertical' && 'max-h-[194px]')}
         />
         <div
           className={cn(

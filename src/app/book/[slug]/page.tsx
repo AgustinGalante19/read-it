@@ -41,8 +41,7 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
             '/small-thumbnail-fallback.jpg'
           }
           width={128}
-          height={194}
-          style={{ width: 128, height: 194 }}
+          height={205}
           className='blur-bottom-image'
         />
       </header>

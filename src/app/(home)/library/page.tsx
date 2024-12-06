@@ -78,8 +78,7 @@ async function LibraryPage({
                 alt={`${book.title} cover`}
                 src={book.thumbnail_url || '/small-thumbnail-fallback.jpg'}
                 width={128}
-                height={194}
-                style={{ width: 128, height: 194 }}
+                height={205}
               />
               <div className={'flex flex-col '}>
                 <span className='font-semibold truncate w-full max-w-full'>
