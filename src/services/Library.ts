@@ -16,12 +16,6 @@ export async function addBook(book: GoogleBookItem): Promise<Response<string>> {
     const { title, pageCount, publishedDate, authors, imageLinks } =
       book.volumeInfo;
 
-    const exists =
-      await sql`SELECT id FROM public.books WHERE google_id = ${book.id}`;
-
-    if (exists.rowCount && exists.rowCount > 0) {
-      return { status: false, result: `This book is already in the library` };
-    }
     await sql`INSERT INTO public.books(google_id, title, thumbnail_url, authors, publish_date, is_readed, page_count)
 	VALUES (${book.id}, ${title}, ${
       imageLinks?.thumbnail || '/thumbnail-fallback.jpg'
@@ -75,11 +69,13 @@ export async function getMyBooks(
   let books: QueryResult<Book>;
 
   if (status === 'readed') {
-    books = await sql`SELECT * FROM public.books WHERE is_readed = true`;
+    books =
+      await sql`SELECT * FROM public.books WHERE is_readed = true ORDER by title ASC`;
   } else if (status === 'notReaded') {
-    books = await sql`SELECT * FROM public.books WHERE is_readed = false`;
+    books =
+      await sql`SELECT * FROM public.books WHERE is_readed = false ORDER by title ASC`;
   } else {
-    books = await sql`SELECT * FROM public.books`;
+    books = await sql`SELECT * FROM public.books ORDER by title ASC`;
   }
   const { rows } = books;
 
