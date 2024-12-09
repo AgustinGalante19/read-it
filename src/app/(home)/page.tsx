@@ -25,7 +25,7 @@ export default async function Home() {
               />
             </>
           ) : (
-            <div className='p-4 flex flex-col items-center gap-2'>
+            <div className='flex flex-col items-center mt-4 gap-2'>
               <span className='text-gray-300'>
                 You don&apos;t have any book to read...
               </span>
