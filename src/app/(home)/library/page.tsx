@@ -40,12 +40,7 @@ async function LibraryPage({
         </span>
       </header>
       <section className='px-4'>
-        <Carousel
-          opts={{
-            align: 'start',
-          }}
-          className='w-full'
-        >
+        <Carousel className='w-full'>
           <CarouselContent className='-ml-1'>
             {options.map((opt) => (
               <div key={opt.label} className='pr-1'>
