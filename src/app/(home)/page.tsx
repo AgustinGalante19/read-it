@@ -2,6 +2,7 @@ import Topbar from '@/components/topbar';
 import { getMyBooks } from '@/services/Library';
 import BooksList from '@/components/book/books-list';
 import ShowAll from '@/components/book/show-all';
+import Link from 'next/link';
 
 export default async function Home() {
   const readList = await getMyBooks('notReaded');
@@ -14,12 +15,25 @@ export default async function Home() {
       <div className='container mx-auto p-4 space-y-8'>
         <section>
           <ShowAll label='My Readlist' readStatus='notReaded' />
-          <BooksList
-            books={readList.result}
-            cardMode='vertical'
-            opts={{ dragFree: true }}
-            itemClassName='basis-1/3'
-          />
+          {readList.result.length > 0 ? (
+            <>
+              <BooksList
+                books={readList.result}
+                cardMode='vertical'
+                opts={{ dragFree: true }}
+                itemClassName='basis-1/3'
+              />
+            </>
+          ) : (
+            <div className='p-4 flex flex-col items-center gap-2'>
+              <span className='text-gray-300'>
+                You don&apos;t have any book to read...
+              </span>
+              <Link href='/search' className='underline'>
+                Search one
+              </Link>
+            </div>
+          )}
         </section>
         <section>
           <ShowAll label='Readed' readStatus='readed' />
