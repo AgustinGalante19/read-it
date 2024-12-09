@@ -1,3 +1,5 @@
+'use client';
+
 import { getDateString } from '@/lib/date-utils';
 import { cn } from '@/lib/utils';
 import { Book } from '@/types/Book';
@@ -8,6 +10,25 @@ import React, { useMemo } from 'react';
 
 type CardMode = 'vertical' | 'horizontal';
 
+const BookImage = React.memo(
+  ({
+    src,
+    alt,
+    width,
+    height,
+  }: {
+    src: string;
+    alt: string;
+    width: number;
+    height: number;
+  }) => {
+    return (
+      <Image alt={alt} src={src} width={width} height={height} loading='lazy' />
+    );
+  }
+);
+BookImage.displayName = 'BookImage';
+
 function BookCard({
   book,
   mode = 'horizontal',
@@ -15,12 +36,15 @@ function BookCard({
   book: Book;
   mode?: CardMode;
 }) {
-  const imageSize = useMemo(
-    () =>
-      mode === 'horizontal'
-        ? { width: 53, height: 77 }
-        : { width: 128, height: 205 },
-    [mode]
+  const imageSize = useMemo(() => {
+    return mode === 'horizontal'
+      ? { width: 53, height: 77 }
+      : { width: 128, height: 205 };
+  }, [mode]);
+
+  const imageSrc = useMemo(
+    () => book.thumbnail_url || '/small-thumbnail-fallback.jpg',
+    [book.thumbnail_url]
   );
 
   return (
@@ -33,12 +57,11 @@ function BookCard({
             : 'flex flex-col h-64 w-32'
         )}
       >
-        <Image
+        <BookImage
           alt={`${book.title} cover`}
-          src={book.thumbnail_url || '/small-thumbnail-fallback.jpg'}
-          width={imageSize.width}
           height={imageSize.height}
-          className={cn(mode === 'vertical' && 'max-h-[194px]')}
+          width={imageSize.width}
+          src={imageSrc}
         />
         <div
           className={cn(
@@ -72,4 +95,4 @@ function BookCard({
   );
 }
 
-export default BookCard;
+export default React.memo(BookCard);
