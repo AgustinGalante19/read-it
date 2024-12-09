@@ -19,19 +19,7 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <head>
-        <link
-          rel='icon'
-          type='image/png'
-          href='/favicon-32x32.png'
-          sizes='32x32'
-        />
         <link rel='icon' type='image/svg+xml' href='/favicon-32x32.png' />
-        <link
-          rel='apple-touch-icon'
-          sizes='180x180'
-          href='/apple-touch-icon.png'
-        />
-        <link rel='manifest' href='/site.webmanifest' />
       </head>
       <body className={`${GeistFont.className} antialiased`}>
         <Container>
