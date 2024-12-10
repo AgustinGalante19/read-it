@@ -10,25 +10,6 @@ import React, { useMemo } from 'react';
 
 type CardMode = 'vertical' | 'horizontal';
 
-const BookImage = React.memo(
-  ({
-    src,
-    alt,
-    width,
-    height,
-  }: {
-    src: string;
-    alt: string;
-    width: number;
-    height: number;
-  }) => {
-    return (
-      <Image alt={alt} src={src} width={width} height={height} loading='lazy' />
-    );
-  }
-);
-BookImage.displayName = 'BookImage';
-
 function BookCard({
   book,
   mode = 'horizontal',
@@ -42,10 +23,16 @@ function BookCard({
       : { width: 128, height: 205 };
   }, [mode]);
 
-  const imageSrc = useMemo(
-    () => book.thumbnail_url || '/small-thumbnail-fallback.jpg',
-    [book.thumbnail_url]
-  );
+  const imageSrc = useMemo(() => {
+    if (!book.thumbnail_url) {
+      if (mode === 'horizontal') {
+        return '/thumbnail-fallback.jpg';
+      } else {
+        return '/small-thumbnail-fallback.jpg';
+      }
+    }
+    return book.thumbnail_url;
+  }, [book.thumbnail_url, mode]);
 
   return (
     <Link href={`/book/${book.google_id}`}>
@@ -53,20 +40,25 @@ function BookCard({
         className={cn(
           'my-2 text-white',
           mode === 'horizontal'
-            ? 'flex max-h-20 w-full'
+            ? 'flex max-h-20 w-[244px]'
             : 'flex flex-col h-64 w-32'
         )}
       >
-        <BookImage
+        <Image
           alt={`${book.title} cover`}
           height={imageSize.height}
           width={imageSize.width}
           src={imageSrc}
+          loading='lazy'
+          className={cn(
+            'max-h-[205px] min-h-[77px]',
+            mode === 'horizontal' ? 'h-[77px]' : 'h-[205px]'
+          )}
         />
         <div
           className={cn(
-            'flex flex-col',
-            mode === 'horizontal' ? 'ml-4 overflow-hidden' : 'mt-1'
+            'flex flex-col overflow-hidden',
+            mode === 'horizontal' ? 'ml-4' : 'mt-1'
           )}
         >
           <span className='font-semibold truncate w-full max-w-full'>
