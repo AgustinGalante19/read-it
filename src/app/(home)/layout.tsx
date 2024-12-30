@@ -24,7 +24,7 @@ export default function RootLayout({
       <body className={`${GeistFont.className} antialiased`}>
         <Container>
           <div className='flex flex-col min-h-screen'>
-            <div className='flex-1 relative'>{children}</div>
+            <div className='flex-1 relative pb-24'>{children}</div>
             <BottomBar />
           </div>
         </Container>

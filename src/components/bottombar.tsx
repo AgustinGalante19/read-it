@@ -36,7 +36,7 @@ const LinkItem = ({
 
 function BottomBar() {
   return (
-    <footer className='flex justify-evenly w-full bottom-0 border-t-2 border-white/10'>
+    <footer className='flex justify-evenly w-[448px] border-t-2 border-white/10 fixed bottom-0 bg-background'>
       <LinkItem label='Home' icon={<Home />} url='/' />
       <LinkItem label='Search' icon={<Search />} url='/search' />
       <LinkItem label='Library' icon={<Library />} url='/library' />
