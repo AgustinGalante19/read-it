@@ -25,9 +25,9 @@ export default function RootLayout({
         <Container>
           <div className='flex flex-col min-h-screen'>
             <div className='flex-1 relative pb-24'>{children}</div>
-            <BottomBar />
           </div>
         </Container>
+        <BottomBar />
       </body>
     </html>
   );
