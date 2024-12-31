@@ -23,7 +23,7 @@ const options: Option[] = [
   { id: 2, value: 'notReaded', label: 'Not Readed', icon: <BookX size={18} /> },
 ];
 
-async function LibraryPage({
+export default async function LibraryPage({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -55,6 +55,11 @@ async function LibraryPage({
                   >
                     {opt.icon}
                     {opt.label}
+                    {opt.value === status && (
+                      <span className='text-xs p-1 rounded-full bg-background text-foreground text-center w-6 h-6'>
+                        {books.result.length}
+                      </span>
+                    )}
                   </Link>
                 </CarouselItem>
               </div>
@@ -74,5 +79,3 @@ async function LibraryPage({
     </div>
   );
 }
-
-export default LibraryPage;
