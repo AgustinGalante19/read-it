@@ -16,7 +16,7 @@ function AddBook({ book }: { book: GoogleBookItem }) {
   };
 
   return (
-    <Button size='sm' className='rounded-full' onClick={handleAddBook}>
+    <Button size='icon' className='rounded-full' onClick={handleAddBook}>
       <Plus />
     </Button>
   );

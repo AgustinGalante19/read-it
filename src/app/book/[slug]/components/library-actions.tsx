@@ -19,16 +19,16 @@ function LibraryActions({ book }: { book: Book }) {
 
   return (
     <div className='flex items-center gap-4'>
-      <Button size='icon' onClick={handleMarkAsReaded}>
+      <Button size='icon' className='rounded-full' onClick={handleMarkAsReaded}>
         {book.is_readed ? <BookX /> : <BookCheck />}
       </Button>
       <Button
         size='icon'
-        variant='outline'
-        className='border-destructive hover:bg-red-400/30'
+        variant='destructive'
+        className='rounded-full text-red-200'
         onClick={handleRemoveFromLibrary}
       >
-        <X color='#f44336' />
+        <X />
       </Button>
     </div>
   );
