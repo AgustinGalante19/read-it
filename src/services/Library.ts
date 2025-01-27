@@ -24,6 +24,7 @@ export async function addBook(book: GoogleBookItem): Promise<Response<string>> {
     )}, false, ${pageCount});`;
 
     revalidatePath('/book');
+    revalidatePath('/');
     return { status: true, result: 'Book added successfully' };
   } catch (err) {
     console.log(err);
@@ -47,7 +48,11 @@ export async function updateReadStatus(
   id: string,
   newStatus: boolean
 ): Promise<Response<string>> {
-  await sql`UPDATE public.books SET is_readed = ${newStatus} WHERE google_id = ${id}`;
+  if (newStatus) {
+    await sql`UPDATE public.books SET is_readed = ${newStatus}, readed_at = ${new Date().toISOString()} WHERE google_id = ${id}`;
+  } else {
+    await sql`UPDATE public.books SET is_readed = ${newStatus} WHERE google_id = ${id}`;
+  }
 
   revalidatePath('/book');
   revalidatePath('/');
@@ -75,7 +80,7 @@ export async function getMyBooks(
     books =
       await sql`SELECT * FROM public.books WHERE is_readed = false ORDER by title ASC`;
   } else {
-    books = await sql`SELECT * FROM public.books ORDER by title ASC`;
+    books = await sql`SELECT * FROM public.books ORDER by readed_at DESC`;
   }
   const { rows } = books;
 
