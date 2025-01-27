@@ -1,16 +1,16 @@
-import { parse } from 'date-fns';
+import { parse, isValid } from 'date-fns';
 
-export function isAValidDate(value: string) {
-  const regex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
-  return regex.test(value);
-}
+const dateFormats = ['yyyy-MM-dd', 'dd/MM/yyyy', 'MM/dd/yyyy'];
 
 export function formatDate(value: string) {
-  const isValid = isAValidDate(value);
+  let parsedDate;
 
-  if (!isValid) return value;
+  for (const format of dateFormats) {
+    parsedDate = parse(value, format, new Date());
+    if (isValid(parsedDate)) break;
+  }
 
-  const parsedDate = parse(value, 'yyyy-MM-dd', new Date());
+  if (!isValid(parsedDate)) return value;
 
   return new Intl.DateTimeFormat(undefined, {
     day: '2-digit',
@@ -18,7 +18,6 @@ export function formatDate(value: string) {
     year: 'numeric',
   }).format(parsedDate);
 }
-
 export function getDateString(date: string | undefined) {
   if (!date) return 'Not Provided';
 
