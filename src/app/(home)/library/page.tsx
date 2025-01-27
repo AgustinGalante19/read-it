@@ -1,27 +1,16 @@
 'use client';
 
+import { ChangeEvent, useEffect, useState } from 'react';
+import { BookCheck, BookMarked, BookX } from 'lucide-react';
+import filterBooksByStatus from '@/lib/filterBooksByStatus';
+import { getMyBooks } from '@/services/Library';
 import BookCard from '@/components/book/book-card';
-import { Button } from '@/components/ui/button';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-} from '@/components/ui/carousel';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import filterBooksByStatus from '@/lib/filterBooksByStatus';
-import { cn } from '@/lib/utils';
-import { getMyBooks } from '@/services/Library';
-import { Book, BookStatus } from '@/types/Book';
-import { BookCheck, BookMarked, BookX, Loader2 } from 'lucide-react';
-import { ChangeEvent, useEffect, useState } from 'react';
-
-interface Option {
-  id: number;
-  value: BookStatus;
-  icon: React.ReactNode;
-  label: string;
-}
+import { Skeleton } from '@/components/ui/skeleton';
+import StatusSelection from './components/status-selection';
+import { Book } from '@/types/Book';
+import Option from './types/Option';
 
 const options: Option[] = [
   { id: 3, value: 'all', label: 'Saved Books', icon: <BookMarked size={18} /> },
@@ -80,36 +69,13 @@ export default function LibraryPage() {
           My Library
         </span>
       </header>
-      <section className='px-4'>
-        <Carousel className='w-full'>
-          <CarouselContent className='-ml-1'>
-            {options.map((opt) => (
-              <div key={opt.label} className='pr-1'>
-                <CarouselItem className='pl-1'>
-                  <Button
-                    variant='link'
-                    className={cn(
-                      'rounded-full',
-                      opt.value === bookStatus.value
-                        ? 'bg-primary text-cgray'
-                        : 'border bg-transparent border-gray-500'
-                    )}
-                    onClick={() => handleChangeStatus(opt)}
-                  >
-                    {opt.icon}
-                    {opt.label}
-                    {opt.value === bookStatus.value && (
-                      <span className='text-xs p-1 rounded-full bg-background text-foreground text-center w-6 h-6'>
-                        {booksList.length}
-                      </span>
-                    )}
-                  </Button>
-                </CarouselItem>
-              </div>
-            ))}
-          </CarouselContent>
-        </Carousel>
-      </section>
+      <StatusSelection
+        isLoading={isLoading}
+        bookStatus={bookStatus}
+        booksList={booksList}
+        handleChangeStatus={handleChangeStatus}
+        options={options}
+      />
       <section className='px-4 mt-2'>
         <Label>
           Title
@@ -120,12 +86,22 @@ export default function LibraryPage() {
           />
         </Label>
       </section>
-      {isLoading ? (
-        <div className='h-[300px] flex items-center justify-center w-full'>
-          <Loader2 className='animate-spin' size={32} />
-        </div>
-      ) : (
-        <section>
+      <section>
+        {isLoading ? (
+          <div className='128x172 grid grid-cols-2 gap-2 py-4'>
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className='h-[272px] w-[128px] space-y-1 mx-auto'>
+                <Skeleton className='w-full h-[190px]' />
+                <Skeleton className='w-[128px] h-[22px]' />
+                <Skeleton className='w-[128px] h-[22px]' />
+                <div className='flex items-center gap-2'>
+                  <Skeleton className='w-[128px] h-[16px]' />
+                  <Skeleton className='w-[50px] h-[16px]' />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
           <ul className='grid grid-cols-2 gap-2 py-4'>
             {booksList.map((book) => (
               <li key={book.id} className='mx-auto w-fit'>
@@ -133,8 +109,8 @@ export default function LibraryPage() {
               </li>
             ))}
           </ul>
-        </section>
-      )}
+        )}
+      </section>
     </div>
   );
 }
