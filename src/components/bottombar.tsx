@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Home, Library, Search } from 'lucide-react';
+import { ChartBar, Home, Library, Search } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useMemo } from 'react';
@@ -40,6 +40,7 @@ function BottomBar() {
       <LinkItem label='Home' icon={<Home />} url='/' />
       <LinkItem label='Search' icon={<Search />} url='/search' />
       <LinkItem label='Library' icon={<Library />} url='/library' />
+      <LinkItem label='Stats' icon={<ChartBar />} url='/stats' />
     </footer>
   );
 }
