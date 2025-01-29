@@ -14,16 +14,10 @@ function PageFallback() {
         <Skeleton className='w-[110px] h-[36px] rounded-full' />
         <Skeleton className='w-[120px] h-[36px] rounded-full' />
       </div>
-      {/* <section className='px-4 mt-2'>
-        <Label>
-          Title
-          <Input
-            placeholder='Search by title'
-            value={searchTerm}
-            onChange={onSearchTermChange}
-          />
-        </Label>
-      </section> */}
+      <section className='px-4 mt-2'>
+        <Skeleton className='w-[29px] h-[18px] mb-2' />
+        <Skeleton className='w-[416px] h-[38px]' />
+      </section>
       <section>
         <div className='128x172 grid grid-cols-2 gap-2 py-4'>
           {Array.from({ length: 6 }).map((_, i) => (
