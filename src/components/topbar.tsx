@@ -1,3 +1,5 @@
+'use client';
+
 import getTimeDescOfDay from '@/lib/getTimeDescOfDay';
 import { CloudSun, Moon, Sun } from 'lucide-react';
 import Image from 'next/image';

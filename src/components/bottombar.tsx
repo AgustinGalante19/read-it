@@ -36,11 +36,13 @@ const LinkItem = ({
 
 function BottomBar() {
   return (
-    <footer className='flex justify-evenly w-full border-t-2 border-white/10 fixed bottom-0 bg-background'>
-      <LinkItem label='Home' icon={<Home />} url='/' />
-      <LinkItem label='Search' icon={<Search />} url='/search' />
-      <LinkItem label='Library' icon={<Library />} url='/library' />
-      <LinkItem label='Stats' icon={<ChartBar />} url='/stats' />
+    <footer className=' w-full border-t-2 border-white/10 fixed bottom-0 bg-background'>
+      <div className='max-w-md mx-auto flex justify-evenly'>
+        <LinkItem label='Home' icon={<Home />} url='/' />
+        <LinkItem label='Search' icon={<Search />} url='/search' />
+        <LinkItem label='Library' icon={<Library />} url='/library' />
+        <LinkItem label='Stats' icon={<ChartBar />} url='/stats' />
+      </div>
     </footer>
   );
 }
