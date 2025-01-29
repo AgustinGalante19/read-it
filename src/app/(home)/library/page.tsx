@@ -1,7 +1,7 @@
 'use client';
 
 import { ChangeEvent, useEffect, useState } from 'react';
-import { BookCheck, BookMarked, BookX } from 'lucide-react';
+import { BookCheck, BookMarked, BookX, Library } from 'lucide-react';
 import filterBooksByStatus from '@/lib/filterBooksByStatus';
 import { getMyBooks } from '@/services/Library';
 import BookCard from '@/components/book/book-card';
@@ -9,8 +9,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
 import StatusSelection from './components/status-selection';
-import { Book } from '@/types/Book';
+import { Book, BookStatus } from '@/types/Book';
 import Option from './types/Option';
+import { useSearchParams } from 'next/navigation';
 
 const options: Option[] = [
   { id: 3, value: 'all', label: 'Saved Books', icon: <BookMarked size={18} /> },
@@ -25,13 +26,29 @@ export default function LibraryPage() {
   const [bookStatus, setBookStatus] = useState<Option>(options[0]);
   const [searchTerm, setSearchTerm] = useState('');
 
+  const searchParams = useSearchParams();
+
+  const readStatus = searchParams.get('status');
+
   useEffect(() => {
     const getBooks = async () => {
       try {
         setIsLoading(true);
-        const { result } = await getMyBooks('all');
-        setBooksList(result);
-        setAllBooks(result);
+        const currentReadStatus: BookStatus =
+          (readStatus as BookStatus) ?? 'all';
+        const { result: allBooksResponse } = await getMyBooks('all');
+        let booksResult = allBooksResponse;
+        if (readStatus) {
+          booksResult = filterBooksByStatus(
+            allBooksResponse,
+            currentReadStatus
+          );
+        }
+        setBooksList(booksResult);
+        setAllBooks(allBooksResponse);
+        setBookStatus(
+          options.find((el) => el.value === currentReadStatus) ?? options[0]
+        );
       } catch (err) {
         console.log(err);
       } finally {
@@ -68,6 +85,7 @@ export default function LibraryPage() {
         <span className='text-2xl font-bold text-white flex items-center gap-2 underline decoration-primary'>
           My Library
         </span>
+        <Library className='text-primary' />
       </header>
       <StatusSelection
         isLoading={isLoading}

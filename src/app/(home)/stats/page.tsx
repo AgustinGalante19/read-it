@@ -356,7 +356,7 @@ const recentBooks = [
 function Page() {
   return (
     <div>
-      <header className='flex items-center gap-2 p-4'>
+      <header className='flex justify-between items-center gap-2 p-4'>
         <h1 className='text-xl text-white font-semibold underline decoration-primary'>
           My Reading stats
         </h1>
