@@ -16,5 +16,7 @@ export default function mapBookObject(googleBook: GoogleBookItem): Book {
     publish_date: getDateString(publishedDate),
     thumbnail_url: imageLinks?.thumbnail,
     title,
+    readed_at: new Date(),
+    tags: '',
   };
 }
