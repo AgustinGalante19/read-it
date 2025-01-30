@@ -6,7 +6,7 @@ import { Toaster } from '@/components/ui/sonner';
 
 export const metadata: Metadata = {
   title: 'Read It',
-  description: 'My personal to use as readlist',
+  description: 'My personal app to use as readlist',
 };
 
 const GeistFont = Geist({ subsets: ['latin'] });

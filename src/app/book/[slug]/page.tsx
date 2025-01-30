@@ -3,24 +3,49 @@ import { getDateString } from '@/lib/date-utils';
 import { getBook } from '@/services/GoogleBooks';
 import { BookText, Calendar, Minus } from 'lucide-react';
 import Image from 'next/image';
-import DOMPurify from 'isomorphic-dompurify';
 import getAuthorsString from '@/lib/getAuthorsString';
-import AddBook from './components/AddBook';
+import AddBook from './components/add-book';
 import Categories from './components/categories';
 import { existsOnLibrary } from '@/services/Library';
 import LibraryActions from './components/library-actions';
+import { Metadata } from 'next';
+import BookDescription from './components/book-description';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const slug = (await params).slug;
+  const book = await getBook(slug);
+
+  if (!book) {
+    return {
+      title: 'Book Not Found',
+      description: 'The requested book could not be found',
+    };
+  }
+
+  return {
+    title: `${book.volumeInfo.title} - ${getAuthorsString(
+      book.volumeInfo.authors
+    )}`,
+    description: book.volumeInfo.description,
+    openGraph: {
+      title: book.volumeInfo.title,
+      description: book.volumeInfo.description,
+      images: [
+        book.volumeInfo.imageLinks?.thumbnail ||
+          '/small-thumbnail-fallback.jpg',
+      ],
+    },
+  };
+}
 
 async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
   const slug = (await params).slug;
   const book = await getBook(slug);
   const dbBook = await existsOnLibrary(book.id);
-
-  const sanitizedContent = DOMPurify.sanitize(
-    book.volumeInfo?.description || '<p>Description not provided</p>',
-    {
-      USE_PROFILES: { html: true },
-    }
-  );
 
   return (
     <article>
@@ -75,10 +100,10 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
           </span>
         </div>
         <h3 className='text-lg font-bold mb-2'>About this book</h3>
-        <section
-          dangerouslySetInnerHTML={{
-            __html: sanitizedContent,
-          }}
+        <BookDescription
+          description={
+            book.volumeInfo?.description || '<p>Description not provided</p>'
+          }
         />
       </div>
     </article>
