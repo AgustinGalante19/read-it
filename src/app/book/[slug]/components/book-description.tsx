@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import DOMPurify from 'dompurify';
+import DOMPurify from 'isomorphic-dompurify';
 
 const BookDescription = ({ description }: { description: string }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -26,24 +26,26 @@ const BookDescription = ({ description }: { description: string }) => {
           __html: isExpanded ? sanitizedContent : truncatedContent,
         }}
       />
-      {!isExpanded && sanitizedContent.length > 300 && (
-        <Button
-          variant='outline'
-          className='mt-2'
-          onClick={() => setIsExpanded(true)}
-        >
-          Mostrar más
-        </Button>
-      )}
-      {isExpanded && (
-        <Button
-          variant='outline'
-          className='mt-2'
-          onClick={() => setIsExpanded(false)}
-        >
-          Mostrar menos
-        </Button>
-      )}
+      <div className='flex items-center justify-end'>
+        {!isExpanded && sanitizedContent.length > 300 && (
+          <Button
+            variant='link'
+            className='mt-2'
+            onClick={() => setIsExpanded(true)}
+          >
+            Show more
+          </Button>
+        )}
+        {isExpanded && (
+          <Button
+            variant='link'
+            className='mt-2'
+            onClick={() => setIsExpanded(false)}
+          >
+            Show less
+          </Button>
+        )}
+      </div>
     </section>
   );
 };
