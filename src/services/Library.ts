@@ -23,8 +23,9 @@ export async function addBook(book: GoogleBookItem): Promise<Response<string>> {
       publishedDate
     )}, false, ${pageCount});`;
 
-    revalidatePath('/book');
+    revalidatePath('/book', 'layout');
     revalidatePath('/');
+    revalidatePath('/stats');
     return { status: true, result: 'Book added successfully' };
   } catch (err) {
     console.log(err);
@@ -51,11 +52,12 @@ export async function updateReadStatus(
   if (newStatus) {
     await sql`UPDATE public.books SET is_readed = ${newStatus}, readed_at = ${new Date().toISOString()} WHERE google_id = ${id}`;
   } else {
-    await sql`UPDATE public.books SET is_readed = ${newStatus} WHERE google_id = ${id}`;
+    await sql`UPDATE public.books SET is_readed = ${newStatus}, readed_at = null WHERE google_id = ${id}`;
   }
 
-  revalidatePath('/book');
+  revalidatePath('/book', 'layout');
   revalidatePath('/');
+  revalidatePath('/stats');
   return { status: true, result: 'Status updated successfully' };
 }
 
@@ -63,8 +65,9 @@ export async function removeFromLibrary(
   id: string
 ): Promise<Response<boolean>> {
   await sql`DELETE FROM public.books WHERE google_id = ${id}`;
-  revalidatePath('/book');
+  revalidatePath('/book', 'layout');
   revalidatePath('/');
+  revalidatePath('/stats');
   return { result: true, status: true };
 }
 
@@ -75,12 +78,12 @@ export async function getMyBooks(
 
   if (status === 'readed') {
     books =
-      await sql`SELECT * FROM public.books WHERE is_readed = true ORDER by title ASC`;
+      await sql`SELECT * FROM public.books WHERE is_readed = true ORDER by inserted_at DESC`;
   } else if (status === 'notReaded') {
     books =
-      await sql`SELECT * FROM public.books WHERE is_readed = false ORDER by title ASC`;
+      await sql`SELECT * FROM public.books WHERE is_readed = false ORDER by inserted_at DESC`;
   } else {
-    books = await sql`SELECT * FROM public.books ORDER by readed_at DESC`;
+    books = await sql`SELECT * FROM public.books ORDER by inserted_at DESC`;
   }
   const { rows } = books;
 
@@ -112,7 +115,7 @@ export async function getMyStats(): Promise<
   );
 
   const { rows: last6MonthsReadedBooks } =
-    await sql`select * from books where readed_at between ${sixMonthsAgo.toISOString()} and ${currentDate.toISOString()} order by readed_at desc;`;
+    await sql`select * from books where is_readed = true and readed_at between ${sixMonthsAgo.toISOString()} and ${currentDate.toISOString()} order by readed_at desc;`;
 
   const oneMonthAgo = new Date();
   oneMonthAgo.setMonth(currentDate.getMonth() - 1);
@@ -125,8 +128,6 @@ export async function getMyStats(): Promise<
   const totalPagesLastMonth = booksLastMonth.reduce((total, book) => {
     return total + parseInt(book.page_count, 10);
   }, 0);
-
-  console.log({ currentDate, oneMonthAgo });
 
   return {
     result: {
