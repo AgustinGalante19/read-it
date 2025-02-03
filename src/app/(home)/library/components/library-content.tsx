@@ -7,13 +7,13 @@ import { getMyBooks } from '@/services/Library';
 import BookCard from '@/components/book/book-card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Skeleton } from '@/components/ui/skeleton';
 import StatusSelection from './status-selection';
 import { Book, BookStatus } from '@/types/Book';
 import Option from '../types/Option';
 import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import VerticalSkeleton from '@/components/book/vertical-skeleton';
 
 const options: Option[] = [
   { id: 3, value: 'all', label: 'Saved Books', icon: <BookMarked size={18} /> },
@@ -116,15 +116,7 @@ export default function LibraryContent() {
         {isLoading ? (
           <div className='128x172 grid grid-cols-2 gap-2 py-4'>
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className='h-[272px] w-[128px] space-y-1 mx-auto'>
-                <Skeleton className='w-full h-[190px]' />
-                <Skeleton className='w-[128px] h-[22px]' />
-                <Skeleton className='w-[128px] h-[22px]' />
-                <div className='flex items-center gap-2'>
-                  <Skeleton className='w-[128px] h-[16px]' />
-                  <Skeleton className='w-[50px] h-[16px]' />
-                </div>
-              </div>
+              <VerticalSkeleton key={i} />
             ))}
           </div>
         ) : (
