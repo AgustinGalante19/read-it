@@ -1,7 +1,7 @@
 'use client';
 
 import { ChangeEvent, useEffect, useState } from 'react';
-import { BookCheck, BookMarked, BookX, Library } from 'lucide-react';
+import { BookCheck, BookMarked, BookX, Calendar } from 'lucide-react';
 import filterBooksByStatus from '@/lib/filterBooksByStatus';
 import { getMyBooks } from '@/services/Library';
 import BookCard from '@/components/book/book-card';
@@ -12,6 +12,7 @@ import StatusSelection from './status-selection';
 import { Book, BookStatus } from '@/types/Book';
 import Option from '../types/Option';
 import { useSearchParams } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 
 const options: Option[] = [
   { id: 3, value: 'all', label: 'Saved Books', icon: <BookMarked size={18} /> },
@@ -44,6 +45,7 @@ export default function LibraryContent() {
             currentReadStatus
           );
         }
+        console.log(allBooksResponse);
         setBooksList(booksResult);
         setAllBooks(allBooksResponse);
         setBookStatus(
@@ -85,7 +87,10 @@ export default function LibraryContent() {
         <span className='text-2xl font-bold text-white flex items-center gap-2 underline decoration-primary'>
           My Library
         </span>
-        <Library className='text-primary' />
+        <Button>
+          <Calendar />
+          Calendar
+        </Button>
       </header>
       <StatusSelection
         isLoading={isLoading}
