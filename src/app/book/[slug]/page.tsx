@@ -88,7 +88,7 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
         <Categories categories={book.volumeInfo?.categories} />
         <div className='grid grid-cols-3 bg-dark-blue items-center justify-between rounded-lg px-8 py-2 mb-6'>
           <span className='text-center text-sm font-bold flex items-center justify-center gap-2'>
-            <Calendar size={20} />
+            <Calendar size={20} className='max-sm:hidden' />
             {getDateString(book.volumeInfo.publishedDate)}
           </span>
           <span className='text-center'>
