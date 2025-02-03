@@ -13,6 +13,7 @@ import { Book, BookStatus } from '@/types/Book';
 import Option from '../types/Option';
 import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 
 const options: Option[] = [
   { id: 3, value: 'all', label: 'Saved Books', icon: <BookMarked size={18} /> },
@@ -30,6 +31,8 @@ export default function LibraryContent() {
   const searchParams = useSearchParams();
 
   const readStatus = searchParams.get('status');
+
+  const router = useRouter();
 
   useEffect(() => {
     const getBooks = async () => {
@@ -87,7 +90,7 @@ export default function LibraryContent() {
         <span className='text-2xl font-bold text-white flex items-center gap-2 underline decoration-primary'>
           My Library
         </span>
-        <Button>
+        <Button onClick={() => router.push('/calendar')}>
           <Calendar />
           Calendar
         </Button>
