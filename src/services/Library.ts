@@ -16,12 +16,12 @@ export async function addBook(book: GoogleBookItem): Promise<Response<string>> {
     const { title, pageCount, publishedDate, authors, imageLinks } =
       book.volumeInfo;
 
-    await sql`INSERT INTO public.books(google_id, title, thumbnail_url, authors, publish_date, is_readed, page_count)
+    await sql`INSERT INTO public.books(google_id, title, thumbnail_url, authors, publish_date, is_readed, page_count, tags)
 	VALUES (${book.id}, ${title}, ${
       imageLinks?.thumbnail || '/thumbnail-fallback.jpg'
     }, ${getAuthorsString(authors)}, ${getDateString(
       publishedDate
-    )}, false, ${pageCount});`;
+    )}, false, ${pageCount}, ${book.volumeInfo?.categories?.join(', ')});`;
 
     revalidatePath('/book', 'layout');
     revalidatePath('/');
