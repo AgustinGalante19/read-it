@@ -10,16 +10,16 @@ import {
   CarouselContent,
   CarouselItem,
 } from '@/components/ui/carousel';
+import Stats from '@/types/Stats';
 import { Book, BookOpen, Tag } from 'lucide-react';
+import Link from 'next/link';
 import React from 'react';
 
-interface Props {
-  tag: { tagCount: number; lastTagReaded: string };
-  book: { bookCount: number; lastBookReaded: string };
-  page: { totalPageCount: number; lastMonthCount: number };
-}
-
-function GeneralStats({ book, page, tag }: Props) {
+function GeneralStats({
+  book,
+  page,
+  tag,
+}: Omit<Stats, 'last6MonthsReadedBooks'>) {
   return (
     <section className='px-4'>
       <Carousel className='w-full'>
@@ -34,11 +34,17 @@ function GeneralStats({ book, page, tag }: Props) {
                   </div>
                 </CardHeader>
                 <CardContent className='px-4 pb-2'>
-                  <span className='text-2xl font-bold'>{book.bookCount}</span>
+                  <span className='text-2xl font-bold'>{book.count}</span>
                 </CardContent>
                 <CardFooter className='pb-0'>
-                  <span className='text-xs text-gray-400 pb-4 truncate'>
-                    Last book readed: {book.lastBookReaded}
+                  <span className='text-xs text-gray-400 pb-4'>
+                    Last book readed:
+                    <Link
+                      href={`/book/${book.lastRead.googleId}`}
+                      className='truncate ml-1 underline text-primary'
+                    >
+                      {book.lastRead.title}
+                    </Link>
                   </span>
                 </CardFooter>
               </Card>
