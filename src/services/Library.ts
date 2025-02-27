@@ -61,6 +61,7 @@ export async function updateReadStatus(
   revalidatePath('/book', 'layout');
   revalidatePath('/');
   revalidatePath('/stats');
+  revalidatePath('/calendar');
   return { status: true, result: 'Status updated successfully' };
 }
 
