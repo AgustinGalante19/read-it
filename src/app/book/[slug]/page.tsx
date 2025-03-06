@@ -75,7 +75,7 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
           <BackButton />
           <h2 className='font-bold text-2xl'>{book.volumeInfo.title}</h2>
         </div>
-        <div className='flex justify-between items-center'>
+        <div className='flex justify-between items-center max-sm:flex-col max-sm:items-start space-y-2'>
           <span className='font-semibold'>
             {getAuthorsString(book.volumeInfo?.authors)}
           </span>
