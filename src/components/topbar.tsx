@@ -1,30 +1,48 @@
 'use client';
 
-import getTimeDescOfDay from '@/lib/getTimeDescOfDay';
-import { CloudSun, Moon, Sun } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { signOut, useSession } from 'next-auth/react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { LogOut } from 'lucide-react';
 import Image from 'next/image';
 
 function Topbar() {
-  const timeDesc = getTimeDescOfDay();
+  const { data } = useSession();
 
   return (
     <header className='w-full flex p-4 justify-between items-center container mx-auto'>
-      <span className='text-2xl font-bold text-white flex items-center gap-2'>
-        {timeDesc === 'Morning' ? (
-          <Sun className='text-primary' />
-        ) : timeDesc === 'Afternoon' ? (
-          <CloudSun className='text-primary' />
-        ) : (
-          <Moon className='text-primary' />
-        )}
-        <span>Good</span> {timeDesc}
-      </span>
       <Image
         src='/book-nexus-logo.svg'
-        width={20}
-        height={20}
-        alt='nexus books logo'
+        width={25}
+        height={50}
+        alt='read-it logo'
       />
+      <span className='text-2xl font-bold text-white flex items-center gap-2'>
+        Hi, {data?.user?.name}!
+      </span>
+      <DropdownMenu>
+        <DropdownMenuTrigger>
+          <Avatar>
+            <AvatarImage src={data?.user?.image || '/fallback'} />
+            <AvatarFallback>{data?.user?.name?.substring(0, 1)}</AvatarFallback>
+          </Avatar>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => signOut()}>
+            <LogOut />
+            Sign Out
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </header>
   );
 }
