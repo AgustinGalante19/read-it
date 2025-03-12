@@ -72,3 +72,11 @@
     --chart-5: 340 75% 55%;
   }
 }
+
+
+.login-bg {
+  background-image: url('/login-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  filter: grayscale(30%);
+}
