@@ -3,6 +3,7 @@ import { Geist } from 'next/font/google';
 import '@/app/globals.css';
 import Container from '@/components/ui/container';
 import BottomBar from '@/components/bottombar';
+import Providers from '@/components/providers';
 
 export const metadata: Metadata = {
   title: 'Read It',
@@ -22,12 +23,14 @@ export default function RootLayout({
         <link rel='icon' type='image/svg+xml' href='/favicon.svg' />
       </head>
       <body className={`${GeistFont.className} antialiased`}>
-        <Container>
-          <div className='flex flex-col min-h-screen'>
-            <div className='flex-1 relative pb-24'>{children}</div>
-          </div>
-        </Container>
-        <BottomBar />
+        <Providers>
+          <Container>
+            <div className='flex flex-col min-h-screen'>
+              <div className='flex-1 relative pb-24'>{children}</div>
+            </div>
+          </Container>
+          <BottomBar />
+        </Providers>
       </body>
     </html>
   );
