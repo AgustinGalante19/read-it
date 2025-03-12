@@ -30,7 +30,7 @@ function Topbar() {
       <DropdownMenu>
         <DropdownMenuTrigger>
           <Avatar>
-            <AvatarImage src={data?.user?.image || '/fallback'} />
+            <AvatarImage src={data?.user?.image || undefined} />
             <AvatarFallback>{data?.user?.name?.substring(0, 1)}</AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
