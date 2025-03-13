@@ -8,6 +8,7 @@ import { Book, BookStatus, GoogleBookItem } from '@/types/Book';
 import Stats from '@/types/Stats';
 import { QueryResult, sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
+import { getUserEmail } from './User';
 
 interface Response<T> {
   status: boolean;
@@ -80,14 +81,17 @@ export async function getMyBooks(
 ): Promise<Response<Book[]>> {
   let books: QueryResult<Book>;
 
+  const userEmail = await getUserEmail();
+
   if (status === 'readed') {
     books =
-      await sql`SELECT * FROM public.books WHERE is_readed = true ORDER by inserted_at DESC`;
+      await sql`SELECT * FROM public.books WHERE is_readed = true AND user_email = ${userEmail} ORDER by inserted_at DESC`;
   } else if (status === 'notReaded') {
     books =
-      await sql`SELECT * FROM public.books WHERE is_readed = false ORDER by inserted_at DESC`;
+      await sql`SELECT * FROM public.books WHERE is_readed = false AND user_email = ${userEmail} ORDER by inserted_at DESC`;
   } else {
-    books = await sql`SELECT * FROM public.books ORDER by inserted_at DESC`;
+    books =
+      await sql`SELECT * FROM public.books WHERE user_email = ${userEmail} ORDER by inserted_at DESC`;
   }
   const { rows } = books;
 
