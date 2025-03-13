@@ -12,7 +12,7 @@ const handler = NextAuth({
   callbacks: {
     signIn: async ({ user }) => {
       try {
-        const { name, email, id: google_id } = user;
+        const { name, email } = user;
 
         const userExists =
           await sql`SELECT email from readit_users where email = ${email}`;
@@ -21,7 +21,7 @@ const handler = NextAuth({
           return true;
         }
 
-        await sql`INSERT INTO readit_users (name, email, google_id) values(${name}, ${email}, ${google_id})`;
+        await sql`INSERT INTO readit_users (name, email) values(${name}, ${email})`;
 
         return true;
       } catch {
