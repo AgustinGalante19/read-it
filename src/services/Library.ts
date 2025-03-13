@@ -20,12 +20,16 @@ export async function addBook(book: GoogleBookItem): Promise<Response<string>> {
     const { title, pageCount, publishedDate, authors, imageLinks } =
       book.volumeInfo;
 
-    await sql`INSERT INTO public.books(google_id, title, thumbnail_url, authors, publish_date, is_readed, page_count, tags)
-	VALUES (${book.id}, ${title}, ${
-      imageLinks?.thumbnail || '/thumbnail-fallback.jpg'
-    }, ${getAuthorsString(authors)}, ${getDateString(
-      publishedDate
-    )}, false, ${pageCount}, ${book.volumeInfo?.categories?.join(', ')});`;
+    const userEmail = await getUserEmail();
+
+    const volumePublishedDate = getDateString(publishedDate);
+    const volumeImage = imageLinks?.thumbnail || '/thumbnail-fallback.jpg';
+    const volumeAuthors = getAuthorsString(authors);
+    const volumeCategories = book.volumeInfo?.categories?.join(', ');
+
+    await sql`INSERT INTO public.books(google_id, title, thumbnail_url, authors, publish_date, is_readed, page_count, tags, user_email)
+	VALUES (
+    ${book.id}, ${title}, ${volumeImage}, ${volumeAuthors}, ${volumePublishedDate}, false, ${pageCount}, ${volumeCategories}, ${userEmail});`;
 
     revalidatePath('/book', 'layout');
     revalidatePath('/');
@@ -40,8 +44,10 @@ export async function addBook(book: GoogleBookItem): Promise<Response<string>> {
 export async function existsOnLibrary(
   id: string
 ): Promise<Response<Book | null>> {
+  const userEmail = await getUserEmail();
+
   const exists: QueryResult<Book> =
-    await sql`SELECT * FROM public.books WHERE google_id = ${id}`;
+    await sql`SELECT * FROM public.books WHERE google_id = ${id} and user_email = ${userEmail};`;
 
   if (exists.rows.length > 0) {
     return { status: true, result: exists.rows[0] };
@@ -53,10 +59,11 @@ export async function updateReadStatus(
   id: string,
   newStatus: boolean
 ): Promise<Response<string>> {
+  const userEmail = await getUserEmail();
   if (newStatus) {
-    await sql`UPDATE public.books SET is_readed = ${newStatus}, readed_at = ${new Date().toISOString()} WHERE google_id = ${id}`;
+    await sql`UPDATE public.books SET is_readed = ${newStatus}, readed_at = ${new Date().toISOString()} WHERE google_id = ${id} and user_email = ${userEmail}`;
   } else {
-    await sql`UPDATE public.books SET is_readed = ${newStatus}, readed_at = null WHERE google_id = ${id}`;
+    await sql`UPDATE public.books SET is_readed = ${newStatus}, readed_at = null WHERE google_id = ${id} and user_email = ${userEmail}`;
   }
 
   revalidatePath('/book', 'layout');
@@ -69,7 +76,9 @@ export async function updateReadStatus(
 export async function removeFromLibrary(
   id: string
 ): Promise<Response<boolean>> {
-  await sql`DELETE FROM public.books WHERE google_id = ${id}`;
+  const userEmail = await getUserEmail();
+
+  await sql`DELETE FROM public.books WHERE google_id = ${id} and user_email = ${userEmail}`;
   revalidatePath('/book', 'layout');
   revalidatePath('/');
   revalidatePath('/stats');
