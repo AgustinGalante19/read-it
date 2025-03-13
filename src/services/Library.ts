@@ -99,9 +99,10 @@ export async function getMyBooks(
 }
 
 export async function getPageCount(status = true): Promise<Response<number>> {
+  const userEmail = await getUserEmail();
   const { rows }: QueryResult<{ total_pages: number }> =
     await sql`SELECT SUM(page_count) AS total_pages 
-            FROM books WHERE is_readed = ${status};`;
+            FROM books WHERE is_readed = ${status} and user_email = ${userEmail};`;
 
   return { status: true, result: rows[0]?.total_pages || 0 };
 }
@@ -109,8 +110,10 @@ export async function getPageCount(status = true): Promise<Response<number>> {
 export async function getTags(
   status = true
 ): Promise<Response<{ tags: string }[]>> {
+  const userEmail = await getUserEmail();
+
   const { rows }: QueryResult<{ tags: string }> =
-    await sql`SELECT tags FROM books WHERE is_readed = ${status};`;
+    await sql`SELECT tags FROM books WHERE is_readed = ${status} and user_email = ${userEmail};`;
 
   return { status: true, result: rows };
 }
@@ -122,8 +125,10 @@ export async function getBooksFromUntilAgo(
     untilAgo: new Date(),
   }
 ): Promise<Response<Book[]>> {
+  const userEmail = await getUserEmail();
+
   const { rows }: QueryResult<Book> =
-    await sql`select * from books where is_readed = ${status} and readed_at between ${from.toISOString()} and ${untilAgo.toISOString()} order by readed_at desc;`;
+    await sql`select * from books where user_email = ${userEmail} and is_readed = ${status} and readed_at between ${from.toISOString()} and ${untilAgo.toISOString()} order by readed_at desc;`;
 
   return { status: true, result: rows };
 }
