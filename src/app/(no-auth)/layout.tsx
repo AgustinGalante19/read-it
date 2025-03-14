@@ -2,11 +2,11 @@ import type { Metadata } from 'next';
 import { Geist } from 'next/font/google';
 import '@/app/globals.css';
 import Container from '@/components/ui/container';
-import { Toaster } from '@/components/ui/sonner';
+import Providers from '@/components/providers';
 
 export const metadata: Metadata = {
   title: 'Read It',
-  description: 'My personal app to use as readlist',
+  description: 'My personal to use as readlist',
 };
 
 const GeistFont = Geist({ subsets: ['latin'] });
@@ -19,12 +19,15 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <head>
-        <link rel='icon' type='image/svg+xml' href='/favicon-32x32.png' />
+        <link rel='icon' type='image/svg+xml' href='/favicon.svg' />
       </head>
       <body className={`${GeistFont.className} antialiased`}>
         <Container>
-          {children}
-          <Toaster />
+          <Providers>
+            <div className='flex flex-col min-h-screen'>
+              <div className='flex-1 relative'>{children}</div>
+            </div>
+          </Providers>
         </Container>
       </body>
     </html>

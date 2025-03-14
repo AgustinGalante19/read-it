@@ -6,8 +6,9 @@ function Loading() {
   return (
     <div className='p-4'>
       <header className='flex justify-between items-center'>
-        <Skeleton className='w-[200px] h-8' />
-        <Skeleton className='w-[20px] h-[27px]' />
+        <Skeleton className='w-[25px] h-[34px]' />
+        <Skeleton className='w-[150px] h-8' />
+        <Skeleton className='w-[40px] h-[40px] rounded-full' />
       </header>
       <div className='my-6'>
         <div className='flex my-2 justify-between items-center'>

@@ -8,7 +8,7 @@ export interface Book {
   is_readed: boolean;
   page_count: number;
   inserted_at: Date;
-  readed_at: Date;
+  readed_at: Date | null;
   tags: string;
 }
 

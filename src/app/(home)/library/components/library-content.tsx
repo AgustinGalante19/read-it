@@ -48,7 +48,6 @@ export default function LibraryContent() {
             currentReadStatus
           );
         }
-        console.log(allBooksResponse);
         setBooksList(booksResult);
         setAllBooks(allBooksResponse);
         setBookStatus(
