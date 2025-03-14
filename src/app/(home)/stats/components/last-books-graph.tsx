@@ -36,7 +36,7 @@ function LastBooksGraph({
   last6MonthsReadedBooks: Book[];
 }) {
   const chartData = last6MonthsReadedBooks.reduce((acc: ChartData, book) => {
-    const readedAt = new Date(book.readed_at);
+    const readedAt = new Date(book.readed_at as Date);
     const monthName = readedAt.toLocaleString('en-US', { month: 'long' });
 
     if (!acc[monthName]) {
