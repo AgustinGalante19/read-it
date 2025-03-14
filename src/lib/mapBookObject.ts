@@ -20,3 +20,7 @@ export default function mapBookObject(googleBook: GoogleBookItem): Book {
     tags: '',
   };
 }
+
+export function mapBooksArray(googleBook: GoogleBookItem[]): Book[] {
+  return googleBook.map((book) => mapBookObject(book));
+}
