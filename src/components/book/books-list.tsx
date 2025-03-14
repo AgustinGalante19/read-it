@@ -25,8 +25,8 @@ function BooksList({
   return (
     <Carousel opts={opts} className='w-full'>
       <CarouselContent className='-ml-2'>
-        {books.map((book) => (
-          <div key={book.id} className='pr-2'>
+        {books.map((book, i) => (
+          <div key={`${book.id}-${book.title}-${i}`} className='pr-2'>
             <CarouselItem className={cn('pl-2', itemClassName)}>
               <BookCard book={book} mode={cardMode} />
             </CarouselItem>
