@@ -22,5 +22,6 @@ export default function mapBookObject(googleBook: GoogleBookItem): Book {
 }
 
 export function mapBooksArray(googleBook: GoogleBookItem[]): Book[] {
+  if (!googleBook) return [];
   return googleBook.map((book) => mapBookObject(book));
 }
