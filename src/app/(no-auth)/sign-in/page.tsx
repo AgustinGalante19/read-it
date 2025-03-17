@@ -5,11 +5,13 @@ import { Button } from '@/components/ui/button';
 import { signIn, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 function SignInPage() {
   const { push } = useRouter();
   const { data } = useSession();
+
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (data?.user) {
@@ -29,9 +31,12 @@ function SignInPage() {
             variant='light'
             className='w-full'
             onClick={async () => {
+              setIsLoading(true);
               await signIn('google');
+              setIsLoading(false);
               push('/');
             }}
+            isLoading={isLoading}
           >
             <GoogleIcon />
             Login with Google
