@@ -23,17 +23,6 @@ function BookCard({
       : { width: 128, height: 205 };
   }, [mode]);
 
-  const imageSrc = useMemo(() => {
-    if (!book.thumbnail_url) {
-      if (mode === 'horizontal') {
-        return '/thumbnail-fallback.jpg';
-      } else {
-        return '/small-thumbnail-fallback.jpg';
-      }
-    }
-    return book.thumbnail_url;
-  }, [book.thumbnail_url, mode]);
-
   return (
     <Link href={`/book/${book.google_id}`}>
       <article
@@ -48,7 +37,7 @@ function BookCard({
           alt={`${book.title} cover`}
           height={imageSize.height}
           width={imageSize.width}
-          src={imageSrc}
+          src={book?.thumbnail_url || '/thumbnail-fallback.jpg'}
           loading='lazy'
           className={cn(
             'max-h-[205px] min-h-[77px]',
