@@ -35,7 +35,6 @@ export default function RootLayout({
             href='/apple-touch-icon.png'
           />
           <meta name='apple-mobile-web-app-title' content='Read-It' />
-          <link rel='manifest' href='/site.webmanifest' />
         </head>
       </head>
       <body className={`${GeistFont.className} antialiased`}>
