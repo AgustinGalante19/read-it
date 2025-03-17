@@ -2,7 +2,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 function Loading() {
   return (
-    <div>
+    <div className='overflow-hidden'>
       <header className='w-full flex p-4 justify-between items-center container mx-auto'>
         <span className='text-2xl font-bold text-white flex items-center gap-2 underline decoration-primary'>
           <Skeleton className='w-[124px] h-[32px]' />

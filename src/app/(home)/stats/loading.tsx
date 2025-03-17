@@ -8,12 +8,12 @@ function Loading() {
         <Skeleton className='w-[167px] h-7' />
         <Skeleton className='w-7 h-7' />
       </header>
-      <div className='px-4'>
+      <div className='px-4 overflow-hidden'>
         <div className='flex overflow-x-hidden gap-2'>
           <Skeleton className='w-[250px] h-[130px]' />
           <Skeleton className='w-[250px] h-[130px]' />
         </div>
-        <Skeleton className='w-[415px] h-[450px] mx-auto mt-4' />
+        <Skeleton className='w-[343px] h-[343px] mx-auto mt-4' />
         <div className='mt-4'>
           <div className='flex items-center justify-between'>
             <Skeleton className='w-[145px] h-[32px]' />

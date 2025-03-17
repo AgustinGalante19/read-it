@@ -15,12 +15,12 @@ function Loading() {
           <Skeleton className='w-[136px] h-8' />
           <Skeleton className='w-[94px] h-6' />
         </div>
-        <div className='flex justify-between gap-2'>
+        <div className='flex justify-between gap-2 overflow-hidden'>
           <VerticalSkeleton />
           <VerticalSkeleton />
           <VerticalSkeleton />
         </div>
-        <div className='flex mt-4 mb-2 justify-between items-center'>
+        <div className='flex mt-4 mb-2 justify-between items-center  overflow-hidden'>
           <Skeleton className='w-[136px] h-8' />
           <Skeleton className='w-[94px] h-6' />
         </div>
@@ -33,7 +33,7 @@ function Loading() {
           <Skeleton className='w-[136px] h-8' />
           <Skeleton className='w-[94px] h-6' />
         </div>
-        <div className='flex justify-between gap-2'>
+        <div className='flex justify-between gap-2  overflow-hidden'>
           <VerticalSkeleton />
           <VerticalSkeleton />
           <VerticalSkeleton />
