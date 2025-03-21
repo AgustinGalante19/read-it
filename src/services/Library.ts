@@ -9,6 +9,7 @@ import Stats from '@/types/Stats';
 import { QueryResult, sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
 import { getUserEmail } from './User';
+import getMostFrequentTag from '@/lib/getMostFrequentTag';
 
 interface Response<T> {
   status: boolean;
@@ -167,6 +168,10 @@ export async function getMyStats(): Promise<Response<Stats>> {
 
   const pageCount = await getPageCount();
 
+  const lastBookTags = last6MonthsReadedBooks[0]?.tags || '';
+
+  const mostFrequentTag = getMostFrequentTag(lastBookTags);
+
   return {
     result: {
       book: {
@@ -181,7 +186,7 @@ export async function getMyStats(): Promise<Response<Stats>> {
         lastMonthCount: totalPagesLastMonth,
       },
       tag: {
-        lastTagReaded: last6MonthsReadedBooks[0]?.tags || '',
+        lastTagReaded: mostFrequentTag,
         tagCount: unrepeatedTags.size,
       },
       last6MonthsReadedBooks,
