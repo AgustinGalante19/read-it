@@ -3,6 +3,12 @@
 import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 
+const Category = ({ cat }: { cat: string }) => (
+  <span className='bg-accent text-accent-foreground text-xs py-2 px-4 rounded-full'>
+    {cat}
+  </span>
+);
+
 function Categories({ categories }: { categories: string[] | undefined }) {
   const [showAll, setShowAll] = useState(false);
 
@@ -12,25 +18,13 @@ function Categories({ categories }: { categories: string[] | undefined }) {
     <section>
       <div className='flex flex-wrap gap-2 mt-3 mb-2'>
         {showAll
-          ? categories?.map((cat: string) => (
-              <span
-                key={cat}
-                className='bg-[#313333] text-white py-2 px-4 rounded-lg'
-              >
-                {cat}
-              </span>
-            ))
-          : categories?.slice(0, 3).map((cat: string) => (
-              <span
-                key={cat}
-                className='bg-[#313333] text-white py-2 px-4 rounded-lg'
-              >
-                {cat}
-              </span>
-            ))}
+          ? categories?.map((cat: string) => <Category key={cat} cat={cat} />)
+          : categories
+              ?.slice(0, 3)
+              .map((cat: string) => <Category key={cat} cat={cat} />)}
       </div>
       {categories?.length && categories?.length > 3 && (
-        <div className='flex justify-end mb-2'>
+        <div>
           <Button variant='link' onClick={handleToggleShow}>
             {!showAll ? 'Show more' : 'Show less'}
           </Button>

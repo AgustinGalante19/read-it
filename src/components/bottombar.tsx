@@ -24,11 +24,17 @@ const LinkItem = ({
       href={url}
       className={cn(
         'flex flex-col items-center gap-2 px-4 py-2 text-white',
-        isActive &&
-          'bg-gradient-to-b from-primary/5 to-transparent text-primary'
+        isActive && 'text-primary'
       )}
     >
-      {icon}
+      <div
+        className={cn(
+          'py-1 px-3',
+          isActive && 'rounded-full bg-primary text-primary-foreground'
+        )}
+      >
+        {icon}
+      </div>
       <span>{label}</span>
     </Link>
   );
@@ -36,7 +42,7 @@ const LinkItem = ({
 
 function BottomBar() {
   return (
-    <footer className=' w-full border-t-2 border-white/10 fixed bottom-0 bg-background'>
+    <footer className='w-full fixed bottom-0 bg-background border-t border-t-secondary'>
       <div className='max-w-md mx-auto flex justify-between'>
         <LinkItem label='Home' icon={<Home />} url='/' />
         <LinkItem label='Search' icon={<Search />} url='/search' />

@@ -86,18 +86,23 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
           )}
         </div>
         <Categories categories={book.volumeInfo?.categories} />
-        <div className='grid grid-cols-3 bg-dark-blue items-center justify-between rounded-lg px-8 py-2 mb-6'>
-          <span className='text-center text-sm font-bold flex items-center justify-center gap-2'>
-            <Calendar size={20} className='max-sm:hidden' />
-            {getDateString(book.volumeInfo.publishedDate)}
-          </span>
-          <span className='text-center'>
-            <Minus className='mx-auto rotate-90' size={30} />
-          </span>
-          <span className='text-center text-sm font-bold flex items-center justify-center gap-2'>
-            <BookText size={20} />
-            {book.volumeInfo.pageCount}
-          </span>
+        <div className='grid grid-cols-2 bg-secondary items-center justify-between rounded-full py-2 mb-6 relative'>
+          <div>
+            <span className='text-center text-sm flex items-center justify-center gap-2 text-secondary-foreground'>
+              <Calendar size={20} className='max-sm:hidden' />
+              {getDateString(book.volumeInfo.publishedDate)}
+            </span>
+          </div>
+          <Minus
+            className='mx-auto rotate-90 absolute inset-x-0 text-secondary-foreground'
+            size={20}
+          />
+          <div>
+            <span className='text-center text-sm flex items-center justify-center gap-2 text-secondary-foreground'>
+              <BookText size={20} />
+              {book.volumeInfo.pageCount}
+            </span>
+          </div>
         </div>
         <h3 className='text-lg font-bold mb-2'>About this book</h3>
         <BookDescription

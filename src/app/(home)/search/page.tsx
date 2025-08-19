@@ -49,7 +49,7 @@ function Search() {
           value={searchTerm}
           onChange={handleChange}
         />
-        <div className='h-5 w-5 absolute top-[14px] right-5 transition-colors duration-200 focus:outline-none bg-transparent hover:bg-transparent'>
+        <div className='h-5 w-5 absolute top-[14px] right-5 transition-colors duration-200 focus:outline-hidden bg-transparent hover:bg-transparent'>
           <button>{isSearching ? '...' : <SearchIcon />}</button>
         </div>
       </div>

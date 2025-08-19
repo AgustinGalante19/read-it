@@ -27,7 +27,7 @@ function AddBook({ book }: { book: GoogleBookItem }) {
   };
 
   return (
-    <Button className='rounded-full' onClick={handleAddBook}>
+    <Button onClick={handleAddBook}>
       <Plus />
       Add to Library
     </Button>

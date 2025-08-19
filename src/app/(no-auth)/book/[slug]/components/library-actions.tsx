@@ -19,7 +19,7 @@ function LibraryActions({ book }: { book: Book }) {
 
   return (
     <div className='flex items-center gap-2'>
-      <Button className='rounded-full' onClick={handleMarkAsReaded}>
+      <Button onClick={handleMarkAsReaded}>
         {book.is_readed ? (
           <>
             <BookX />
@@ -32,11 +32,7 @@ function LibraryActions({ book }: { book: Book }) {
           </>
         )}
       </Button>
-      <Button
-        variant='destructive'
-        className='rounded-full text-red-200'
-        onClick={handleRemoveFromLibrary}
-      >
+      <Button variant='destructive' onClick={handleRemoveFromLibrary}>
         <X />
         Remove
       </Button>

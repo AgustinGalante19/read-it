@@ -26,11 +26,11 @@ const BookDescription = ({ description }: { description: string }) => {
           __html: isExpanded ? sanitizedContent : truncatedContent,
         }}
       />
-      <div className='flex items-center justify-end'>
+      <div className='flex items-center'>
         {!isExpanded && sanitizedContent.length > 300 && (
           <Button
             variant='link'
-            className='mt-2'
+            className='p-0 mt-2'
             onClick={() => setIsExpanded(true)}
           >
             Show more
@@ -39,7 +39,7 @@ const BookDescription = ({ description }: { description: string }) => {
         {isExpanded && (
           <Button
             variant='link'
-            className='mt-2'
+            className='p-0 mt-2'
             onClick={() => setIsExpanded(false)}
           >
             Show less

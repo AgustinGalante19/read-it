@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Geist } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import Providers from '@/components/providers';
 import '@/app/globals.css';
 
@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: 'My personal to use as readlist',
 };
 
-const GeistFont = Geist({ subsets: ['latin'] });
+const InterFont = Inter({ subsets: ['latin'] });
 
 export default function RootLayout({
   children,
@@ -33,7 +33,7 @@ export default function RootLayout({
         />
         <meta name='apple-mobile-web-app-title' content='Read-It' />
       </head>
-      <body className={`${GeistFont.className} antialiased`}>
+      <body className={`${InterFont.className} antialiased`}>
         <Providers>{children}</Providers>
       </body>
     </html>
