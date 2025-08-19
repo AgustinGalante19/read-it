@@ -8,7 +8,8 @@
     "dev:https": "next dev --experimental-https --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "colors": "node scripts/material-to-css.js"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.3",
