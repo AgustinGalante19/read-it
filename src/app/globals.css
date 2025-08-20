@@ -11,7 +11,10 @@
   --color-cgray: #272828;
   --color-dark-blue: #232538;
   --color-white: oklch(var(--white));
-
+  --color-surface: oklch(var(--surface));
+  --color-surface-foreground: oklch(var(--surface-foreground));
+  --color-secondary-container: oklch(var(--secondary-container));
+  --color-secondary-container-foreground: oklch(var(--secondary-container-foreground));
   --color-card: oklch(var(--card));
   --color-card-foreground: oklch(var(--card-foreground));
 
@@ -64,9 +67,11 @@
     /* Dark scheme (from Material Theme Builder export) */
     --background-low: 0.1849 0.0118 139.43;
     --background: 0.1617 0.0101 158.69;
-    /* #0F1511 (was HSL 129 13% 6%) */
     --foreground: 0.86 0.016 123;
-    /* #DFE4DD (was HSL 120 7% 86%) */
+    --surface: 0.1878 0.0122 155.86;
+    --surface-foreground: 0.9131 0.0108 136.56;
+    --secondary-container: 0.3917 0.0333 156.05;
+    --secondary-container-foreground: 0.9083 0.0351 153.2;
     --white: 1 0 0;
     /* #FFFFFF (was HSL 0 0% 100%) */
 

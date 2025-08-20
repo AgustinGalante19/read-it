@@ -23,26 +23,27 @@ const LinkItem = ({
     <Link
       href={url}
       className={cn(
-        'flex flex-col items-center gap-2 px-4 py-2 text-white',
+        'flex flex-col items-center gap-2 px-4 py-2',
         isActive && 'text-primary'
       )}
     >
       <div
         className={cn(
-          'py-1 px-3',
-          isActive && 'rounded-full bg-primary text-primary-foreground'
+          'py-1 px-4',
+          isActive &&
+            'rounded-full bg-secondary-container text-secondary-container-foreground'
         )}
       >
         {icon}
       </div>
-      <span>{label}</span>
+      <span className='text-secondary-foreground'>{label}</span>
     </Link>
   );
 };
 
 function BottomBar() {
   return (
-    <footer className='w-full fixed bottom-0 bg-background border-t border-t-secondary'>
+    <footer className='w-full fixed bottom-0 bg-surface'>
       <div className='max-w-md mx-auto flex justify-between'>
         <LinkItem label='Home' icon={<Home />} url='/' />
         <LinkItem label='Search' icon={<Search />} url='/search' />
