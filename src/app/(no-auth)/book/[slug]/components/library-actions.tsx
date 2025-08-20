@@ -1,41 +1,72 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { removeFromLibrary, updateReadStatus } from '@/services/Library';
-import { Book } from '@/types/Book';
-import { BookCheck, BookX, X } from 'lucide-react';
+import { addBook } from '@/services/Library';
+import { Book, GoogleBookItem } from '@/types/Book';
+import { Bookmark, ChevronDown } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import BookMenu from './book-menu';
+import { useState } from 'react';
 
-function LibraryActions({ book }: { book: Book }) {
-  const handleMarkAsReaded = async () => {
-    await updateReadStatus(book.google_id, !book.is_readed);
-    toast.success(`Book marked as ${!book.is_readed ? 'readed' : 'to read'}`);
-  };
+function LibraryActions({
+  dbBook: book,
+  googleBook,
+}: {
+  dbBook: Book | null;
+  googleBook: GoogleBookItem | null;
+}) {
+  const { status: sessionStatus } = useSession();
 
-  const handleRemoveFromLibrary = async () => {
-    await removeFromLibrary(book.google_id);
-    toast.success(`${book.title} removed from library`);
+  const { push } = useRouter();
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleAddBook = async () => {
+    if (sessionStatus === 'unauthenticated') {
+      push('/sign-in');
+      return;
+    }
+
+    if (!googleBook) {
+      return toast.error('book not found');
+    }
+    const { result, status } = await addBook(googleBook);
+    if (!status) {
+      return toast.error(result);
+    }
+    return toast.success(result);
   };
 
   return (
-    <div className='flex items-center gap-2'>
-      <Button onClick={handleMarkAsReaded}>
-        {book.is_readed ? (
-          <>
-            <BookX />
-            Mark as to read
-          </>
-        ) : (
-          <>
-            <BookCheck />
-            Mark as readed
-          </>
-        )}
-      </Button>
-      <Button variant='destructive' onClick={handleRemoveFromLibrary}>
-        <X />
-        Remove
-      </Button>
+    <div className='flex items-center gap-1'>
+      {book ? (
+        <Button onClick={() => setIsOpen(!isOpen)}>
+          <div className='flex items-center gap-1'>
+            {/* Cambiar segun estado actual del libro */}
+            <Bookmark />
+            Want to Read
+          </div>
+          <ChevronDown />
+        </Button>
+      ) : (
+        <>
+          <Button className='custom-radius1' onClick={handleAddBook}>
+            <Bookmark />
+            Want to Read
+          </Button>
+          <Button className='custom-radius2' onClick={() => setIsOpen(!isOpen)}>
+            <ChevronDown />
+          </Button>
+        </>
+      )}
+      <BookMenu
+        isOpen={isOpen}
+        close={() => setIsOpen(false)}
+        book={book}
+        googleBook={googleBook}
+      />
     </div>
   );
 }

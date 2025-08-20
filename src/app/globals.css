@@ -165,3 +165,11 @@
   background: radial-gradient(circle at 20% 30%, rgba(17, 122, 9, 0.3), transparent),
     radial-gradient(circle at 80% 70%, rgba(16, 154, 6, 0.4), transparent);
 }
+
+.custom-radius1 {
+  border-radius: 100px 20px 20px 100px;
+}
+
+.custom-radius2 {
+  border-radius: 20px 100px 100px 20px;
+}

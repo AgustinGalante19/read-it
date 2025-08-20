@@ -4,7 +4,6 @@ import { getBook } from '@/services/GoogleBooks';
 import { BookText, Calendar, Minus } from 'lucide-react';
 import Image from 'next/image';
 import getAuthorsString from '@/lib/getAuthorsString';
-import AddBook from './components/add-book';
 import Categories from './components/categories';
 import { existsOnLibrary } from '@/services/Library';
 import LibraryActions from './components/library-actions';
@@ -79,11 +78,7 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
           <span className='font-semibold'>
             {getAuthorsString(book.volumeInfo?.authors)}
           </span>
-          {!dbBook.result ? (
-            <AddBook book={book} />
-          ) : (
-            <LibraryActions book={dbBook.result} />
-          )}
+          <LibraryActions dbBook={dbBook.result} googleBook={book} />
         </div>
         <Categories categories={book.volumeInfo?.categories} />
         <div className='grid grid-cols-2 bg-secondary items-center justify-between rounded-full py-2 mb-6 relative'>
