@@ -5,11 +5,13 @@ export interface Book {
   thumbnail_url: string;
   authors: string;
   publish_date: string;
-  is_readed: boolean;
   page_count: number;
-  inserted_at: Date;
-  readed_at: Date | null;
+  inserted_at: string;
+  start_date: string;
+  finish_date: string;
   tags: string;
+  user_email: string;
+  id_book_status: number;
 }
 
 export type BookStatus = 'readed' | 'notReaded' | 'all';

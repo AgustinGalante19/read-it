@@ -1,20 +1,33 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { addBook } from '@/services/Library';
+import { addBook, removeFromLibrary } from '@/services/Library';
 import { Book, GoogleBookItem } from '@/types/Book';
-import { Bookmark, ChevronDown } from 'lucide-react';
+import { BadgeCheck, Bookmark, BookOpen, ChevronDown } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import BookMenu from './book-menu';
 import { useState } from 'react';
 
+function renderBookIcon(statusId: number) {
+  switch (statusId) {
+    case 1:
+      return <Bookmark className='fill-primary-foreground' />;
+    case 2:
+      return <BookOpen className='fill-accent text-primary-foreground/80' />;
+    case 3:
+      return <BadgeCheck className='fill-accent text-primary-foreground/80' />;
+    default:
+      return null;
+  }
+}
+
 function LibraryActions({
   dbBook: book,
   googleBook,
 }: {
-  dbBook: Book | null;
+  dbBook: (Book & { ds_status: string }) | null;
   googleBook: GoogleBookItem | null;
 }) {
   const { status: sessionStatus } = useSession();
@@ -32,6 +45,12 @@ function LibraryActions({
     if (!googleBook) {
       return toast.error('book not found');
     }
+
+    if (book?.id_book_status) {
+      await removeFromLibrary(book.google_id);
+      return;
+    }
+
     const { result, status } = await addBook(googleBook);
     if (!status) {
       return toast.error(result);
@@ -42,24 +61,20 @@ function LibraryActions({
   return (
     <div className='flex items-center gap-1'>
       {book ? (
-        <Button onClick={() => setIsOpen(!isOpen)}>
-          <div className='flex items-center gap-1'>
-            {/* Cambiar segun estado actual del libro */}
-            <Bookmark />
-            Want to Read
-          </div>
-          <ChevronDown />
-        </Button>
-      ) : (
-        <>
-          <Button className='custom-radius1' onClick={handleAddBook}>
-            <Bookmark />
-            Want to Read
+        <div className='flex items-center gap-1'>
+          <Button onClick={handleAddBook} className='custom-radius1'>
+            {renderBookIcon(book.id_book_status)}
+            {book.ds_status}
           </Button>
-          <Button className='custom-radius2' onClick={() => setIsOpen(!isOpen)}>
+          <Button onClick={() => setIsOpen(true)} className='custom-radius2'>
             <ChevronDown />
           </Button>
-        </>
+        </div>
+      ) : (
+        <Button onClick={handleAddBook}>
+          <Bookmark />
+          Want to Read
+        </Button>
       )}
       <BookMenu
         isOpen={isOpen}

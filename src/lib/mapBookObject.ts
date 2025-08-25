@@ -10,13 +10,15 @@ export default function mapBookObject(googleBook: GoogleBookItem): Book {
     authors: getAuthorsString(authors),
     google_id: googleBook.id,
     id: 0,
-    inserted_at: new Date(),
-    is_readed: false,
+    inserted_at: '',
+    finish_date: '',
+    id_book_status: 0,
+    start_date: '',
+    user_email: '',
     page_count: pageCount,
     publish_date: getDateString(publishedDate),
     thumbnail_url: imageLinks?.thumbnail,
     title,
-    readed_at: new Date(),
     tags: '',
   };
 }

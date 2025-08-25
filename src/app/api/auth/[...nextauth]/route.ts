@@ -1,4 +1,4 @@
-import { sql } from '@vercel/postgres';
+import { turso } from '@/services/turso';
 import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 
@@ -13,16 +13,20 @@ const handler = NextAuth({
     signIn: async ({ user }) => {
       try {
         const { name, email } = user;
+        if (!name || !email) return false;
 
-        const userExists =
-          await sql`SELECT email from readit_users where email = ${email}`;
+        const userExists = await turso.execute({
+          sql: `SELECT email FROM readit_users where email = ?;`,
+          args: [email],
+        });
 
         if (userExists.rows.length > 0) {
           return true;
         }
-
-        await sql`INSERT INTO readit_users (name, email) values(${name}, ${email})`;
-
+        await turso.execute({
+          sql: `INSERT INTO readit_users (name, email) values(?, ?);`,
+          args: [name, email],
+        });
         return true;
       } catch {
         return false;

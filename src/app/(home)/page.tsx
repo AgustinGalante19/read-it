@@ -10,20 +10,18 @@ export default async function Home() {
   const allBooks = await getMyBooks('all');
 
   return (
-    <main>
+    <main className='min-h-full'>
       <Topbar />
       <div className='container mx-auto p-4 space-y-8'>
         <section>
           <ShowAll label='My Readlist' readStatus='notReaded' />
           {readList.result.length > 0 ? (
-            <>
-              <BooksList
-                books={readList.result}
-                cardMode='vertical'
-                opts={{ dragFree: true }}
-                itemClassName='basis-1/3'
-              />
-            </>
+            <BooksList
+              books={readList.result}
+              cardMode='vertical'
+              opts={{ dragFree: true }}
+              itemClassName='basis-1/3'
+            />
           ) : (
             <div className='flex flex-col items-center mt-4 gap-2'>
               <span className='text-gray-300'>
@@ -48,6 +46,8 @@ export default async function Home() {
             itemClassName='basis-1/3'
           />
         </section>
+        {/* Espaciado adicional para mejor UX */}
+        <div className='h-4'></div>
       </div>
     </main>
   );

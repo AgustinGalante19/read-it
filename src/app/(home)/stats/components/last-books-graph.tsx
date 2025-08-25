@@ -1,7 +1,6 @@
 'use client';
 
 import { Bar, BarChart, XAxis, YAxis } from 'recharts';
-
 import {
   ChartConfig,
   ChartContainer,
@@ -22,7 +21,7 @@ import { Book } from '@/types/Book';
 const chartConfig = {
   count: {
     label: 'count',
-    color: 'hsl(var(--chart-2))',
+    color: 'oklch(var(--chart-4))',
   },
 } satisfies ChartConfig;
 
@@ -36,8 +35,8 @@ function LastBooksGraph({
   last6MonthsReadedBooks: Book[];
 }) {
   const chartData = last6MonthsReadedBooks.reduce((acc: ChartData, book) => {
-    const readedAt = new Date(book.readed_at as Date);
-    const monthName = readedAt.toLocaleString('en-US', { month: 'long' });
+    const finishDate = new Date(book.finish_date);
+    const monthName = finishDate.toLocaleString('en-US', { month: 'long' });
 
     if (!acc[monthName]) {
       acc[monthName] = { month: monthName, count: 0 };
@@ -59,7 +58,9 @@ function LastBooksGraph({
     <section className='p-4'>
       <Card>
         <CardHeader>
-          <CardTitle>Books Readed</CardTitle>
+          <CardTitle className='text-secondary-foreground'>
+            Books Readed
+          </CardTitle>
           <CardDescription>Past 6 months</CardDescription>
         </CardHeader>
         <CardContent>
