@@ -121,6 +121,7 @@ export default function BookDatesModal({
               align='start'
               side='bottom'
               sideOffset={5}
+              disablePortal={true}
               onPointerDownOutside={(e) => e.preventDefault()}
               onEscapeKeyDown={(e) => {
                 e.stopPropagation();
