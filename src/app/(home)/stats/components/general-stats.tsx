@@ -26,15 +26,19 @@ function GeneralStats({
         <CarouselContent className='-ml-1'>
           <div className='pr-1'>
             <CarouselItem className='pl-1'>
-              <Card className='w-[250px]'>
+              <Card className='w-[250px] h-[150px]'>
                 <CardHeader className='p-4'>
                   <div className='flex items-center justify-between'>
-                    <CardTitle>Books readed</CardTitle>
+                    <CardTitle className='text-secondary-foreground'>
+                      Books readed
+                    </CardTitle>
                     <Book />
                   </div>
                 </CardHeader>
                 <CardContent className='px-4 pb-2'>
-                  <span className='text-2xl font-bold'>{book.count}</span>
+                  <span className='text-2xl font-bold text-primary'>
+                    {book.count}
+                  </span>
                 </CardContent>
                 <CardFooter className='pb-0'>
                   <span className='text-xs text-gray-400 pb-4'>
@@ -52,15 +56,17 @@ function GeneralStats({
           </div>
           <div className='pr-1'>
             <CarouselItem className='pl-1'>
-              <Card className='w-[250px]'>
+              <Card className='w-[250px] h-[150px]'>
                 <CardHeader className='p-4'>
                   <div className='flex items-center justify-between'>
-                    <CardTitle>Page count</CardTitle>
+                    <CardTitle className='text-secondary-foreground'>
+                      Page count
+                    </CardTitle>
                     <BookOpen />
                   </div>
                 </CardHeader>
                 <CardContent className='px-4 pb-2'>
-                  <span className='text-2xl font-bold'>
+                  <span className='text-2xl font-bold text-primary'>
                     +{page.totalPageCount}
                   </span>
                 </CardContent>
@@ -74,15 +80,19 @@ function GeneralStats({
           </div>
           <div className='pr-1'>
             <CarouselItem className='pl-1'>
-              <Card className='w-[250px]'>
+              <Card className='w-[250px] h-[150px]'>
                 <CardHeader className='p-4'>
                   <div className='flex items-center justify-between'>
-                    <CardTitle>Tags count</CardTitle>
+                    <CardTitle className='text-secondary-foreground'>
+                      Tags count
+                    </CardTitle>
                     <Tag />
                   </div>
                 </CardHeader>
                 <CardContent className='px-4 pb-2'>
-                  <span className='text-2xl font-bold'>{tag.tagCount}</span>
+                  <span className='text-2xl font-bold text-primary'>
+                    {tag.tagCount}
+                  </span>
                 </CardContent>
                 <CardFooter className='pb-0'>
                   <span className='text-xs text-gray-400 pb-4'>

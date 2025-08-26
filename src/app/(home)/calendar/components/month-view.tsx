@@ -38,7 +38,7 @@ export default function MonthView({
         ))}
         {days.map((day) => {
           const booksForDay = books.filter((book) =>
-            isSameDay(book.readed_at as Date, day)
+            isSameDay(book.finish_date, day)
           );
           const book = booksForDay[0];
 

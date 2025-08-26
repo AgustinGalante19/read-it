@@ -1,12 +1,17 @@
+'use server';
+
 import GeneralStats from './components/general-stats';
 import { ChartBar } from 'lucide-react';
 import LastBooksGraph from './components/last-books-graph';
 import LastbooksList from './components/last-books-list';
-import { getMyStats } from '@/services/Library';
 import { Book } from '@/types/Book';
+import { getMyStats } from '@/services/StatsService';
 
 async function StatsPage() {
-  const { result } = await getMyStats();
+  const { data } = await getMyStats();
+  if (!data) {
+    return <div>No stats found</div>;
+  }
 
   return (
     <div>
@@ -16,11 +21,11 @@ async function StatsPage() {
         </h1>
         <ChartBar />
       </header>
-      <GeneralStats book={result.book} page={result.page} tag={result.tag} />
+      <GeneralStats book={data.book} page={data.page} tag={data.tag} />
       <LastBooksGraph
-        last6MonthsReadedBooks={result.last6MonthsReadedBooks as Book[]}
+        last6MonthsReadedBooks={data.last6MonthsReadedBooks as Book[]}
       />
-      <LastbooksList books={result.last6MonthsReadedBooks as Book[]} />
+      <LastbooksList books={data.last6MonthsReadedBooks as Book[]} />
     </div>
   );
 }

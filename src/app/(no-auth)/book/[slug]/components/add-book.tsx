@@ -1,9 +1,9 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { addBook } from '@/services/Library';
+import { addBook } from '@/services/BookService';
 import { GoogleBookItem } from '@/types/Book';
-import { Plus } from 'lucide-react';
+import { Bookmark, ChevronDown } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -19,18 +19,23 @@ function AddBook({ book }: { book: GoogleBookItem }) {
       return;
     }
 
-    const { result, status } = await addBook(book);
-    if (!status) {
-      return toast.error(result);
+    const { success, data } = await addBook(book);
+    if (!success) {
+      return toast.error(data);
     }
-    return toast.success(result);
+    return toast.success(data);
   };
 
   return (
-    <Button onClick={handleAddBook}>
-      <Plus />
-      Add to Library
-    </Button>
+    <div className='flex items-center gap-1'>
+      <Button className='custom-radius1' onClick={handleAddBook}>
+        <Bookmark />
+        Want to Read
+      </Button>
+      <Button className='custom-radius2'>
+        <ChevronDown />
+      </Button>
+    </div>
   );
 }
 

@@ -7,10 +7,13 @@ export default function filterBooksByStatus(
   let books;
   switch (status) {
     case 'readed':
-      books = booksList.filter((book) => book.is_readed);
+      books = booksList.filter((book) => book.id_book_status === 3);
       break;
-    case 'notReaded':
-      books = booksList.filter((book) => !book.is_readed);
+    case 'reading':
+      books = booksList.filter((book) => book.id_book_status === 2);
+      break;
+    case 'wantTo':
+      books = booksList.filter((book) => book.id_book_status === 1);
       break;
     default:
       books = booksList;

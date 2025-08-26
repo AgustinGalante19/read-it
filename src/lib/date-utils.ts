@@ -23,3 +23,10 @@ export function getDateString(date: string | undefined) {
 
   return formatDate(date);
 }
+
+// Función para convertir string yyyy-mm-dd a Date local
+export function parseLocalDate(dateString: string): Date | undefined {
+  if (!dateString || dateString === 'null') return undefined;
+  const [year, month, day] = dateString.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}

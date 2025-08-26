@@ -10,6 +10,7 @@
   --color-foreground: oklch(var(--foreground));
   --color-cgray: #272828;
   --color-dark-blue: #232538;
+  --color-inverse-surface: oklch(var(--inverse-surface));
   --color-white: oklch(var(--white));
   --color-surface: oklch(var(--surface));
   --color-surface-foreground: oklch(var(--surface-foreground));
@@ -70,6 +71,7 @@
     --foreground: 0.86 0.016 123;
     --surface: 0.1878 0.0122 155.86;
     --surface-foreground: 0.9131 0.0108 136.56;
+    --inverse-surface: 0.9131 0.0108 136.56;
     --secondary-container: 0.3917 0.0333 156.05;
     --secondary-container-foreground: 0.9083 0.0351 153.2;
     --white: 1 0 0;
@@ -94,7 +96,6 @@
     /* secondary: #B5CCBB (was HSL 118 17% 81%) */
     --secondary-foreground: 0.9083 0.0351 153.2;
     /* onSecondary: #213528 (was HSL 140 22% 13%) */
-
     --muted: 0.3 0.02 140;
     /* surfaceVariant: #404942 (was HSL 132 6% 30%) */
     --muted-foreground: 0.77 0.021 120;
@@ -140,6 +141,20 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  :root {
+    --bottom-bar-height: 6rem;
+    /* fallback */
+  }
+
+  /* Mejorar el scroll en mobile */
+  body {
+    overscroll-behavior: none;
+  }
 }
 
 
@@ -164,4 +179,12 @@
 .blur-background-green {
   background: radial-gradient(circle at 20% 30%, rgba(17, 122, 9, 0.3), transparent),
     radial-gradient(circle at 80% 70%, rgba(16, 154, 6, 0.4), transparent);
+}
+
+.custom-radius1 {
+  border-radius: 100px 20px 20px 100px;
+}
+
+.custom-radius2 {
+  border-radius: 20px 100px 100px 20px;
 }

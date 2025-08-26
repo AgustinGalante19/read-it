@@ -53,21 +53,21 @@ function BookCard({
           <span className='font-semibold truncate w-full max-w-full'>
             {book.title}
           </span>
-          <span className='font-light truncate w-full max-w-full'>
+          <span className='font-light truncate w-full max-w-full text-secondary-foreground'>
             {book.authors}
           </span>
           <div
             className={cn('flex', mode === 'horizontal' ? 'gap-4' : 'gap-1')}
           >
-            <div className='flex gap-1 items-center'>
+            <div className='flex gap-1 items-center text-muted-foreground'>
               <Calendar size={14} />
-              <span className='text-xs text-nowrap'>
+              <span className='text-xs text-nowrap '>
                 {getDateString(book.publish_date)}
               </span>
             </div>
-            <div className='flex gap-1 items-center'>
+            <div className='flex gap-1 items-center text-muted-foreground'>
               <BookText size={14} />
-              <span className='text-xs'>{book.page_count}</span>
+              <span className='text-xs '>{book.page_count}</span>
             </div>
           </div>
         </div>

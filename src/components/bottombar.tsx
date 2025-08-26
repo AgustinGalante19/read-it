@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { ChartBar, Home, Library, Search } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 
 const LinkItem = ({
   label,
@@ -42,8 +42,35 @@ const LinkItem = ({
 };
 
 function BottomBar() {
+  useEffect(() => {
+    // Establecer la altura de la barra de navegación como CSS custom property
+    const updateBottomBarHeight = () => {
+      const bottomBar = document.querySelector(
+        '[data-bottom-bar]'
+      ) as HTMLElement;
+      if (bottomBar) {
+        const height = bottomBar.offsetHeight;
+        document.documentElement.style.setProperty(
+          '--bottom-bar-height',
+          `${height}px`
+        );
+      }
+    };
+
+    // Calcular inicialmente
+    updateBottomBarHeight();
+
+    // Recalcular en cambios de ventana
+    window.addEventListener('resize', updateBottomBarHeight);
+
+    return () => window.removeEventListener('resize', updateBottomBarHeight);
+  }, []);
+
   return (
-    <footer className='w-full fixed bottom-0 bg-surface'>
+    <footer
+      data-bottom-bar
+      className='fixed bottom-0 left-0 right-0 bg-surface/95 backdrop-blur-sm border-t border-border z-50'
+    >
       <div className='max-w-md mx-auto flex justify-between'>
         <LinkItem label='Home' icon={<Home />} url='/' />
         <LinkItem label='Search' icon={<Search />} url='/search' />
