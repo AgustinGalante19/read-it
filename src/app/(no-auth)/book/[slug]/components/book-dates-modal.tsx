@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { ChevronDownIcon } from 'lucide-react';
+import { CalendarIcon } from 'lucide-react';
 import { type DateRange } from 'react-day-picker';
 
 import { Button } from '@/components/ui/button';
@@ -78,24 +78,27 @@ export default function BookDatesModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent showCloseButton={false}>
         <DialogHeader>
-          <DialogTitle>Read Dates</DialogTitle>
-          <DialogDescription>Set your book read dates</DialogDescription>
+          <DialogTitle className='text-start'>Read Dates</DialogTitle>
+          <DialogDescription className='text-start'>
+            Set your book start and finish dates
+          </DialogDescription>
         </DialogHeader>
         <div className='flex flex-col gap-3'>
           <Popover>
             <PopoverTrigger asChild>
               <Button
                 variant='outline'
-                className='w-56 justify-between font-normal mx-auto'
+                className='w-full justify-between font-normal rounded-md mx-auto bg-transparent'
+                onClick={(e) => e.stopPropagation()}
               >
                 {range?.from || range?.to
                   ? `${range.from ? range.from.toLocaleDateString() : ''}${
                       range.from && range.to ? ' - ' : ''
                     }${range.to ? range.to.toLocaleDateString() : ''}`
                   : 'Select date'}
-                <ChevronDownIcon />
+                <CalendarIcon className='text-primary' />
               </Button>
             </PopoverTrigger>
             <PopoverContent
@@ -114,12 +117,21 @@ export default function BookDatesModal({
           </Popover>
         </div>
         <DialogFooter>
-          <DialogClose asChild>
-            <Button variant={'outline'}>Cancel</Button>
-          </DialogClose>
-          <Button onClick={handleSave} isLoading={isWorking}>
-            Save
-          </Button>
+          <div className='flex justify-end gap-2'>
+            <DialogClose asChild>
+              <Button variant={'ghost'} className='text-primary'>
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button
+              variant={'ghost'}
+              className='text-primary'
+              onClick={handleSave}
+              isLoading={isWorking}
+            >
+              Save
+            </Button>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
