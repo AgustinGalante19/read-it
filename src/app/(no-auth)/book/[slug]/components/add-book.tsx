@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { addBook } from '@/services/Library';
+import { addBook } from '@/services/BookService';
 import { GoogleBookItem } from '@/types/Book';
 import { Bookmark, ChevronDown } from 'lucide-react';
 import { useSession } from 'next-auth/react';
@@ -19,11 +19,11 @@ function AddBook({ book }: { book: GoogleBookItem }) {
       return;
     }
 
-    const { result, status } = await addBook(book);
-    if (!status) {
-      return toast.error(result);
+    const { success, data } = await addBook(book);
+    if (!success) {
+      return toast.error(data);
     }
-    return toast.success(result);
+    return toast.success(data);
   };
 
   return (

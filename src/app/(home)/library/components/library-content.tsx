@@ -1,9 +1,8 @@
 'use client';
 
 import { ChangeEvent, useEffect, useState } from 'react';
-import { BookCheck, BookMarked, BookX, Calendar } from 'lucide-react';
+import { BookCheck, BookIcon, BookMarked, BookX, Calendar } from 'lucide-react';
 import filterBooksByStatus from '@/lib/filterBooksByStatus';
-import { getMyBooks } from '@/services/Library';
 import BookCard from '@/components/book/book-card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,11 +13,12 @@ import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import VerticalSkeleton from '@/components/book/vertical-skeleton';
-
+import { getMyBooks } from '@/services/BookService';
 const options: Option[] = [
   { id: 3, value: 'all', label: 'Saved Books', icon: <BookMarked size={18} /> },
   { id: 1, value: 'readed', label: 'Readed', icon: <BookCheck size={18} /> },
-  { id: 2, value: 'notReaded', label: 'Not Readed', icon: <BookX size={18} /> },
+  { id: 4, value: 'reading', label: 'Reading', icon: <BookIcon size={18} /> },
+  { id: 2, value: 'wantTo', label: 'Want to Read', icon: <BookX size={18} /> },
 ];
 
 export default function LibraryContent() {
@@ -40,7 +40,12 @@ export default function LibraryContent() {
         setIsLoading(true);
         const currentReadStatus: BookStatus =
           (readStatus as BookStatus) ?? 'all';
-        const { result: allBooksResponse } = await getMyBooks('all');
+        const { data: allBooksResponse } = await getMyBooks('all');
+
+        if (!allBooksResponse) {
+          return;
+        }
+
         let booksResult = allBooksResponse;
         if (readStatus) {
           booksResult = filterBooksByStatus(

@@ -23,11 +23,11 @@ import {
 } from '@/components/ui/dialog';
 import { parseLocalDate } from '@/lib/date-utils';
 import { Book } from '@/types/Book';
-import { updateBookDates } from '@/services/Library';
 import { toast } from 'sonner';
+import { updateBookDates } from '@/services/BookService';
 
 interface BookDatesModal {
-  dbBook: Book | null;
+  dbBook: Book | null | undefined;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -44,15 +44,16 @@ export default function BookDatesModal({
     if (!dbBook) return;
 
     setIsWorking(true);
-    const { status, result } = await updateBookDates(dbBook.google_id, {
+    const { error, data, success } = await updateBookDates(dbBook.google_id, {
       from: range?.from ? range.from.toISOString().split('T')[0] : null,
       to: range?.to ? range.to.toISOString().split('T')[0] : null,
     });
 
-    if (!status) {
-      toast.error(result);
+    if (!success) {
+      toast.error(error);
+      return;
     }
-    toast.success(result);
+    toast.success(data);
     setIsWorking(false);
     onClose();
   };

@@ -10,11 +10,11 @@ import {
 } from '@/components/ui/drawer';
 import { Separator } from '@/components/ui/separator';
 import getAuthorsString from '@/lib/getAuthorsString';
-import { removeFromLibrary, updateBookStatus } from '@/services/Library';
 import { Book, GoogleBookItem } from '@/types/Book';
 import { BadgeCheck, Bookmark, BookOpen, Calendar, Trash } from 'lucide-react';
 import { useState } from 'react';
 import BookDatesModal from './book-dates-modal';
+import { removeFromLibrary, updateBookStatus } from '@/services/BookService';
 
 function BookMenu({
   isOpen,
@@ -24,7 +24,7 @@ function BookMenu({
 }: {
   isOpen: boolean;
   close: () => void;
-  book: (Book & { ds_status: string }) | null;
+  book: (Book & { ds_status: string }) | null | undefined;
   googleBook: GoogleBookItem | null;
 }) {
   const [isLoading, setIsLoading] = useState({

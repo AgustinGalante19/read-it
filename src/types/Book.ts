@@ -14,7 +14,7 @@ export interface Book {
   id_book_status: number;
 }
 
-export type BookStatus = 'readed' | 'notReaded' | 'all';
+export type BookStatus = 'readed' | 'reading' | 'wantTo' | 'all';
 
 export interface GoogleBooksResponse {
   kind: string;

@@ -1,7 +1,6 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { addBook, removeFromLibrary } from '@/services/Library';
 import { Book, GoogleBookItem } from '@/types/Book';
 import { BadgeCheck, Bookmark, BookOpen, ChevronDown } from 'lucide-react';
 import { useSession } from 'next-auth/react';
@@ -9,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import BookMenu from './book-menu';
 import { useState } from 'react';
+import { addBook, removeFromLibrary } from '@/services/BookService';
 
 function renderBookIcon(statusId: number) {
   switch (statusId) {
@@ -27,7 +27,7 @@ function LibraryActions({
   dbBook: book,
   googleBook,
 }: {
-  dbBook: (Book & { ds_status: string }) | null;
+  dbBook: (Book & { ds_status: string }) | null | undefined;
   googleBook: GoogleBookItem | null;
 }) {
   const { status: sessionStatus } = useSession();
@@ -51,11 +51,11 @@ function LibraryActions({
       return;
     }
 
-    const { result, status } = await addBook(googleBook);
-    if (!status) {
-      return toast.error(result);
+    const { data, success } = await addBook(googleBook);
+    if (!success) {
+      return toast.error(data);
     }
-    return toast.success(result);
+    return toast.success(data);
   };
 
   return (

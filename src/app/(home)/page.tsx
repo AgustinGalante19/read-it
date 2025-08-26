@@ -1,11 +1,14 @@
+'use server';
+
 import Topbar from '@/components/topbar';
-import { getMyBooks } from '@/services/Library';
 import BooksList from '@/components/book/books-list';
 import ShowAll from '@/components/book/show-all';
 import Link from 'next/link';
+import { getMyBooks } from '@/services/BookService';
 
 export default async function Home() {
-  const readList = await getMyBooks('notReaded');
+  const currentlyReading = await getMyBooks('reading');
+  const readList = await getMyBooks('wantTo');
   const readedBooks = await getMyBooks('readed');
   const allBooks = await getMyBooks('all');
 
@@ -14,10 +17,23 @@ export default async function Home() {
       <Topbar />
       <div className='container mx-auto p-4 space-y-8'>
         <section>
-          <ShowAll label='My Readlist' readStatus='notReaded' />
-          {readList.result.length > 0 ? (
+          {currentlyReading.data && (
+            <>
+              <ShowAll label='Currently Reading' readStatus='reading' />
+              <BooksList
+                books={currentlyReading.data}
+                cardMode='vertical'
+                opts={{ dragFree: true }}
+                itemClassName='basis-1/3'
+              />
+            </>
+          )}
+        </section>
+        <section>
+          <ShowAll label='My Readlist' readStatus='wantTo' />
+          {readList.data ? (
             <BooksList
-              books={readList.result}
+              books={readList.data}
               cardMode='vertical'
               opts={{ dragFree: true }}
               itemClassName='basis-1/3'
@@ -35,16 +51,28 @@ export default async function Home() {
         </section>
         <section>
           <ShowAll label='Readed' readStatus='readed' />
-          <BooksList books={readedBooks.result} opts={{ dragFree: true }} />
+          {readedBooks.data ? (
+            <BooksList books={readedBooks.data} opts={{ dragFree: true }} />
+          ) : (
+            <span className='text-gray-300'>
+              You don&apos;t have any book readed yet...
+            </span>
+          )}
         </section>
         <section>
           <ShowAll label='All my Books' readStatus='all' />
-          <BooksList
-            books={allBooks.result}
-            cardMode='vertical'
-            opts={{ dragFree: true }}
-            itemClassName='basis-1/3'
-          />
+          {allBooks.data ? (
+            <BooksList
+              books={allBooks.data}
+              cardMode='vertical'
+              opts={{ dragFree: true }}
+              itemClassName='basis-1/3'
+            />
+          ) : (
+            <span className='text-gray-300'>
+              You don&apos;t have any book in your library...
+            </span>
+          )}
         </section>
         {/* Espaciado adicional para mejor UX */}
         <div className='h-4'></div>
