@@ -39,6 +39,7 @@ export default function BookDatesModal({
 }: BookDatesModal) {
   const [range, setRange] = React.useState<DateRange | undefined>(undefined);
   const [isWorking, setIsWorking] = React.useState(false);
+  const [popoverOpen, setPopoverOpen] = React.useState(false);
 
   const handleSave = async () => {
     if (!dbBook) return;
@@ -69,16 +70,27 @@ export default function BookDatesModal({
 
     if (isOpen) {
       loadDefaults();
+      setPopoverOpen(false); // Asegurar que el popover esté cerrado
     }
 
     return () => {
       setRange(undefined);
+      setPopoverOpen(false);
     };
   }, [isOpen, dbBook]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent showCloseButton={false}>
+      <DialogContent
+        showCloseButton={false}
+        onPointerDownOutside={(e) => {
+          // Prevenir cierre si el click es dentro del popover
+          const target = e.target as Element;
+          if (target.closest('[data-radix-popper-content-wrapper]')) {
+            e.preventDefault();
+          }
+        }}
+      >
         <DialogHeader>
           <DialogTitle className='text-start'>Read Dates</DialogTitle>
           <DialogDescription className='text-start'>
@@ -86,12 +98,15 @@ export default function BookDatesModal({
           </DialogDescription>
         </DialogHeader>
         <div className='flex flex-col gap-3'>
-          <Popover>
+          <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
             <PopoverTrigger asChild>
               <Button
                 variant='outline'
                 className='w-full justify-between font-normal rounded-md mx-auto bg-transparent'
-                onClick={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setPopoverOpen(true);
+                }}
               >
                 {range?.from || range?.to
                   ? `${range.from ? range.from.toLocaleDateString() : ''}${
@@ -104,13 +119,18 @@ export default function BookDatesModal({
             <PopoverContent
               className='w-auto overflow-hidden p-0'
               align='start'
+              onPointerDownOutside={(e) => e.preventDefault()}
+              onEscapeKeyDown={(e) => {
+                e.stopPropagation();
+                setPopoverOpen(false);
+              }}
             >
               <Calendar
                 mode='range'
                 selected={range}
                 captionLayout='dropdown'
-                onSelect={(range) => {
-                  setRange(range);
+                onSelect={(selectedRange) => {
+                  setRange(selectedRange);
                 }}
               />
             </PopoverContent>
