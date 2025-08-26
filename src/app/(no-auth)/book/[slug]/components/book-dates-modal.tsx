@@ -117,22 +117,26 @@ export default function BookDatesModal({
               </Button>
             </PopoverTrigger>
             <PopoverContent
-              className='w-auto overflow-hidden p-0'
+              className='w-auto overflow-hidden p-0 z-[9999]'
               align='start'
+              side='bottom'
+              sideOffset={5}
               onPointerDownOutside={(e) => e.preventDefault()}
               onEscapeKeyDown={(e) => {
                 e.stopPropagation();
                 setPopoverOpen(false);
               }}
             >
-              <Calendar
-                mode='range'
-                selected={range}
-                captionLayout='dropdown'
-                onSelect={(selectedRange) => {
-                  setRange(selectedRange);
-                }}
-              />
+              <div onClick={(e) => e.stopPropagation()}>
+                <Calendar
+                  mode='range'
+                  selected={range}
+                  captionLayout='dropdown'
+                  onSelect={(selectedRange) => {
+                    setRange(selectedRange);
+                  }}
+                />
+              </div>
             </PopoverContent>
           </Popover>
         </div>
