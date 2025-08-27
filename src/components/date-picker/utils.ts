@@ -1,4 +1,4 @@
-import { DAYNAMES, MONTHNAMES } from './constants';
+import { MONTHNAMES } from './constants';
 import type { DateRange } from './types';
 
 // Formatear rango de fechas para el header
@@ -8,10 +8,15 @@ export const formatDateRange = (range: DateRange) => {
   }
 
   if (range.from && !range.to) {
-    const dayName = DAYNAMES[range.from.getDay()].slice(0, 3);
     const monthName = MONTHNAMES[range.from.getMonth()].slice(0, 3);
     const day = range.from.getDate();
-    return `${dayName}, ${monthName} ${day}`;
+    return ` - ${monthName} ${day}`;
+  }
+
+  if (!range.from && range.to) {
+    const monthName = MONTHNAMES[range.to.getMonth()].slice(0, 3);
+    const day = range.to.getDate();
+    return `${monthName} ${day} - `;
   }
 
   if (range.from && range.to) {
@@ -26,7 +31,6 @@ export const formatDateRange = (range: DateRange) => {
 
   return 'Select Date Range';
 };
-
 export const generateCalendarDays = (currentMonth: Date) => {
   const year = currentMonth.getFullYear();
   const month = currentMonth.getMonth();

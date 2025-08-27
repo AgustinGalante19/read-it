@@ -44,11 +44,17 @@ function DatePicker({
     }
   );
   const [currentMonth, setCurrentMonth] = useState(() => {
-    // Si hay un defaultValue, inicializar el mes actual con el mes de 'from' o la fecha actual
+    // Si hay un defaultValue, inicializar el mes actual con el mes de 'from' o 'to'
     if (defaultValue?.from) {
       return new Date(
         defaultValue.from.getFullYear(),
         defaultValue.from.getMonth(),
+        1
+      );
+    } else if (defaultValue?.to) {
+      return new Date(
+        defaultValue.to.getFullYear(),
+        defaultValue.to.getMonth(),
         1
       );
     }
@@ -66,6 +72,14 @@ function DatePicker({
             new Date(
               defaultValue.from.getFullYear(),
               defaultValue.from.getMonth(),
+              1
+            )
+          );
+        } else if (defaultValue.to) {
+          setCurrentMonth(
+            new Date(
+              defaultValue.to.getFullYear(),
+              defaultValue.to.getMonth(),
               1
             )
           );
