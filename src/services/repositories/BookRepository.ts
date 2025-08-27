@@ -1,6 +1,7 @@
 import { turso } from '../turso';
 import { ResultSet } from '@libsql/client/web';
 import { Book, BookStatus } from '@/types/Book';
+import { getCurrentDateDefault } from '@/lib/date-utils';
 
 function mapDbResultToBook(dbResponse: ResultSet): Book[] {
   return dbResponse.rows.map((book) => ({
@@ -73,8 +74,10 @@ export async function findBookByGoogleId(
     publish_date: String(book.publish_date),
     page_count: Number(book.page_count),
     inserted_at: String(book.inserted_at),
-    start_date: String(book.start_date),
-    finish_date: String(book.finish_date),
+    start_date:
+      String(book.start_date) === 'null' ? null : String(book.start_date),
+    finish_date:
+      String(book.finish_date) === 'null' ? null : String(book.finish_date),
     tags: String(book.tags),
     user_email: String(book.user_email),
     id_book_status: Number(book.id_book_status),
@@ -121,15 +124,13 @@ export async function updateBookStatus(
       args: [newStatus, googleId, userEmail],
     });
   } else if (newStatus === 2) {
-    const startDate =
-      dates?.startDate || new Date().toISOString().split('T')[0];
+    const startDate = dates?.startDate || getCurrentDateDefault();
     await turso.execute({
       sql: `UPDATE readit_books SET id_book_status = ?, start_date = ? WHERE google_id = ? AND user_email = ?`,
       args: [newStatus, startDate, googleId, userEmail],
     });
   } else if (newStatus === 3) {
-    const finishDate =
-      dates?.finishDate || new Date().toISOString().split('T')[0];
+    const finishDate = dates?.finishDate || getCurrentDateDefault();
     if (dates?.startDate) {
       await turso.execute({
         sql: `UPDATE readit_books SET id_book_status = ?, start_date = ?, finish_date = ? WHERE google_id = ? AND user_email = ?`,

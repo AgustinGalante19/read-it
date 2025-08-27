@@ -7,8 +7,8 @@ export interface Book {
   publish_date: string;
   page_count: number;
   inserted_at: string;
-  start_date: string;
-  finish_date: string;
+  start_date: string | null;
+  finish_date: string | null;
   tags: string;
   user_email: string;
   id_book_status: number;

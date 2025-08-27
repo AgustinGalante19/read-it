@@ -12,9 +12,17 @@ import { Separator } from '@/components/ui/separator';
 import getAuthorsString from '@/lib/getAuthorsString';
 import { Book, GoogleBookItem } from '@/types/Book';
 import { BadgeCheck, Bookmark, BookOpen, Calendar, Trash } from 'lucide-react';
-import { useState } from 'react';
-import BookDatesModal from './book-dates-modal';
-import { removeFromLibrary, updateBookStatus } from '@/services/BookService';
+import { useMemo, useState } from 'react';
+/* import BookDatesModal from './book-dates-modal'; */
+import {
+  removeFromLibrary,
+  updateBookDates,
+  updateBookStatus,
+} from '@/services/BookService';
+import DatePicker from '@/components/date-picker';
+import { DateRange } from '@/components/date-picker/types';
+import { toast } from 'sonner';
+import { getDateNormalized } from '@/lib/date-utils';
 
 function BookMenu({
   isOpen,
@@ -35,6 +43,15 @@ function BookMenu({
   });
 
   const [isBookDateModalOpen, setIsBookDateModalOpen] = useState(false);
+  const [isWorking, setIsWorking] = useState(false);
+
+  const defaultDateRange: DateRange = useMemo(
+    () => ({
+      from: book?.start_date ? new Date(book.start_date) : undefined,
+      to: book?.finish_date ? new Date(book.finish_date) : undefined,
+    }),
+    [book]
+  );
 
   const handleAction = async (
     action: keyof typeof isLoading,
@@ -45,6 +62,25 @@ function BookMenu({
     await updateBookStatus(newStatus, book?.google_id);
     setIsLoading((prev) => ({ ...prev, [action]: false }));
     close();
+  };
+
+  const handleSaveDates = async (range: DateRange) => {
+    if (!book) return;
+    setIsWorking(true);
+
+    const { error, data, success } = await updateBookDates(book.google_id, {
+      from: range?.from ? getDateNormalized(range.from) : null,
+      to: range?.to ? getDateNormalized(range.to) : null,
+    });
+
+    if (!success) {
+      toast.error(error);
+      return;
+    }
+
+    toast.success(data);
+    setIsWorking(false);
+    setIsBookDateModalOpen(false);
   };
 
   const handleRemove = async () => {
@@ -124,10 +160,13 @@ function BookMenu({
           </div>
         </DrawerContent>
       </Drawer>
-      <BookDatesModal
+      <DatePicker
         isOpen={isBookDateModalOpen}
-        onClose={() => setIsBookDateModalOpen(false)}
-        dbBook={book}
+        onOpenChange={setIsBookDateModalOpen}
+        onSubmit={handleSaveDates}
+        book={book}
+        defaultValue={defaultDateRange}
+        isWorking={isWorking}
       />
     </>
   );

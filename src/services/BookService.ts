@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import * as BookRepository from './repositories/BookRepository';
 import { getUserEmail } from './User';
 import { Book, BookStatus, GoogleBookItem } from '@/types/Book';
-import { getDateString } from '@/lib/date-utils';
+import { getCurrentDateDefault, getDateString } from '@/lib/date-utils';
 import getAuthorsString from '@/lib/getAuthorsString';
 import { Result } from '@/types/Result';
 
@@ -71,7 +71,7 @@ export async function updateBookStatus(
       return { success: false, error: 'User not authenticated' };
     }
 
-    const currentDate = new Date().toISOString().split('T')[0];
+    const currentDate = getCurrentDateDefault();
     const dates: { startDate?: string; finishDate?: string } = {};
 
     if (newStatus === 2) {
@@ -97,8 +97,7 @@ export async function updateBookStatus(
     await revalidateBookPaths();
 
     return { success: true, data: 'Book status updated successfully' };
-  } catch (error) {
-    console.error('Error updating book status:', error);
+  } catch {
     return { success: false, error: 'Failed to update book status' };
   }
 }
@@ -117,8 +116,7 @@ export async function updateBookDates(
     await revalidateBookPaths();
 
     return { success: true, data: 'Book dates updated successfully' };
-  } catch (error) {
-    console.error('Error updating book dates:', error);
+  } catch {
     return { success: false, error: 'Failed to update book dates' };
   }
 }
