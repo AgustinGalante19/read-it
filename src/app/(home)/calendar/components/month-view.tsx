@@ -37,8 +37,8 @@ export default function MonthView({
           <div key={`empty-${i}`} className='bg-background p-2' />
         ))}
         {days.map((day) => {
-          const booksForDay = books.filter((book) =>
-            isSameDay(book.finish_date, day)
+          const booksForDay = books.filter(
+            (book) => book.finish_date && isSameDay(book.finish_date, day)
           );
           const book = booksForDay[0];
 
