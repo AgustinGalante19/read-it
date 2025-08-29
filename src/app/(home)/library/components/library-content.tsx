@@ -16,7 +16,7 @@ import VerticalSkeleton from '@/components/book/vertical-skeleton';
 import { getMyBooks } from '@/services/BookService';
 const options: Option[] = [
   { id: 3, value: 'all', label: 'Saved Books', icon: <BookMarked size={18} /> },
-  { id: 1, value: 'readed', label: 'Readed', icon: <BookCheck size={18} /> },
+  { id: 1, value: 'readed', label: 'Read', icon: <BookCheck size={18} /> },
   { id: 4, value: 'reading', label: 'Reading', icon: <BookIcon size={18} /> },
   { id: 2, value: 'wantTo', label: 'Want to Read', icon: <BookX size={18} /> },
 ];

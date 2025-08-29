@@ -41,7 +41,7 @@ export default async function Home() {
           ) : (
             <div className='flex flex-col items-center mt-4 gap-2'>
               <span className='text-gray-300'>
-                You don&apos;t have any book to read...
+                You don&apos;t have any books to read...
               </span>
               <Link href='/search' className='underline'>
                 Search one
@@ -50,13 +50,11 @@ export default async function Home() {
           )}
         </section>
         <section>
-          <ShowAll label='Readed' readStatus='readed' />
+          <ShowAll label='Read' readStatus='readed' />
           {readedBooks.data ? (
             <BooksList books={readedBooks.data} opts={{ dragFree: true }} />
           ) : (
-            <span className='text-gray-300'>
-              You don&apos;t have any book readed yet...
-            </span>
+            <span className='text-gray-300'>No books read yet...</span>
           )}
         </section>
         <section>
@@ -70,11 +68,10 @@ export default async function Home() {
             />
           ) : (
             <span className='text-gray-300'>
-              You don&apos;t have any book in your library...
+              You don&apos;t have any books in your library...
             </span>
           )}
         </section>
-        {/* Espaciado adicional para mejor UX */}
         <div className='h-4'></div>
       </div>
     </main>

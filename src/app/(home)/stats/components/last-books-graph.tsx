@@ -59,9 +59,11 @@ function LastBooksGraph({
       <Card>
         <CardHeader>
           <CardTitle className='text-secondary-foreground'>
-            Books Readed
+            Books read in the last 6 months
           </CardTitle>
-          <CardDescription>Past 6 months</CardDescription>
+          <CardDescription>
+            Your books read in the last 6 months
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <ChartContainer config={chartConfig}>
@@ -92,11 +94,16 @@ function LastBooksGraph({
         </CardContent>
         <CardFooter className='flex-col items-start gap-2 text-sm'>
           <div className='flex gap-2 font-medium leading-none'>
-            {(totalBooksReaded / 6).toFixed(2)} books readed per month{' '}
-            <TrendingUp className='h-4 w-4' />
+            <span className='text-primary font-semibold'>
+              {(totalBooksReaded / 6).toFixed(2)}
+            </span>{' '}
+            books read per month <TrendingUp className='h-4 w-4 text-primary' />
           </div>
           <div className='leading-none text-muted-foreground'>
-            Total books readed {totalBooksReaded}
+            Total books read{' '}
+            <span className='text-primary font-semibold'>
+              {totalBooksReaded}
+            </span>
           </div>
         </CardFooter>
       </Card>

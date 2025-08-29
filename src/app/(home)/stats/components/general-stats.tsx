@@ -30,7 +30,7 @@ function GeneralStats({
                 <CardHeader className='p-4'>
                   <div className='flex items-center justify-between'>
                     <CardTitle className='text-secondary-foreground'>
-                      Books readed
+                      Books read
                     </CardTitle>
                     <Book />
                   </div>
@@ -42,7 +42,7 @@ function GeneralStats({
                 </CardContent>
                 <CardFooter className='pb-0'>
                   <span className='text-xs text-gray-400 pb-4'>
-                    Last book readed:
+                    Last book read:
                     <Link
                       href={`/book/${book.lastRead.googleId}`}
                       className='truncate ml-1 underline text-primary'

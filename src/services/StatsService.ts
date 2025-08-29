@@ -3,9 +3,11 @@ import { getUserEmail } from './User';
 import getDateRange from '@/lib/getDateRange';
 import normalizeBookTags from '@/lib/normalizeBookTags';
 import getMostFrequentTag from '@/lib/getMostFrequentTag';
-import Stats from '@/types/Stats';
+import processTagsForRadar from '@/lib/processTagsForRadar';
+import Stats, { TagRadarData } from '@/types/Stats';
 import { Result } from '@/types/Result';
 import { Book } from '@/types/Book';
+import { getMyBooks } from './BookService';
 
 export async function getPageCount(status = 3): Promise<Result<number>> {
   'use server';
@@ -127,6 +129,20 @@ export async function getMyStats(): Promise<Result<Stats>> {
     const lastBookTags = last6MonthsResult.data[0]?.tags || '';
     const mostFrequentTag = getMostFrequentTag(lastBookTags);
 
+    // Process tags for radar chart (use all read books, not just last 6 months)
+    const allReadBooksResult = await getBooksFromDateRange(
+      new Date(0), // From beginning of time
+      currentDate,
+      3 // Only read books
+    );
+    
+    let radarData: TagRadarData[] = [];
+    if (allReadBooksResult.success && allReadBooksResult.data) {
+      radarData = processTagsForRadar(allReadBooksResult.data);
+    }
+
+    const {data: totalBooks} = await getMyBooks('readed')
+
     const stats: Stats = {
       book: {
         count: tagsResult.data.length,
@@ -134,6 +150,7 @@ export async function getMyStats(): Promise<Result<Stats>> {
           title: last6MonthsResult.data[0]?.title || '',
           googleId: last6MonthsResult.data[0]?.google_id || '',
         },
+        totalBooks: totalBooks || []
       },
       page: {
         totalPageCount: pageCountResult.data || 0,
@@ -142,6 +159,7 @@ export async function getMyStats(): Promise<Result<Stats>> {
       tag: {
         lastTagReaded: mostFrequentTag,
         tagCount: unrepeatedTags.size,
+        radarData: radarData,
       },
       last6MonthsReadedBooks: last6MonthsResult.data,
     };

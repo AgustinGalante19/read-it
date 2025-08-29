@@ -26,8 +26,7 @@ async function PreviewPage() {
           </h1>
         </div>
         <span className='text-center block text-gray-400 font-semibold'>
-          Get track of your books readed an to read! totally free and an easy
-          way
+          Get track of your books read an to read! totally free and an easy way
         </span>
       </div>
       <div className='flex items-center justify-between pt-4'>

@@ -4,8 +4,10 @@ import GeneralStats from './components/general-stats';
 import { ChartBar } from 'lucide-react';
 import LastBooksGraph from './components/last-books-graph';
 import LastbooksList from './components/last-books-list';
+import TagsRadarChart from './components/tags-radar-chart';
 import { Book } from '@/types/Book';
 import { getMyStats } from '@/services/StatsService';
+import BooksGrid from './components/books-grid';
 
 async function StatsPage() {
   const { data } = await getMyStats();
@@ -25,6 +27,8 @@ async function StatsPage() {
       <LastBooksGraph
         last6MonthsReadedBooks={data.last6MonthsReadedBooks as Book[]}
       />
+      <TagsRadarChart radarData={data.tag.radarData} />
+      <BooksGrid books={data.book.totalBooks} />
       <LastbooksList books={data.last6MonthsReadedBooks as Book[]} />
     </div>
   );
