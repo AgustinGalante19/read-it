@@ -1,25 +1,7 @@
 import { turso } from '../turso';
-import { ResultSet } from '@libsql/client/web';
 import { Book, BookStatus } from '@/types/Book';
 import { getCurrentDateDefault } from '@/lib/date-utils';
-
-function mapDbResultToBook(dbResponse: ResultSet): Book[] {
-  return dbResponse.rows.map((book) => ({
-    id: Number(book.id),
-    google_id: String(book.google_id),
-    title: String(book.title),
-    thumbnail_url: String(book.thumbnail_url),
-    authors: String(book.authors),
-    publish_date: String(book.publish_date),
-    page_count: Number(book.page_count),
-    inserted_at: String(book.inserted_at),
-    start_date: String(book.start_date),
-    finish_date: String(book.finish_date),
-    tags: String(book.tags),
-    user_email: String(book.user_email),
-    id_book_status: Number(book.id_book_status),
-  }));
-}
+import BookAdapter from '../adapters/BookAdapter';
 
 export async function findBooksByStatus(
   userEmail: string,
@@ -28,13 +10,13 @@ export async function findBooksByStatus(
   let query: string;
 
   switch (status) {
-    case 'readed':
+    case BookStatus.READ:
       query = `SELECT * FROM readit_books WHERE id_book_status = 3 AND user_email = ? ORDER BY inserted_at DESC`;
       break;
-    case 'reading':
+    case BookStatus.READING:
       query = `SELECT * FROM readit_books WHERE id_book_status = 2 AND user_email = ? ORDER BY inserted_at DESC`;
       break;
-    case 'wantTo':
+    case BookStatus.WANT_TO_READ:
       query = `SELECT * FROM readit_books WHERE id_book_status = 1 AND user_email = ? ORDER BY inserted_at DESC`;
       break;
     default:
@@ -46,7 +28,7 @@ export async function findBooksByStatus(
     args: [userEmail],
   });
 
-  return mapDbResultToBook(result);
+  return BookAdapter(result);
 }
 
 export async function findBookByGoogleId(
@@ -183,7 +165,7 @@ export async function findBooksByDateRange(
     args: [userEmail, status, fromDate.toISOString(), toDate.toISOString()],
   });
 
-  return mapDbResultToBook(result);
+  return BookAdapter(result);
 }
 
 export async function getTotalPageCount(
