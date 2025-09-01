@@ -3,8 +3,3 @@ export interface Result<T> {
   data?: T;
   error?: string;
 }
-
-export interface Response<T> {
-  status: boolean;
-  result: T;
-}
