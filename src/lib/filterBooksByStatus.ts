@@ -6,13 +6,13 @@ export default function filterBooksByStatus(
 ): Book[] {
   let books;
   switch (status) {
-    case 'readed':
+    case BookStatus.READ:
       books = booksList.filter((book) => book.id_book_status === 3);
       break;
-    case 'reading':
+    case BookStatus.READING:
       books = booksList.filter((book) => book.id_book_status === 2);
       break;
-    case 'wantTo':
+    case BookStatus.WANT_TO_READ:
       books = booksList.filter((book) => book.id_book_status === 1);
       break;
     default:

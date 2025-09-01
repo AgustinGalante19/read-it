@@ -6,7 +6,7 @@ import getMostFrequentTag from '@/lib/getMostFrequentTag';
 import processTagsForRadar from '@/lib/processTagsForRadar';
 import Stats, { TagRadarData } from '@/types/Stats';
 import { Result } from '@/types/Result';
-import { Book } from '@/types/Book';
+import { Book, BookStatus } from '@/types/Book';
 import { getMyBooks } from './BookService';
 
 export async function getPageCount(status = 3): Promise<Result<number>> {
@@ -135,13 +135,13 @@ export async function getMyStats(): Promise<Result<Stats>> {
       currentDate,
       3 // Only read books
     );
-    
+
     let radarData: TagRadarData[] = [];
     if (allReadBooksResult.success && allReadBooksResult.data) {
       radarData = processTagsForRadar(allReadBooksResult.data);
     }
 
-    const {data: totalBooks} = await getMyBooks('readed')
+    const { data: totalBooks } = await getMyBooks(BookStatus.READ);
 
     const stats: Stats = {
       book: {
@@ -150,7 +150,7 @@ export async function getMyStats(): Promise<Result<Stats>> {
           title: last6MonthsResult.data[0]?.title || '',
           googleId: last6MonthsResult.data[0]?.google_id || '',
         },
-        totalBooks: totalBooks || []
+        totalBooks: totalBooks || [],
       },
       page: {
         totalPageCount: pageCountResult.data || 0,

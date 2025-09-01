@@ -14,7 +14,13 @@ export interface Book {
   id_book_status: number;
 }
 
-export type BookStatus = 'readed' | 'reading' | 'wantTo' | 'all';
+export enum BookStatus {
+  WANT_TO_READ = 1,
+  READING = 2,
+  READ = 3,
+  NOT_FINISH = 4,
+  ALL = 0,
+}
 
 export interface GoogleBooksResponse {
   kind: string;

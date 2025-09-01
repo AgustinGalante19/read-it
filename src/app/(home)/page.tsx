@@ -5,12 +5,13 @@ import BooksList from '@/components/book/books-list';
 import ShowAll from '@/components/book/show-all';
 import Link from 'next/link';
 import { getMyBooks } from '@/services/BookService';
+import { BookStatus } from '@/types/Book';
 
 export default async function Home() {
-  const currentlyReading = await getMyBooks('reading');
-  const readList = await getMyBooks('wantTo');
-  const readedBooks = await getMyBooks('readed');
-  const allBooks = await getMyBooks('all');
+  const currentlyReading = await getMyBooks(BookStatus.READING);
+  const readList = await getMyBooks(BookStatus.WANT_TO_READ);
+  const readedBooks = await getMyBooks(BookStatus.READ);
+  const allBooks = await getMyBooks(BookStatus.ALL);
 
   return (
     <main className='min-h-full'>
@@ -19,7 +20,10 @@ export default async function Home() {
         <section>
           {currentlyReading.data && (
             <>
-              <ShowAll label='Currently Reading' readStatus='reading' />
+              <ShowAll
+                label='Currently Reading'
+                readStatus={BookStatus.READING}
+              />
               <BooksList
                 books={currentlyReading.data}
                 cardMode='vertical'
@@ -30,7 +34,7 @@ export default async function Home() {
           )}
         </section>
         <section>
-          <ShowAll label='My Readlist' readStatus='wantTo' />
+          <ShowAll label='My Readlist' readStatus={BookStatus.WANT_TO_READ} />
           {readList.data ? (
             <BooksList
               books={readList.data}
@@ -50,7 +54,7 @@ export default async function Home() {
           )}
         </section>
         <section>
-          <ShowAll label='Read' readStatus='readed' />
+          <ShowAll label='Read' readStatus={BookStatus.READ} />
           {readedBooks.data ? (
             <BooksList books={readedBooks.data} opts={{ dragFree: true }} />
           ) : (
@@ -58,7 +62,7 @@ export default async function Home() {
           )}
         </section>
         <section>
-          <ShowAll label='All my Books' readStatus='all' />
+          <ShowAll label='All my Books' readStatus={BookStatus.ALL} />
           {allBooks.data ? (
             <BooksList
               books={allBooks.data}

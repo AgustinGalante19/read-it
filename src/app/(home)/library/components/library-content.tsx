@@ -15,10 +15,10 @@ import { useRouter } from 'next/navigation';
 import VerticalSkeleton from '@/components/book/vertical-skeleton';
 import { getMyBooks } from '@/services/BookService';
 const options: Option[] = [
-  { id: 3, value: 'all', label: 'Saved Books', icon: <BookMarked size={18} /> },
-  { id: 1, value: 'readed', label: 'Read', icon: <BookCheck size={18} /> },
-  { id: 4, value: 'reading', label: 'Reading', icon: <BookIcon size={18} /> },
-  { id: 2, value: 'wantTo', label: 'Want to Read', icon: <BookX size={18} /> },
+  { id: 3, value: 0, label: 'Saved Books', icon: <BookMarked size={18} /> },
+  { id: 1, value: 3, label: 'Read', icon: <BookCheck size={18} /> },
+  { id: 4, value: 2, label: 'Reading', icon: <BookIcon size={18} /> },
+  { id: 2, value: 1, label: 'Want to Read', icon: <BookX size={18} /> },
 ];
 
 export default function LibraryContent() {
@@ -39,8 +39,8 @@ export default function LibraryContent() {
       try {
         setIsLoading(true);
         const currentReadStatus: BookStatus =
-          (readStatus as BookStatus) ?? 'all';
-        const { data: allBooksResponse } = await getMyBooks('all');
+          Number(readStatus) ?? BookStatus.ALL;
+        const { data: allBooksResponse } = await getMyBooks(BookStatus.ALL);
 
         if (!allBooksResponse) {
           return;
