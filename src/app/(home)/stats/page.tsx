@@ -24,12 +24,14 @@ async function StatsPage() {
         <ChartBar />
       </header>
       <GeneralStats book={data.book} page={data.page} tag={data.tag} />
-      <LastBooksGraph
-        last6MonthsReadedBooks={data.last6MonthsReadedBooks as Book[]}
-      />
-      <TagsRadarChart radarData={data.tag.radarData} />
-      <BooksGrid books={data.book.totalBooks} />
-      <LastbooksList books={data.last6MonthsReadedBooks as Book[]} />
+      <div className='px-4 space-y-4 mt-2'>
+        <LastBooksGraph
+          last6MonthsReadedBooks={data.last6MonthsReadedBooks as Book[]}
+        />
+        <TagsRadarChart radarData={data.tag.radarData} />
+        <BooksGrid books={data.book.totalBooks} />
+        <LastbooksList books={data.last6MonthsReadedBooks as Book[]} />
+      </div>
     </div>
   );
 }

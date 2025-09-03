@@ -55,7 +55,7 @@ function LastBooksGraph({
   );
 
   return (
-    <section className='p-4'>
+    <section>
       <Card>
         <CardHeader>
           <CardTitle className='text-secondary-foreground'>

@@ -29,7 +29,7 @@ function BooksGrid({ books }: { books: Book[] }) {
   const shouldShowButton = books.length > 10;
 
   return (
-    <div className='px-4 mt-4'>
+    <section>
       <Card>
         <CardHeader>
           <CardTitle>Books read</CardTitle>
@@ -73,7 +73,7 @@ function BooksGrid({ books }: { books: Book[] }) {
           )}
         </CardContent>
       </Card>
-    </div>
+    </section>
   );
 }
 
