@@ -1,7 +1,7 @@
 'use client';
 
-import { getDateString } from '@/lib/date-utils';
 import { cn } from '@/lib/utils';
+import datesHelper from '@/services/helpers/DatesHelper';
 import { Book } from '@/types/Book';
 import { BookText, Calendar } from 'lucide-react';
 import Image from 'next/image';
@@ -62,7 +62,7 @@ function BookCard({
             <div className='flex gap-1 items-center text-muted-foreground'>
               <Calendar size={14} />
               <span className='text-xs text-nowrap '>
-                {getDateString(book.publish_date)}
+                {datesHelper.getDateString(book.publish_date)}
               </span>
             </div>
             <div className='flex gap-1 items-center text-muted-foreground'>

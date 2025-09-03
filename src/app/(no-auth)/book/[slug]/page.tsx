@@ -1,14 +1,14 @@
 import BackButton from '@/components/ui/back-button';
-import { getDateString } from '@/lib/date-utils';
-import { getBook } from '@/services/GoogleBooks';
+import { getBook } from '@/services/GoogleBooksService';
 import { BookText, Calendar, Minus } from 'lucide-react';
 import Image from 'next/image';
-import getAuthorsString from '@/lib/getAuthorsString';
 import Categories from './components/categories';
 import LibraryActions from './components/library-actions';
 import { Metadata } from 'next';
 import BookDescription from './components/book-description';
 import { existsOnLibrary } from '@/services/BookService';
+import datesHelper from '@/services/helpers/DatesHelper';
+import bookHelper from '@/services/helpers/BookHelper';
 
 export async function generateMetadata({
   params,
@@ -26,7 +26,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${book.volumeInfo.title} - ${getAuthorsString(
+    title: `${book.volumeInfo.title} - ${bookHelper.getBookAuthors(
       book.volumeInfo.authors
     )}`,
     description: book.volumeInfo.description,
@@ -76,7 +76,7 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
         </div>
         <div className='flex justify-between items-center max-sm:flex-col max-sm:items-start space-y-2'>
           <span className='font-semibold'>
-            {getAuthorsString(book.volumeInfo?.authors)}
+            {bookHelper.getBookAuthors(book.volumeInfo?.authors)}
           </span>
           <LibraryActions dbBook={dbBook.data} googleBook={book} />
         </div>
@@ -85,7 +85,7 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
           <div>
             <span className='text-center text-sm flex items-center justify-center gap-2 text-secondary-foreground'>
               <Calendar size={20} className='max-sm:hidden' />
-              {getDateString(book.volumeInfo.publishedDate)}
+              {datesHelper.getDateString(book.volumeInfo.publishedDate)}
             </span>
           </div>
           <Minus

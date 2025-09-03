@@ -1,5 +1,9 @@
 'use client';
 
+import { useMemo, useState } from 'react';
+import { BadgeCheck, Bookmark, BookOpen, Calendar, Trash } from 'lucide-react';
+import { toast } from 'sonner';
+import { Book, GoogleBookItem } from '@/types/Book';
 import { Button } from '@/components/ui/button';
 import {
   Drawer,
@@ -9,11 +13,6 @@ import {
   DrawerTitle,
 } from '@/components/ui/drawer';
 import { Separator } from '@/components/ui/separator';
-import getAuthorsString from '@/lib/getAuthorsString';
-import { Book, GoogleBookItem } from '@/types/Book';
-import { BadgeCheck, Bookmark, BookOpen, Calendar, Trash } from 'lucide-react';
-import { useMemo, useState } from 'react';
-/* import BookDatesModal from './book-dates-modal'; */
 import {
   removeFromLibrary,
   updateBookDates,
@@ -21,20 +20,17 @@ import {
 } from '@/services/BookService';
 import DatePicker from '@/components/date-picker';
 import { DateRange } from '@/components/date-picker/types';
-import { toast } from 'sonner';
-import { getDateNormalized } from '@/lib/date-utils';
+import datesHelper from '@/services/helpers/DatesHelper';
+import bookHelper from '@/services/helpers/BookHelper';
 
-function BookMenu({
-  isOpen,
-  close,
-  book,
-  googleBook,
-}: {
+interface BookMenuProps {
   isOpen: boolean;
   close: () => void;
   book: (Book & { ds_status: string }) | null | undefined;
   googleBook: GoogleBookItem | null;
-}) {
+}
+
+function BookMenu({ isOpen, close, book, googleBook }: BookMenuProps) {
   const [isLoading, setIsLoading] = useState({
     currentlyReading: false,
     wantToRead: false,
@@ -69,8 +65,8 @@ function BookMenu({
     setIsWorking(true);
 
     const { error, data, success } = await updateBookDates(book.google_id, {
-      from: range?.from ? getDateNormalized(range.from) : null,
-      to: range?.to ? getDateNormalized(range.to) : null,
+      from: range?.from ? datesHelper.getDateNormalized(range.from) : null,
+      to: range?.to ? datesHelper.getDateNormalized(range.to) : null,
     });
 
     if (!success) {
@@ -100,7 +96,7 @@ function BookMenu({
               {book?.title || googleBook?.volumeInfo.title}
             </DrawerTitle>
             <DrawerDescription className='text-left'>
-              {getAuthorsString(googleBook?.volumeInfo.authors)}
+              {bookHelper.getBookAuthors(googleBook?.volumeInfo.authors)}
             </DrawerDescription>
           </DrawerHeader>
           <div className='flex flex-col gap-2 px-4 pb-4 items-start'>

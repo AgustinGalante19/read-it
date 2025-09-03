@@ -2,7 +2,7 @@
 
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { GoogleBookItem } from '@/types/Book';
-import { getBooks } from '@/services/GoogleBooks';
+import { getBooks } from '@/services/GoogleBooksService';
 import { useDebounce } from '@uidotdev/usehooks';
 import { Input } from '@/components/ui/input';
 import { SearchIcon } from 'lucide-react';

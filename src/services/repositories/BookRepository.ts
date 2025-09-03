@@ -1,193 +1,135 @@
-import { turso } from '../turso';
 import { Book, BookStatus } from '@/types/Book';
-import { getCurrentDateDefault } from '@/lib/date-utils';
-import BookAdapter from '../adapters/BookAdapter';
+import { turso } from '../database/turso';
+import BookAdapter, { BookAdapterWithStatus } from '../adapters/BookAdapter';
+import datesHelper from '../helpers/DatesHelper';
 
-export async function findBooksByStatus(
-  userEmail: string,
-  status: BookStatus
-): Promise<Book[]> {
-  let query: string;
+class BookRepository {
+  async findBooksByStatus(
+    userEmail: string,
+    status: BookStatus
+  ): Promise<Book[]> {
+    let query: string;
 
-  switch (status) {
-    case BookStatus.READ:
-      query = `SELECT * FROM readit_books WHERE id_book_status = 3 AND user_email = ? ORDER BY inserted_at DESC`;
-      break;
-    case BookStatus.READING:
-      query = `SELECT * FROM readit_books WHERE id_book_status = 2 AND user_email = ? ORDER BY inserted_at DESC`;
-      break;
-    case BookStatus.WANT_TO_READ:
-      query = `SELECT * FROM readit_books WHERE id_book_status = 1 AND user_email = ? ORDER BY inserted_at DESC`;
-      break;
-    default:
-      query = `SELECT * FROM readit_books WHERE user_email = ? ORDER BY inserted_at DESC`;
+    switch (status) {
+      case BookStatus.READ:
+        query = `SELECT * FROM readit_books WHERE id_book_status = 3 AND user_email = ? ORDER BY inserted_at DESC`;
+        break;
+      case BookStatus.READING:
+        query = `SELECT * FROM readit_books WHERE id_book_status = 2 AND user_email = ? ORDER BY inserted_at DESC`;
+        break;
+      case BookStatus.WANT_TO_READ:
+        query = `SELECT * FROM readit_books WHERE id_book_status = 1 AND user_email = ? ORDER BY inserted_at DESC`;
+        break;
+      default:
+        query = `SELECT * FROM readit_books WHERE user_email = ? ORDER BY inserted_at DESC`;
+    }
+
+    const result = await turso.execute({
+      sql: query,
+      args: [userEmail],
+    });
+
+    return BookAdapter(result);
   }
 
-  const result = await turso.execute({
-    sql: query,
-    args: [userEmail],
-  });
-
-  return BookAdapter(result);
-}
-
-export async function findBookByGoogleId(
-  googleId: string,
-  userEmail: string
-): Promise<(Book & { ds_status: string }) | null> {
-  const result = await turso.execute({
-    sql: `SELECT b.*, bs.ds_status  
-          FROM readit_books b 
-          JOIN readit_book_status bs ON b.id_book_status = bs.id  
-          WHERE google_id = ? 
-          AND user_email = ?;`,
-    args: [googleId, userEmail],
-  });
-
-  if (result.rows.length === 0) return null;
-
-  const book = result.rows[0];
-  return {
-    id: Number(book.id),
-    google_id: String(book.google_id),
-    title: String(book.title),
-    thumbnail_url: String(book.thumbnail_url),
-    authors: String(book.authors),
-    publish_date: String(book.publish_date),
-    page_count: Number(book.page_count),
-    inserted_at: String(book.inserted_at),
-    start_date:
-      String(book.start_date) === 'null' ? null : String(book.start_date),
-    finish_date:
-      String(book.finish_date) === 'null' ? null : String(book.finish_date),
-    tags: String(book.tags),
-    user_email: String(book.user_email),
-    id_book_status: Number(book.id_book_status),
-    ds_status: String(book.ds_status),
-  };
-}
-
-export async function createBook(bookData: {
-  googleId: string;
-  title: string;
-  thumbnailUrl: string;
-  authors: string;
-  publishDate: string;
-  pageCount: number;
-  tags: string;
-  userEmail: string;
-}): Promise<void> {
-  await turso.execute({
-    sql: `INSERT INTO readit_books (google_id, title, thumbnail_url, authors, publish_date, page_count, tags, user_email, id_book_status) 
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    args: [
-      bookData.googleId,
-      bookData.title,
-      bookData.thumbnailUrl,
-      bookData.authors,
-      bookData.publishDate,
-      bookData.pageCount,
-      bookData.tags,
-      bookData.userEmail,
-      1, // Default status: not read
-    ],
-  });
-}
-
-export async function updateBookStatus(
-  googleId: string,
-  userEmail: string,
-  newStatus: number,
-  dates?: { startDate?: string; finishDate?: string }
-): Promise<void> {
-  if (newStatus === 1) {
-    await turso.execute({
-      sql: `UPDATE readit_books SET id_book_status = ?, start_date = NULL, finish_date = NULL WHERE google_id = ? AND user_email = ?`,
-      args: [newStatus, googleId, userEmail],
+  async findBookByGoogleId(
+    googleId: string,
+    userEmail: string
+  ): Promise<(Book & { ds_status: string }) | null> {
+    const result = await turso.execute({
+      sql: `SELECT b.*, bs.ds_status  
+            FROM readit_books b 
+            JOIN readit_book_status bs ON b.id_book_status = bs.id  
+            WHERE google_id = ? 
+            AND user_email = ?;`,
+      args: [googleId, userEmail],
     });
-  } else if (newStatus === 2) {
-    const startDate = dates?.startDate || getCurrentDateDefault();
+
+    if (result.rows.length === 0) return null;
+    return BookAdapterWithStatus(result)[0];
+  }
+
+  async createBook(bookData: {
+    googleId: string;
+    title: string;
+    thumbnailUrl: string;
+    authors: string;
+    publishDate: string;
+    pageCount: number;
+    tags: string;
+    userEmail: string;
+  }): Promise<void> {
     await turso.execute({
-      sql: `UPDATE readit_books SET id_book_status = ?, start_date = ? WHERE google_id = ? AND user_email = ?`,
-      args: [newStatus, startDate, googleId, userEmail],
+      sql: `INSERT INTO readit_books (google_id, title, thumbnail_url, authors, publish_date, page_count, tags, user_email, id_book_status) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      args: [
+        bookData.googleId,
+        bookData.title,
+        bookData.thumbnailUrl,
+        bookData.authors,
+        bookData.publishDate,
+        bookData.pageCount,
+        bookData.tags,
+        bookData.userEmail,
+        1, // Default status: not read
+      ],
     });
-  } else if (newStatus === 3) {
-    const finishDate = dates?.finishDate || getCurrentDateDefault();
-    if (dates?.startDate) {
+  }
+
+  async updateBookStatus(
+    googleId: string,
+    userEmail: string,
+    newStatus: number,
+    dates?: { startDate?: string; finishDate?: string }
+  ): Promise<void> {
+    if (newStatus === 1) {
       await turso.execute({
-        sql: `UPDATE readit_books SET id_book_status = ?, start_date = ?, finish_date = ? WHERE google_id = ? AND user_email = ?`,
-        args: [newStatus, dates.startDate, finishDate, googleId, userEmail],
+        sql: `UPDATE readit_books SET id_book_status = ?, start_date = NULL, finish_date = NULL WHERE google_id = ? AND user_email = ?`,
+        args: [newStatus, googleId, userEmail],
       });
-    } else {
+    } else if (newStatus === 2) {
+      const startDate = dates?.startDate || datesHelper.getCurrentDateDefault();
       await turso.execute({
-        sql: `UPDATE readit_books SET id_book_status = ?, finish_date = ? WHERE google_id = ? AND user_email = ?`,
-        args: [newStatus, finishDate, googleId, userEmail],
+        sql: `UPDATE readit_books SET id_book_status = ?, start_date = ? WHERE google_id = ? AND user_email = ?`,
+        args: [newStatus, startDate, googleId, userEmail],
       });
+    } else if (newStatus === 3) {
+      const finishDate =
+        dates?.finishDate || datesHelper.getCurrentDateDefault();
+      if (dates?.startDate) {
+        await turso.execute({
+          sql: `UPDATE readit_books SET id_book_status = ?, start_date = ?, finish_date = ? WHERE google_id = ? AND user_email = ?`,
+          args: [newStatus, dates.startDate, finishDate, googleId, userEmail],
+        });
+      } else {
+        await turso.execute({
+          sql: `UPDATE readit_books SET id_book_status = ?, finish_date = ? WHERE google_id = ? AND user_email = ?`,
+          args: [newStatus, finishDate, googleId, userEmail],
+        });
+      }
     }
   }
+
+  async updateBookDates(
+    googleId: string,
+    userEmail: string,
+    startDate: string | null,
+    finishDate: string | null
+  ): Promise<void> {
+    await turso.execute({
+      sql: `UPDATE readit_books SET start_date = ?, finish_date = ? WHERE google_id = ? AND user_email = ?`,
+      args: [startDate, finishDate, googleId, userEmail],
+    });
+  }
+
+  async deleteBook(googleId: string, userEmail: string): Promise<void> {
+    await turso.execute({
+      sql: `DELETE FROM readit_books WHERE google_id = ? AND user_email = ?`,
+      args: [googleId, userEmail],
+    });
+  }
 }
 
-export async function updateBookDates(
-  googleId: string,
-  userEmail: string,
-  startDate: string | null,
-  finishDate: string | null
-): Promise<void> {
-  await turso.execute({
-    sql: `UPDATE readit_books SET start_date = ?, finish_date = ? WHERE google_id = ? AND user_email = ?`,
-    args: [startDate, finishDate, googleId, userEmail],
-  });
-}
+const bookRepository = new BookRepository();
 
-export async function deleteBook(
-  googleId: string,
-  userEmail: string
-): Promise<void> {
-  await turso.execute({
-    sql: `DELETE FROM readit_books WHERE google_id = ? AND user_email = ?`,
-    args: [googleId, userEmail],
-  });
-}
-
-export async function findBooksByDateRange(
-  userEmail: string,
-  fromDate: Date,
-  toDate: Date,
-  status = 3
-): Promise<Book[]> {
-  const result = await turso.execute({
-    sql: `SELECT * 
-          FROM readit_books 
-          WHERE user_email = ?
-          AND id_book_status = ?
-          AND finish_date BETWEEN ? AND ?
-          ORDER BY finish_date DESC`,
-    args: [userEmail, status, fromDate.toISOString(), toDate.toISOString()],
-  });
-
-  return BookAdapter(result);
-}
-
-export async function getTotalPageCount(
-  userEmail: string,
-  status = 3
-): Promise<number> {
-  const { rows } = await turso.execute({
-    sql: `SELECT SUM(page_count) as total_pages FROM readit_books WHERE user_email = ? AND id_book_status = ?`,
-    args: [userEmail, status],
-  });
-
-  return Number(rows[0]?.total_pages) || 0;
-}
-
-export async function getBookTags(
-  userEmail: string,
-  status = 3
-): Promise<string[]> {
-  const { rows } = await turso.execute({
-    sql: `SELECT tags FROM readit_books WHERE id_book_status = ? AND user_email = ?`,
-    args: [status, userEmail],
-  });
-
-  return rows.map((row) => String(row.tags));
-}
+export default bookRepository;

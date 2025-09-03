@@ -1,4 +1,4 @@
-import { turso } from '@/services/turso';
+import { turso } from '@/services/database/turso';
 import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 

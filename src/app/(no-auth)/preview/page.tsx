@@ -1,6 +1,6 @@
 import BooksList from '@/components/book/books-list';
-import { mapBooksArray } from '@/lib/mapBookObject';
-import { getBooksBySubject } from '@/services/GoogleBooks';
+import { mapGoogleBooksArray } from '@/services/adapters/BookAdapter';
+import { getBooksBySubject } from '@/services/GoogleBooksService';
 import { LogIn } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -37,7 +37,7 @@ async function PreviewPage() {
       <section>
         <span className='text-xl font-semibold'>Fiction 🚀</span>
         <BooksList
-          books={mapBooksArray(fiction.items)}
+          books={mapGoogleBooksArray(fiction.items)}
           cardMode='vertical'
           opts={{ dragFree: true }}
         />
@@ -45,7 +45,7 @@ async function PreviewPage() {
       <section>
         <span className='text-xl font-semibold'>Fantasy 🧙‍♂️</span>
         <BooksList
-          books={mapBooksArray(fantasy.items)}
+          books={mapGoogleBooksArray(fantasy.items)}
           cardMode='vertical'
           opts={{ dragFree: true }}
         />
@@ -53,7 +53,7 @@ async function PreviewPage() {
       <section>
         <span className='text-xl font-semibold'>Thrillers 🤔</span>
         <BooksList
-          books={mapBooksArray(thriller.items)}
+          books={mapGoogleBooksArray(thriller.items)}
           cardMode='vertical'
           opts={{ dragFree: true }}
         />

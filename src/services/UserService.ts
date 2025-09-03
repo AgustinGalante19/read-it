@@ -7,3 +7,9 @@ export async function getUserEmail() {
 
   return session?.user?.email as string;
 }
+
+export async function isAuthenticated(userEmail: string) {
+  if (!userEmail) {
+    return { success: false, error: 'User not authenticated' };
+  }
+}

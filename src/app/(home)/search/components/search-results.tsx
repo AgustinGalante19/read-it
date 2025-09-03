@@ -1,8 +1,8 @@
 'use client';
 
 import BookCard from '@/components/book/book-card';
-import mapBookObject from '@/lib/mapBookObject';
-import { addIDBBook, getIDBBooks } from '@/services/localBooksDb';
+import { mapGoogleBookToBook } from '@/services/adapters/BookAdapter';
+import { bookSearchService } from '@/services/SearchsService';
 import { Book, GoogleBookItem } from '@/types/Book';
 import { useRouter } from 'next/navigation';
 import React, { useCallback } from 'react';
@@ -13,14 +13,14 @@ function SearchResults({ books }: { books: GoogleBookItem[] }) {
   const handleClickSearch = useCallback(
     async (book: Book) => {
       try {
-        const recentSearchesResult = await getIDBBooks();
+        const recentSearchesResult = await bookSearchService.getIDBBooks();
         const alreadyExists = recentSearchesResult.find(
           (el) => el.google_id === book.google_id
         );
         if (alreadyExists) {
           return;
         }
-        addIDBBook(book);
+        await bookSearchService.addIDBBook(book);
       } catch (err) {
         console.log('Error on save data: ', err);
       } finally {
@@ -33,7 +33,7 @@ function SearchResults({ books }: { books: GoogleBookItem[] }) {
   return (
     <ul className='p-2 rounded-b text-white w-full'>
       {books.map((book) => {
-        const mappedBook = mapBookObject(book);
+        const mappedBook = mapGoogleBookToBook(book);
         return (
           <li
             key={book.id}

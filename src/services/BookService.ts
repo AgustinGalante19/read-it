@@ -1,12 +1,12 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import * as BookRepository from './repositories/BookRepository';
-import { getUserEmail } from './User';
+import { getUserEmail, isAuthenticated } from './UserService';
 import { Book, BookStatus, GoogleBookItem } from '@/types/Book';
-import { getCurrentDateDefault, getDateString } from '@/lib/date-utils';
-import getAuthorsString from '@/lib/getAuthorsString';
 import { Result } from '@/types/Result';
+import GoogleVolumeAdapter from './adapters/GoogleVolumeAdapter';
+import ReadDatesHelper from './helpers/ReadDatesHelper';
+import bookRepository from './repositories/BookRepository';
 
 async function revalidateBookPaths(): Promise<void> {
   revalidatePath('/book', 'layout');
@@ -18,11 +18,9 @@ async function revalidateBookPaths(): Promise<void> {
 export async function getMyBooks(status: BookStatus): Promise<Result<Book[]>> {
   try {
     const userEmail = await getUserEmail();
-    if (!userEmail) {
-      return { success: false, error: 'User not authenticated' };
-    }
+    await isAuthenticated(userEmail);
 
-    const books = await BookRepository.findBooksByStatus(userEmail, status);
+    const books = await bookRepository.findBooksByStatus(userEmail, status);
     return { success: true, data: books };
   } catch (error) {
     console.error('Error fetching books:', error);
@@ -32,26 +30,16 @@ export async function getMyBooks(status: BookStatus): Promise<Result<Book[]>> {
 
 export async function addBook(book: GoogleBookItem): Promise<Result<string>> {
   try {
-    const { title, pageCount, publishedDate, authors, imageLinks } =
-      book.volumeInfo;
+    const { volumeInfo } = book;
     const userEmail = await getUserEmail();
 
     if (!userEmail) {
       return { success: false, error: 'User not authenticated' };
     }
 
-    const bookData = {
-      googleId: book.id,
-      title,
-      thumbnailUrl: imageLinks?.thumbnail || '/thumbnail-fallback.jpg',
-      authors: getAuthorsString(authors),
-      publishDate: getDateString(publishedDate),
-      pageCount: pageCount || 0,
-      tags: book.volumeInfo?.categories?.join(', ') || '',
-      userEmail,
-    };
+    const volumeData = GoogleVolumeAdapter(volumeInfo);
 
-    await BookRepository.createBook(bookData);
+    await bookRepository.createBook(volumeData);
     await revalidateBookPaths();
 
     return { success: true, data: 'Book added successfully' };
@@ -67,28 +55,15 @@ export async function updateBookStatus(
 ): Promise<Result<string>> {
   try {
     const userEmail = await getUserEmail();
-    if (!userEmail) {
-      return { success: false, error: 'User not authenticated' };
-    }
+    await isAuthenticated(userEmail);
 
-    const currentDate = getCurrentDateDefault();
-    const dates: { startDate?: string; finishDate?: string } = {};
+    const existingBook = await bookRepository.findBookByGoogleId(
+      googleId,
+      userEmail
+    );
+    const dates = ReadDatesHelper(newStatus, existingBook);
 
-    if (newStatus === 2) {
-      dates.startDate = currentDate;
-    } else if (newStatus === 3) {
-      // Check if book has start_date
-      const existingBook = await BookRepository.findBookByGoogleId(
-        googleId,
-        userEmail
-      );
-      if (!existingBook?.start_date) {
-        dates.startDate = currentDate;
-      }
-      dates.finishDate = currentDate;
-    }
-
-    await BookRepository.updateBookStatus(
+    await bookRepository.updateBookStatus(
       googleId,
       userEmail,
       newStatus,
@@ -108,11 +83,9 @@ export async function updateBookDates(
 ): Promise<Result<string>> {
   try {
     const userEmail = await getUserEmail();
-    if (!userEmail) {
-      return { success: false, error: 'User not authenticated' };
-    }
+    await isAuthenticated(userEmail);
 
-    await BookRepository.updateBookDates(googleId, userEmail, from, to);
+    await bookRepository.updateBookDates(googleId, userEmail, from, to);
     await revalidateBookPaths();
 
     return { success: true, data: 'Book dates updated successfully' };
@@ -126,11 +99,9 @@ export async function removeFromLibrary(
 ): Promise<Result<boolean>> {
   try {
     const userEmail = await getUserEmail();
-    if (!userEmail) {
-      return { success: false, error: 'User not authenticated' };
-    }
+    await isAuthenticated(userEmail);
 
-    await BookRepository.deleteBook(googleId, userEmail);
+    await bookRepository.deleteBook(googleId, userEmail);
     await revalidateBookPaths();
 
     return { success: true, data: true };
@@ -145,11 +116,9 @@ export async function existsOnLibrary(
 ): Promise<Result<(Book & { ds_status: string }) | null>> {
   try {
     const userEmail = await getUserEmail();
-    if (!userEmail) {
-      return { success: false, error: 'User not authenticated' };
-    }
+    await isAuthenticated(userEmail);
 
-    const book = await BookRepository.findBookByGoogleId(googleId, userEmail);
+    const book = await bookRepository.findBookByGoogleId(googleId, userEmail);
     return { success: true, data: book };
   } catch (error) {
     console.error('Error checking if book exists:', error);

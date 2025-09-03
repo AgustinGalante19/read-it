@@ -2,18 +2,18 @@
 
 import { ChangeEvent, useEffect, useState } from 'react';
 import { BookCheck, BookIcon, BookMarked, BookX, Calendar } from 'lucide-react';
-import filterBooksByStatus from '@/lib/filterBooksByStatus';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Book, BookStatus } from '@/types/Book';
+import Option from '../types/Option';
 import BookCard from '@/components/book/book-card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import StatusSelection from './status-selection';
-import { Book, BookStatus } from '@/types/Book';
-import Option from '../types/Option';
-import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { useRouter } from 'next/navigation';
 import VerticalSkeleton from '@/components/book/vertical-skeleton';
 import { getMyBooks } from '@/services/BookService';
+import bookHelper from '@/services/helpers/BookHelper';
+import StatusSelection from './status-selection';
+
 const options: Option[] = [
   { id: 3, value: 0, label: 'Saved Books', icon: <BookMarked size={18} /> },
   { id: 1, value: 3, label: 'Read', icon: <BookCheck size={18} /> },
@@ -48,7 +48,7 @@ export default function LibraryContent() {
 
         let booksResult = allBooksResponse;
         if (readStatus) {
-          booksResult = filterBooksByStatus(
+          booksResult = bookHelper.filterBooksByStatus(
             allBooksResponse,
             currentReadStatus
           );
@@ -71,7 +71,7 @@ export default function LibraryContent() {
     const { value } = e.target;
     setSearchTerm(value);
     if (!value) {
-      const books = filterBooksByStatus(allBooks, bookStatus.value);
+      const books = bookHelper.filterBooksByStatus(allBooks, bookStatus.value);
       setBooksList(books);
       return;
     }
@@ -83,7 +83,7 @@ export default function LibraryContent() {
 
   const handleChangeStatus = (newOption: Option) => {
     setBookStatus(newOption);
-    const newBooks = filterBooksByStatus(allBooks, newOption.value);
+    const newBooks = bookHelper.filterBooksByStatus(allBooks, newOption.value);
     setSearchTerm('');
     setBooksList(newBooks);
   };

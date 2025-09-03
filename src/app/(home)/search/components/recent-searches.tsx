@@ -2,7 +2,7 @@
 
 import BookCard from '@/components/book/book-card';
 import { Button } from '@/components/ui/button';
-import { getIDBBooks, removeIDBBooks } from '@/services/localBooksDb';
+import { bookSearchService } from '@/services/SearchsService';
 import { Book } from '@/types/Book';
 import React, { useCallback } from 'react';
 
@@ -11,14 +11,14 @@ function RecentSearches() {
 
   React.useEffect(() => {
     const getRecentSearches = async () => {
-      const results = await getIDBBooks();
+      const results = await bookSearchService.getIDBBooks();
       setRecentSearches(results);
     };
     getRecentSearches();
   }, []);
 
   const handleRemoveRecenSearches = useCallback(async () => {
-    await removeIDBBooks();
+    await bookSearchService.removeIDBBooks();
     setRecentSearches([]);
   }, []);
 
