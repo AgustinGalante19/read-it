@@ -19,6 +19,7 @@
   --color-card: oklch(var(--card));
   --color-card-foreground: oklch(var(--card-foreground));
   --color-surface-container-high: oklch(var(--surface-container-high));
+  --color-surface-container: oklch(var(--surface-container));
 
   --color-popover: oklch(var(--popover));
   --color-popover-foreground: oklch(var(--popover-foreground));
@@ -72,6 +73,7 @@
     --foreground: 0.86 0.016 123;
     --surface: 0.1878 0.0122 155.86;
     --surface-container-high: 0.2826 0.0101 151.46;
+    --surface-container: 0.2402 0.0116 156.25;
     --surface-foreground: 0.9131 0.0108 136.56;
     --inverse-surface: 0.9131 0.0108 136.56;
     --secondary-container: 0.3917 0.0333 156.05;

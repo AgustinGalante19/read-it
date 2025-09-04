@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { ABeeZee } from 'next/font/google';
 import Providers from '@/components/providers';
 import '@/app/globals.css';
 
@@ -8,8 +8,7 @@ export const metadata: Metadata = {
   description: 'My personal to use as readlist',
 };
 
-const InterFont = Inter({ subsets: ['latin'] });
-
+const ABeeZeeFont = ABeeZee({ subsets: ['latin'], weight: ['400'] });
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -33,7 +32,7 @@ export default function RootLayout({
         />
         <meta name='apple-mobile-web-app-title' content='Read-It' />
       </head>
-      <body className={`${InterFont.className} antialiased`}>
+      <body className={`${ABeeZeeFont.className} antialiased`}>
         <Providers>{children}</Providers>
       </body>
     </html>
