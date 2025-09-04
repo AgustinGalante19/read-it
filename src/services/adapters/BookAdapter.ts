@@ -21,8 +21,10 @@ function mapBaseBookProperties(book: DatabaseRow): Book {
     publish_date: String(book.publish_date),
     page_count: Number(book.page_count),
     inserted_at: String(book.inserted_at),
-    start_date: String(book.start_date),
-    finish_date: String(book.finish_date),
+    start_date:
+      String(book.start_date) === 'null' ? null : String(book.start_date),
+    finish_date:
+      String(book.finish_date) === 'null' ? null : String(book.finish_date),
     tags: String(book.tags),
     user_email: String(book.user_email),
     id_book_status: Number(book.id_book_status),

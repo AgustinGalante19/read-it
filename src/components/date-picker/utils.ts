@@ -10,7 +10,7 @@ export const formatDateRange = (range: DateRange) => {
   if (range.from && !range.to) {
     const monthName = MONTHNAMES[range.from.getMonth()].slice(0, 3);
     const day = range.from.getDate();
-    return ` - ${monthName} ${day}`;
+    return `${monthName} ${day} - `;
   }
 
   if (!range.from && range.to) {
