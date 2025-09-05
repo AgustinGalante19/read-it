@@ -37,8 +37,7 @@ export async function addBook(book: GoogleBookItem): Promise<Result<string>> {
       return { success: false, error: 'User not authenticated' };
     }
 
-    const volumeData = GoogleVolumeAdapter(volumeInfo);
-
+    const volumeData = GoogleVolumeAdapter(volumeInfo, book.id, userEmail);
     await bookRepository.createBook(volumeData);
     await revalidateBookPaths();
 

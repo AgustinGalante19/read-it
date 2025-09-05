@@ -2,7 +2,11 @@ import { VolumeInfo } from '@/types/Book';
 import datesHelper from '../helpers/DatesHelper';
 import bookHelper from '../helpers/BookHelper';
 
-export default function GoogleVolumeAdapter(volumeInfo: VolumeInfo): {
+export default function GoogleVolumeAdapter(
+  volumeInfo: VolumeInfo,
+  googleId?: string,
+  userEmail?: string
+): {
   googleId: string;
   title: string;
   thumbnailUrl: string;
@@ -22,7 +26,7 @@ export default function GoogleVolumeAdapter(volumeInfo: VolumeInfo): {
     thumbnailUrl: imageLinks?.thumbnail || '/thumbnail-fallback.jpg',
     pageCount: pageCount || 0,
     tags: categories?.join(', ') || '',
-    googleId: '',
-    userEmail: '',
+    googleId: googleId || '',
+    userEmail: userEmail || '',
   };
 }

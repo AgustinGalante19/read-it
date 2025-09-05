@@ -24,11 +24,6 @@ function Loading() {
           <Skeleton className='w-[136px] h-8' />
           <Skeleton className='w-[94px] h-6' />
         </div>
-        <div className='flex justify-between gap-2 overflow-x-hidden'>
-          <HorizontalSkeleton />
-          <HorizontalSkeleton />
-          <HorizontalSkeleton />
-        </div>
         <div className='flex mt-4 justify-between items-center mb-2'>
           <Skeleton className='w-[136px] h-8' />
           <Skeleton className='w-[94px] h-6' />
@@ -37,6 +32,11 @@ function Loading() {
           <VerticalSkeleton />
           <VerticalSkeleton />
           <VerticalSkeleton />
+        </div>
+        <div className='flex justify-between gap-2 overflow-x-hidden mt-2'>
+          <HorizontalSkeleton />
+          <HorizontalSkeleton />
+          <HorizontalSkeleton />
         </div>
       </div>
     </div>
