@@ -2,9 +2,8 @@
 
 import { revalidatePath } from 'next/cache';
 import { getUserEmail, isAuthenticated } from './UserService';
-import { Book, BookStatus, GoogleBookItem } from '@/types/Book';
+import { Book, BookStatus } from '@/types/Book';
 import { Result } from '@/types/Result';
-import GoogleVolumeAdapter from './adapters/GoogleVolumeAdapter';
 import ReadDatesHelper from './helpers/ReadDatesHelper';
 import bookRepository from './repositories/BookRepository';
 
@@ -28,17 +27,14 @@ export async function getMyBooks(status: BookStatus): Promise<Result<Book[]>> {
   }
 }
 
-export async function addBook(book: GoogleBookItem): Promise<Result<string>> {
+export async function addBook(book: Book): Promise<Result<string>> {
   try {
-    const { volumeInfo } = book;
     const userEmail = await getUserEmail();
 
     if (!userEmail) {
       return { success: false, error: 'User not authenticated' };
     }
-
-    const volumeData = GoogleVolumeAdapter(volumeInfo, book.id, userEmail);
-    await bookRepository.createBook(volumeData);
+    await bookRepository.createBook({ ...book, user_email: userEmail });
     await revalidateBookPaths();
 
     return { success: true, data: 'Book added successfully' };

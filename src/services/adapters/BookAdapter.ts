@@ -67,7 +67,9 @@ export function mapGoogleBookToBook(googleBook: GoogleBookItem): Book {
     publish_date: datesHelper.getDateString(publishedDate),
     thumbnail_url: imageLinks?.thumbnail,
     title,
-    tags: '',
+    tags: googleBook.volumeInfo.categories
+      ? googleBook.volumeInfo.categories.join('/')
+      : '',
   };
 }
 

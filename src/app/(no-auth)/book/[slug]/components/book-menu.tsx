@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { BadgeCheck, Bookmark, BookOpen, Calendar, Trash } from 'lucide-react';
 import { toast } from 'sonner';
-import { Book, GoogleBookItem } from '@/types/Book';
+import { Book } from '@/types/Book';
 import { Button } from '@/components/ui/button';
 import {
   Drawer,
@@ -27,7 +27,7 @@ interface BookMenuProps {
   isOpen: boolean;
   close: () => void;
   book: (Book & { ds_status: string }) | null | undefined;
-  googleBook: GoogleBookItem | null;
+  googleBook: Book | null;
 }
 
 function BookMenu({ isOpen, close, book, googleBook }: BookMenuProps) {
@@ -93,10 +93,10 @@ function BookMenu({ isOpen, close, book, googleBook }: BookMenuProps) {
         <DrawerContent>
           <DrawerHeader>
             <DrawerTitle className='text-lg font-semibold flex items-center gap-2'>
-              {book?.title || googleBook?.volumeInfo.title}
+              {book?.title || googleBook?.title}
             </DrawerTitle>
             <DrawerDescription className='text-left'>
-              {bookHelper.getBookAuthors(googleBook?.volumeInfo.authors)}
+              {bookHelper.getBookAuthors(googleBook?.authors)}
             </DrawerDescription>
           </DrawerHeader>
           <div className='flex flex-col gap-2 px-4 pb-4 items-start'>

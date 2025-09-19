@@ -14,6 +14,10 @@ export interface Book {
   id_book_status: number;
 }
 
+export interface ExtendedBookData extends Book {
+  description?: string;
+}
+
 export enum BookStatus {
   WANT_TO_READ = 1,
   READING = 2,

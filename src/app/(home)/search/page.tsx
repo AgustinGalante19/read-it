@@ -1,17 +1,17 @@
 'use client';
 
 import React, { ChangeEvent, useEffect, useState } from 'react';
-import { GoogleBookItem } from '@/types/Book';
-import { getBooks } from '@/services/GoogleBooksService';
 import { useDebounce } from '@uidotdev/usehooks';
-import { Input } from '@/components/ui/input';
 import { SearchIcon } from 'lucide-react';
+import { Book } from '@/types/Book';
+import { Input } from '@/components/ui/input';
 import SearchResults from './components/search-results';
 import RecentSearches from './components/recent-searches';
+import booksSearcher from '@/services/repositories/BooksSearcher';
 
 function Search() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [results, setResults] = useState<GoogleBookItem[] | null>(null);
+  const [results, setResults] = useState<Book[] | null>(null);
   const [isSearching, setIsSearching] = useState(false);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
@@ -22,11 +22,11 @@ function Search() {
         return setResults(null);
       }
 
-      let results: GoogleBookItem[] = [];
+      let results: Book[] = [];
       setIsSearching(true);
       if (debouncedSearchTerm) {
-        const data = await getBooks(debouncedSearchTerm);
-        results = data?.items || [];
+        const data = await booksSearcher.getByQuery(debouncedSearchTerm);
+        results = data || [];
       }
 
       setIsSearching(false);

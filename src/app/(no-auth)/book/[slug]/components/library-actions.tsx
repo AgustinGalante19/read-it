@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Book, GoogleBookItem } from '@/types/Book';
+import { Book } from '@/types/Book';
 import { BadgeCheck, Bookmark, BookOpen, ChevronDown } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
@@ -28,7 +28,7 @@ function LibraryActions({
   googleBook,
 }: {
   dbBook: (Book & { ds_status: string }) | null | undefined;
-  googleBook: GoogleBookItem | null;
+  googleBook: Book | null;
 }) {
   const { status: sessionStatus } = useSession();
 
@@ -80,7 +80,7 @@ function LibraryActions({
         isOpen={isOpen}
         close={() => setIsOpen(false)}
         book={book}
-        googleBook={googleBook}
+        googleBook={googleBook} /* ESPERA */
       />
     </div>
   );

@@ -1,14 +1,13 @@
-import BooksList from '@/components/book/books-list';
-import { mapGoogleBooksArray } from '@/services/adapters/BookAdapter';
-import { getBooksBySubject } from '@/services/GoogleBooksService';
 import { LogIn } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import BooksList from '@/components/book/books-list';
+import booksSearcher from '@/services/repositories/BooksSearcher';
 
 async function PreviewPage() {
-  const fiction = await getBooksBySubject('fiction');
-  const fantasy = await getBooksBySubject('fantasy');
-  const thriller = await getBooksBySubject('thriller');
+  const fiction = await booksSearcher.getBooksBySubject('fiction');
+  const fantasy = await booksSearcher.getBooksBySubject('fantasy');
+  const thriller = await booksSearcher.getBooksBySubject('thriller');
 
   return (
     <div className='space-y-4 p-4'>
@@ -37,7 +36,7 @@ async function PreviewPage() {
       <section>
         <span className='text-xl font-semibold'>Fiction 🚀</span>
         <BooksList
-          books={mapGoogleBooksArray(fiction.items)}
+          books={fiction}
           cardMode='vertical'
           opts={{ dragFree: true }}
         />
@@ -45,7 +44,7 @@ async function PreviewPage() {
       <section>
         <span className='text-xl font-semibold'>Fantasy 🧙‍♂️</span>
         <BooksList
-          books={mapGoogleBooksArray(fantasy.items)}
+          books={fantasy}
           cardMode='vertical'
           opts={{ dragFree: true }}
         />
@@ -53,7 +52,7 @@ async function PreviewPage() {
       <section>
         <span className='text-xl font-semibold'>Thrillers 🤔</span>
         <BooksList
-          books={mapGoogleBooksArray(thriller.items)}
+          books={thriller}
           cardMode='vertical'
           opts={{ dragFree: true }}
         />

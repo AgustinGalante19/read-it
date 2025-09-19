@@ -49,28 +49,19 @@ class BookRepository {
     return BookAdapterWithStatus(result)[0];
   }
 
-  async createBook(bookData: {
-    googleId: string;
-    title: string;
-    thumbnailUrl: string;
-    authors: string;
-    publishDate: string;
-    pageCount: number;
-    tags: string;
-    userEmail: string;
-  }): Promise<void> {
+  async createBook(bookData: Book): Promise<void> {
     await turso.execute({
       sql: `INSERT INTO readit_books (google_id, title, thumbnail_url, authors, publish_date, page_count, tags, user_email, id_book_status) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       args: [
-        bookData.googleId,
+        bookData.google_id,
         bookData.title,
-        bookData.thumbnailUrl,
+        bookData.thumbnail_url,
         bookData.authors,
-        bookData.publishDate,
-        bookData.pageCount,
+        bookData.publish_date,
+        bookData.page_count,
         bookData.tags,
-        bookData.userEmail,
+        bookData.user_email,
         1, // Default status: not read
       ],
     });
