@@ -1,6 +1,6 @@
 'use client';
 
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState, useTransition } from 'react';
 import { BookCheck, BookIcon, BookMarked, BookX, Calendar } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Book, BookStatus } from '@/types/Book';
@@ -22,11 +22,13 @@ const options: Option[] = [
 ];
 
 export default function LibraryContent() {
-  const [isLoading, setIsLoading] = useState(true);
+  //const [isLoading, setIsLoading] = useState(true);
   const [allBooks, setAllBooks] = useState<Book[]>([]);
   const [booksList, setBooksList] = useState<Book[]>([]);
   const [bookStatus, setBookStatus] = useState<Option>(options[0]);
   const [searchTerm, setSearchTerm] = useState('');
+
+  const [isPending, startTransition] = useTransition();
 
   const searchParams = useSearchParams();
 
@@ -36,33 +38,32 @@ export default function LibraryContent() {
 
   useEffect(() => {
     const getBooks = async () => {
-      try {
-        setIsLoading(true);
-        const currentReadStatus: BookStatus =
-          Number(readStatus) ?? BookStatus.ALL;
-        const { data: allBooksResponse } = await getMyBooks(BookStatus.ALL);
+      startTransition(async () => {
+        try {
+          const currentReadStatus: BookStatus =
+            Number(readStatus) ?? BookStatus.ALL;
+          const { data: allBooksResponse } = await getMyBooks(BookStatus.ALL);
 
-        if (!allBooksResponse) {
-          return;
-        }
+          if (!allBooksResponse) {
+            return;
+          }
 
-        let booksResult = allBooksResponse;
-        if (readStatus) {
-          booksResult = bookHelper.filterBooksByStatus(
-            allBooksResponse,
-            currentReadStatus
+          let booksResult = allBooksResponse;
+          if (readStatus) {
+            booksResult = bookHelper.filterBooksByStatus(
+              allBooksResponse,
+              currentReadStatus
+            );
+          }
+          setBooksList(booksResult);
+          setAllBooks(allBooksResponse);
+          setBookStatus(
+            options.find((el) => el.value === currentReadStatus) ?? options[0]
           );
+        } catch (err) {
+          console.log(err);
         }
-        setBooksList(booksResult);
-        setAllBooks(allBooksResponse);
-        setBookStatus(
-          options.find((el) => el.value === currentReadStatus) ?? options[0]
-        );
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setIsLoading(false);
-      }
+      });
     };
     getBooks();
   }, [readStatus]);
@@ -100,7 +101,7 @@ export default function LibraryContent() {
         </Button>
       </header>
       <StatusSelection
-        isLoading={isLoading}
+        isLoading={isPending}
         bookStatus={bookStatus}
         booksList={booksList}
         handleChangeStatus={handleChangeStatus}
@@ -117,7 +118,7 @@ export default function LibraryContent() {
         </Label>
       </section>
       <section>
-        {isLoading ? (
+        {isPending ? (
           <div className='128x172 grid grid-cols-2 gap-2 py-4'>
             {Array.from({ length: 6 }).map((_, i) => (
               <VerticalSkeleton key={i} />
