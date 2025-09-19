@@ -18,7 +18,7 @@ export default async function Home() {
       <Topbar />
       <div className='container mx-auto p-4 space-y-8'>
         <section>
-          {currentlyReading.data && (
+          {currentlyReading.data && currentlyReading.data.length > 0 ? (
             <>
               <ShowAll
                 label='Currently Reading'
@@ -31,11 +31,20 @@ export default async function Home() {
                 itemClassName='basis-1/3'
               />
             </>
+          ) : (
+            <div className='flex flex-col items-center mt-4 gap-2'>
+              <span className='text-muted-foreground'>
+                You&apos;re not reading any book...
+              </span>
+              <Link href='/search' className='text-accent-foreground underline'>
+                Search one!
+              </Link>
+            </div>
           )}
         </section>
         <section>
           <ShowAll label='My Readlist' readStatus={BookStatus.WANT_TO_READ} />
-          {readList.data ? (
+          {readList.data && readList.data.length > 0 ? (
             <BooksList
               books={readList.data}
               cardMode='vertical'
@@ -44,26 +53,33 @@ export default async function Home() {
             />
           ) : (
             <div className='flex flex-col items-center mt-4 gap-2'>
-              <span className='text-gray-300'>
+              <span className='text-muted-foreground'>
                 You don&apos;t have any books to read...
               </span>
-              <Link href='/search' className='underline'>
-                Search one
+              <Link href='/search' className='text-accent-foreground underline'>
+                Search one!
               </Link>
             </div>
           )}
         </section>
         <section>
           <ShowAll label='Read' readStatus={BookStatus.READ} />
-          {readedBooks.data ? (
+          {readedBooks.data && readedBooks.data.length > 0 ? (
             <BooksList books={readedBooks.data} opts={{ dragFree: true }} />
           ) : (
-            <span className='text-gray-300'>No books read yet...</span>
+            <div className='flex flex-col items-center mt-4 gap-2'>
+              <span className='text-muted-foreground'>
+                No books read yet...
+              </span>
+              <Link href='/search' className='text-accent-foreground underline'>
+                Start now!
+              </Link>
+            </div>
           )}
         </section>
         <section>
           <ShowAll label='All my Books' readStatus={BookStatus.ALL} />
-          {allBooks.data ? (
+          {allBooks.data && allBooks.data.length > 0 ? (
             <BooksList
               books={allBooks.data}
               cardMode='vertical'
@@ -71,9 +87,14 @@ export default async function Home() {
               itemClassName='basis-1/3'
             />
           ) : (
-            <span className='text-gray-300'>
-              You don&apos;t have any books in your library...
-            </span>
+            <div className='flex flex-col items-center mt-4 gap-2'>
+              <span className='text-muted-foreground'>
+                You don&apos;t have any books in your library...
+              </span>
+              <Link href='/search' className='text-accent-foreground underline'>
+                Search now!
+              </Link>
+            </div>
           )}
         </section>
         <div className='h-4'></div>
