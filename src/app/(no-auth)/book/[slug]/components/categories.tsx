@@ -14,14 +14,20 @@ function Categories({ categories }: { categories: string[] | undefined }) {
 
   const handleToggleShow = () => setShowAll(!showAll);
 
+  if (categories?.length === 0) return null;
+
   return (
     <section>
       <div className='flex flex-wrap gap-2 mt-3 mb-2'>
         {showAll
-          ? categories?.map((cat: string) => <Category key={cat} cat={cat} />)
+          ? categories?.map((cat: string, i) => (
+              <Category key={`${cat}-${i}`} cat={cat} />
+            ))
           : categories
               ?.slice(0, 3)
-              .map((cat: string) => <Category key={cat} cat={cat} />)}
+              .map((cat: string, i) => (
+                <Category key={`${cat}-${i}`} cat={cat} />
+              ))}
       </div>
       {categories?.length && categories?.length > 3 && (
         <div>
