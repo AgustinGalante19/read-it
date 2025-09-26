@@ -85,8 +85,7 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
           </Link>
           <LibraryActions dbBook={dbBook.data} googleBook={book} />
         </div>
-        <Categories categories={book.tags.split('/')} />
-
+        <Categories categories={book.tags ? book.tags.split('/') : []} />
         <div className='grid grid-cols-2 bg-secondary items-center justify-between rounded-full py-2 mb-6 relative'>
           <div>
             <span className='text-center text-sm flex items-center justify-center gap-2 text-secondary-foreground'>
