@@ -80,7 +80,7 @@ function LibraryActions({
         isOpen={isOpen}
         close={() => setIsOpen(false)}
         book={book}
-        googleBook={googleBook} /* ESPERA */
+        googleBook={googleBook}
       />
     </div>
   );

@@ -8,8 +8,6 @@
   --color-background: oklch(var(--background));
   --color-background-low: oklch(var(--background-low));
   --color-foreground: oklch(var(--foreground));
-  --color-cgray: #272828;
-  --color-dark-blue: #232538;
   --color-inverse-surface: oklch(var(--inverse-surface));
   --color-white: oklch(var(--white));
   --color-surface: oklch(var(--surface));

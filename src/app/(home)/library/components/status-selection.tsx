@@ -46,7 +46,7 @@ function StatusSelection({
                     className={cn(
                       'rounded-full',
                       opt.value === bookStatus.value
-                        ? 'bg-primary text-cgray'
+                        ? 'bg-primary text-primary-foreground'
                         : 'border bg-transparent border-gray-500'
                     )}
                     onClick={() => handleChangeStatus(opt)}
