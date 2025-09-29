@@ -41,11 +41,11 @@ function GeneralStats({
                   </span>
                 </CardContent>
                 <CardFooter className='pb-0'>
-                  <span className='text-xs text-gray-400 pb-4'>
+                  <span className='text-xs text-pretty text-surface-foreground pb-4 truncate'>
                     Last book read:
                     <Link
                       href={`/book/${book.lastRead.googleId}`}
-                      className='truncate ml-1 underline text-primary'
+                      className='text-pretty ml-1 underline text-primary'
                     >
                       {book.lastRead.title}
                     </Link>
@@ -71,7 +71,7 @@ function GeneralStats({
                   </span>
                 </CardContent>
                 <CardFooter className='pb-0'>
-                  <span className='text-xs text-gray-400 pb-4'>
+                  <span className='text-xs text-surface-foreground pb-4'>
                     {page.lastMonthCount} pages last month
                   </span>
                 </CardFooter>
@@ -95,7 +95,7 @@ function GeneralStats({
                   </span>
                 </CardContent>
                 <CardFooter className='pb-0'>
-                  <span className='text-xs text-gray-400 pb-4'>
+                  <span className='text-xs text-surface-foreground pb-4'>
                     Last genre read {tag.lastTagReaded}
                   </span>
                 </CardFooter>
