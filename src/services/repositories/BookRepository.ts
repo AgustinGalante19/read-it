@@ -12,7 +12,7 @@ class BookRepository {
 
     switch (status) {
       case BookStatus.READ:
-        query = `SELECT * FROM readit_books WHERE id_book_status = 3 AND user_email = ? ORDER BY inserted_at DESC`;
+        query = `SELECT * FROM readit_books WHERE id_book_status = 3 AND user_email = ? ORDER BY finish_date DESC`;
         break;
       case BookStatus.READING:
         query = `SELECT * FROM readit_books WHERE id_book_status = 2 AND user_email = ? ORDER BY inserted_at DESC`;
