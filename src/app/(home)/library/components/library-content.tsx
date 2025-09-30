@@ -15,19 +15,17 @@ import bookHelper from '@/services/helpers/BookHelper';
 import StatusSelection from './status-selection';
 
 const options: Option[] = [
-  { id: 3, value: 0, label: 'Saved Books', icon: <BookMarked size={18} /> },
   { id: 1, value: 3, label: 'Read', icon: <BookCheck size={18} /> },
+  { id: 3, value: 0, label: 'Saved Books', icon: <BookMarked size={18} /> },
   { id: 4, value: 2, label: 'Reading', icon: <BookIcon size={18} /> },
   { id: 2, value: 1, label: 'Want to Read', icon: <BookX size={18} /> },
 ];
 
 export default function LibraryContent() {
-  //const [isLoading, setIsLoading] = useState(true);
   const [allBooks, setAllBooks] = useState<Book[]>([]);
   const [booksList, setBooksList] = useState<Book[]>([]);
   const [bookStatus, setBookStatus] = useState<Option>(options[0]);
   const [searchTerm, setSearchTerm] = useState('');
-
   const [isPending, startTransition] = useTransition();
 
   const searchParams = useSearchParams();
@@ -39,30 +37,25 @@ export default function LibraryContent() {
   useEffect(() => {
     const getBooks = async () => {
       startTransition(async () => {
-        try {
-          const currentReadStatus: BookStatus =
-            Number(readStatus) ?? BookStatus.ALL;
-          const { data: allBooksResponse } = await getMyBooks(BookStatus.ALL);
+        const { data: allBooksResponse } = await getMyBooks(BookStatus.ALL);
 
-          if (!allBooksResponse) {
-            return;
-          }
-
-          let booksResult = allBooksResponse;
-          if (readStatus) {
-            booksResult = bookHelper.filterBooksByStatus(
-              allBooksResponse,
-              currentReadStatus
-            );
-          }
-          setBooksList(booksResult);
-          setAllBooks(allBooksResponse);
-          setBookStatus(
-            options.find((el) => el.value === currentReadStatus) ?? options[0]
-          );
-        } catch (err) {
-          console.log(err);
+        if (!allBooksResponse) {
+          return;
         }
+        setAllBooks(allBooksResponse);
+
+        const currentReadStatus: BookStatus = readStatus
+          ? Number(readStatus)
+          : BookStatus.READ;
+        let booksResult = allBooksResponse;
+        booksResult = bookHelper.filterBooksByStatus(
+          allBooksResponse,
+          currentReadStatus
+        );
+        setBooksList(booksResult);
+        setBookStatus(
+          options.find((el) => el.value === currentReadStatus) ?? options[0]
+        );
       });
     };
     getBooks();
