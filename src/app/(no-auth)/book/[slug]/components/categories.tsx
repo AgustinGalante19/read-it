@@ -47,7 +47,7 @@ function Categories({ categories = [] }: { categories: string[] | undefined }) {
           <Button
             variant='link'
             onClick={handleToggleShow}
-            className='transition-all duration-75 hover:scale-105'
+            className='transition-all px-0 duration-75 hover:scale-105'
           >
             {!showAll ? 'Show more' : 'Show less'}
           </Button>

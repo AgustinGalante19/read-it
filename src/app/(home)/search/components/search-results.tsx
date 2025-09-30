@@ -31,13 +31,21 @@ function SearchResults({ books }: { books: Book[] }) {
 
   return (
     <ul className='p-2 rounded-b text-white w-full'>
-      {books.map((book) => (
+      {books.map((book, index) => (
         <li
           key={book.google_id}
-          className='my-4'
+          className='my-4 animate-in fade-in-0 slide-in-from-bottom-4 zoom-in-95 duration-400
+                     transition-all hover:scale-[1.03] hover:translate-y-[-3px] hover:shadow-xl
+                     cursor-pointer rounded-lg hover:bg-surface-container/30 active:scale-[0.98]'
+          style={{
+            animationDelay: `${index * 150}ms`,
+            animationFillMode: 'both',
+          }}
           onClick={() => handleClickSearch(book)}
         >
-          <BookCard book={book} />
+          <div className='p-3 rounded-lg transition-all duration-300 hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5'>
+            <BookCard book={book} />
+          </div>
         </li>
       ))}
     </ul>
