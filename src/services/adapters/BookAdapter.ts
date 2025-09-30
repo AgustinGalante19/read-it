@@ -1,4 +1,4 @@
-import { Book, GoogleBookItem } from '@/types/Book';
+import { Book, ExtendedBookData, GoogleBookItem } from '@/types/Book';
 import { ResultSet } from '@libsql/client/web';
 import datesHelper from '../helpers/DatesHelper';
 import bookHelper from '../helpers/BookHelper';
@@ -50,7 +50,9 @@ export function BookAdapterWithStatus(
   }));
 }
 
-export function mapGoogleBookToBook(googleBook: GoogleBookItem): Book {
+export function mapGoogleBookToBook(
+  googleBook: GoogleBookItem
+): ExtendedBookData {
   const { authors, pageCount, publishedDate, imageLinks, title } =
     googleBook.volumeInfo;
 
@@ -70,6 +72,7 @@ export function mapGoogleBookToBook(googleBook: GoogleBookItem): Book {
     tags: googleBook.volumeInfo.categories
       ? googleBook.volumeInfo.categories.join('/')
       : '',
+    description: googleBook.volumeInfo.description,
   };
 }
 
