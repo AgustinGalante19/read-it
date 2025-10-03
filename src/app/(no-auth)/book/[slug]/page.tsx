@@ -62,28 +62,34 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
         />
       </header>
       <div className='p-4 text-white mb-3'>
-        <div className='flex justify-between items-center gap-4 mt-2'>
-          <div className='flex flex-col gap-1'>
-            <div className='flex items-center gap-2'>
-              <BackButton />
-              <h2 className='font-bold text-2xl'>{book.title}</h2>
-            </div>
+        <div className='flex items-center gap-4 mt-2'>
+          <BackButton />
+          <h2 className='font-bold text-2xl'>{book.title}</h2>
+        </div>
+        <div className='flex items-start justify-between gap-2'>
+          <div className='flex flex-col h-max'>
             <span className='font-semibold'>
               {bookHelper.getBookAuthors(book.authors)}
             </span>
+            <Link
+              className='text-accent-foreground underline mt-3 '
+              target='_blank'
+              href={`https://annas-archive.org/search?${new URLSearchParams({
+                q: `${book.title} ${bookHelper.getBookAuthors(book.authors)}`,
+              })}`}
+            >
+              Search on Anna&apos;s Archive
+            </Link>
           </div>
-        </div>
-        <div className='flex items-center justify-between gap-2'>
-          <Link
-            className='text-accent-foreground underline'
-            target='_blank'
-            href={`https://annas-archive.org/search?${new URLSearchParams({
-              q: `${book.title} ${bookHelper.getBookAuthors(book.authors)}`,
-            })}`}
-          >
-            Search on Anna&apos;s Archive
-          </Link>
-          <LibraryActions dbBook={dbBook.data} googleBook={book} />
+          <div className='flex flex-col justify-start items-end gap-2'>
+            <LibraryActions dbBook={dbBook.data} googleBook={book} />
+            {dbBook.data && dbBook.data.finish_date && (
+              <span className='text-xs text-surface-foreground'>
+                Finished at:{' '}
+                {new Date(dbBook.data.finish_date).toLocaleDateString()}
+              </span>
+            )}
+          </div>
         </div>
         <Categories categories={book.tags ? book.tags.split('/') : []} />
         <div className='grid grid-cols-2 bg-secondary items-center justify-between rounded-full py-2 mb-6 relative'>
