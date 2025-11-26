@@ -120,3 +120,17 @@ export async function existsOnLibrary(
     return { success: false, error: 'Failed to check book existence' };
   }
 }
+
+export async function updateBookHash(
+  hash: string,
+  googleId: string
+): Promise<Result<string>> {
+  try {
+    const userEmail = 'agustin.19.galante@gmail.com';
+    await bookRepository.updateHash(googleId, userEmail, hash);
+    return { success: true, data: 'Book hash updated successfully' };
+  } catch (error) {
+    console.error('Error updating book hash:', error);
+    return { success: false, error: 'Failed to update book hash' };
+  }
+}

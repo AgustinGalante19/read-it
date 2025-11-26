@@ -119,6 +119,17 @@ class BookRepository {
       args: [googleId, userEmail],
     });
   }
+
+  async updateHash(
+    googleId: string,
+    userEmail: string,
+    hash: string
+  ): Promise<void> {
+    await turso.execute({
+      sql: `UPDATE readit_books SET book_hash = ? WHERE google_id = ? AND user_email = ?`,
+      args: [hash, googleId, userEmail],
+    });
+  }
 }
 
 const bookRepository = new BookRepository();
