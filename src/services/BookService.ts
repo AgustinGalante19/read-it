@@ -126,11 +126,25 @@ export async function updateBookHash(
   googleId: string
 ): Promise<Result<string>> {
   try {
-    const userEmail = 'agustin.19.galante@gmail.com';
-    await bookRepository.updateHash(googleId, userEmail, hash);
+    await bookRepository.updateHash(googleId, hash);
     return { success: true, data: 'Book hash updated successfully' };
   } catch (error) {
     console.error('Error updating book hash:', error);
     return { success: false, error: 'Failed to update book hash' };
+  }
+}
+
+export async function recordLastReadingInfo(data: {
+  totalReadPages: number;
+  totalReadTime: number;
+  lastOpen: string;
+  hash: string;
+}): Promise<Result<string>> {
+  try {
+    await bookRepository.recordLastReadingInfo(data);
+    return { success: true, data: 'Book last open updated successfully' };
+  } catch (error) {
+    console.error('Error updating book last open:', error);
+    return { success: false, error: 'Failed to update book last open' };
   }
 }

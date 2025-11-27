@@ -12,6 +12,10 @@ export interface Book {
   tags: string;
   user_email: string;
   id_book_status: number;
+  book_hash: string;
+  book_last_open: string;
+  book_total_read_time: number;
+  book_total_read_pages: number;
 }
 
 export interface ExtendedBookData extends Book {

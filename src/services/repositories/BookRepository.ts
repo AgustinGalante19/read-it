@@ -120,14 +120,31 @@ class BookRepository {
     });
   }
 
-  async updateHash(
-    googleId: string,
-    userEmail: string,
-    hash: string
-  ): Promise<void> {
+  async updateHash(googleId: string, hash: string): Promise<void> {
     await turso.execute({
       sql: `UPDATE readit_books SET book_hash = ? WHERE google_id = ? AND user_email = ?`,
-      args: [hash, googleId, userEmail],
+      args: [hash, googleId],
+    });
+  }
+
+  async recordLastReadingInfo({
+    totalReadPages,
+    totalReadTime,
+    lastOpen,
+    hash,
+  }: {
+    totalReadPages: number;
+    totalReadTime: number;
+    lastOpen: string;
+    hash: string;
+  }): Promise<void> {
+    await turso.execute({
+      sql: `UPDATE readit_books 
+            SET book_total_read_pages = ?,
+                book_total_read_time =  ?,
+                book_last_open = ?
+            WHERE book_hash = ?`,
+      args: [totalReadPages, totalReadTime, lastOpen, hash],
     });
   }
 }
