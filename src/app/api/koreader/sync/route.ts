@@ -12,7 +12,7 @@ export async function POST(request: Request) {
   await recordLastReadingInfo({
     totalReadPages: totalReadPages,
     totalReadTime: totalReadTime,
-    lastOpen: new Date(lastOpen).getTime().toString(),
+    lastOpen: Math.floor(new Date(lastOpen).getTime() / 1000).toString(),
     hash,
   });
 
