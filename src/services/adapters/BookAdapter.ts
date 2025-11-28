@@ -28,6 +28,10 @@ function mapBaseBookProperties(book: DatabaseRow): Book {
     tags: String(book.tags),
     user_email: String(book.user_email),
     id_book_status: Number(book.id_book_status),
+    book_hash: null,
+    book_last_open: null,
+    book_total_read_time: null,
+    book_total_read_pages: null,
   };
 }
 
