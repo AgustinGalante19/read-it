@@ -18,6 +18,15 @@ export interface Book {
   book_total_read_pages?: number | null;
 }
 
+export interface BookPageStatData {
+  id: number;
+  hash: string;
+  page: number;
+  duration: number;
+  start_time: string;
+  total_pages: number;
+}
+
 export interface ExtendedBookData extends Book {
   description?: string;
 }

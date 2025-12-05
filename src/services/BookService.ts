@@ -123,10 +123,11 @@ export async function existsOnLibrary(
 
 export async function updateBookHash(
   hash: string,
-  googleId: string
+  googleId: string,
+  pageCount: number
 ): Promise<Result<string>> {
   try {
-    await bookRepository.updateHash(googleId, hash);
+    await bookRepository.updateHash(googleId, hash, pageCount);
     return { success: true, data: 'Book hash updated successfully' };
   } catch (error) {
     console.error('Error updating book hash:', error);

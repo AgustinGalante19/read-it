@@ -120,10 +120,18 @@ class BookRepository {
     });
   }
 
-  async updateHash(googleId: string, hash: string): Promise<void> {
+  async updateHash(
+    googleId: string,
+    hash: string,
+    pageCount: number
+  ): Promise<void> {
     await turso.execute({
-      sql: `UPDATE readit_books SET book_hash = ? WHERE google_id = ? AND user_email = ?`,
-      args: [hash, googleId, 'agustin.19.galante@gmail.com'],
+      sql: `
+      UPDATE readit_books 
+      SET book_hash = ?,
+          page_count = ? 
+      WHERE google_id = ? AND user_email = ?`,
+      args: [hash, pageCount, googleId, 'agustin.19.galante@gmail.com'],
     });
   }
 
