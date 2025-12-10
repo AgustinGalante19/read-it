@@ -114,9 +114,53 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
         <BookDescription
           description={book?.description || '<p>Description not provided</p>'}
         />
+        {dbBook.data && (
+          <div className="mt-8">
+            <h3 className="mb-4 text-lg font-bold">Reading Activity</h3>
+            <BookTimeline
+              bookId={book.google_id}
+              defaultDate={
+                dbBook.data.finish_date
+                  ? new Date(dbBook.data.finish_date)
+                  : dbBook.data.start_date
+                  ? new Date(dbBook.data.start_date)
+                  : new Date()
+              }
+            />
+          </div>
+        )}
       </div>
     </article>
   );
 }
+
+
+import { getReadingTimeline } from '@/services/ReadingStatisticsService';
+import { ReadingTimeline } from '@/components/ReadingTimeline';
+
+async function BookTimeline({
+  bookId,
+  defaultDate,
+}: {
+  bookId: string;
+  defaultDate: Date;
+}) {
+  const { success, data } = await getReadingTimeline({
+    bookId,
+    month: defaultDate.getMonth() + 1,
+    year: defaultDate.getFullYear(),
+  });
+
+  if (!success || !data || data.length === 0) {
+    return (
+      <p className="text-sm text-muted-foreground">
+        No reading activity recorded for this month.
+      </p>
+    );
+  }
+
+  return <ReadingTimeline data={data} month={defaultDate} />;
+}
+
 
 export default BookPerId;

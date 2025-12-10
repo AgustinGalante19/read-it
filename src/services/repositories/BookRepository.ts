@@ -32,6 +32,31 @@ class BookRepository {
     return BookAdapter(result);
   }
 
+  async getBooksFinishedInMonth(
+    userEmail: string,
+    month: number,
+    year: number
+  ): Promise<Book[]> {
+    const monthStr = month.toString().padStart(2, '0');
+    // Filter by finish_date in format 'YYYY-MM-DD' or 'YYYY-MM-DDT...'
+    // SQLite strftime('%Y-%m', finish_date) matches 'YYYY-MM'
+    const query = `
+      SELECT * FROM readit_books 
+      WHERE user_email = ? 
+      AND id_book_status = 3 
+      AND finish_date IS NOT NULL
+      AND strftime('%Y-%m', finish_date) = ?
+      ORDER BY finish_date ASC
+    `;
+
+    const result = await turso.execute({
+      sql: query,
+      args: [userEmail, `${year}-${monthStr}`],
+    });
+
+    return BookAdapter(result);
+  }
+
   async findBookByGoogleId(
     googleId: string,
     userEmail: string

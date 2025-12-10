@@ -85,6 +85,108 @@ class ReadingStatisticsRepository {
       totalPages: row.total_pages as number,
     }));
   }
+  /**
+   * Obtiene las estadísticas diarias de lectura para un usuario
+   * @param userEmail - Email del usuario
+   * @param filters - Filtros opcionales (mes, año, bookId)
+   */
+  async getDailyReadingStats(
+    userEmail: string,
+    filters?: { month?: number; year?: number; bookId?: string }
+  ): Promise<
+    {
+      date: string;
+      totalDuration: number;
+      booksRead: number;
+      details: {
+        bookId: string;
+        title: string;
+        duration: number;
+        thumbnail_url?: string;
+      }[];
+    }[]
+  > {
+    let query = `
+        SELECT 
+          date(datetime(psd.start_time / 1000, 'unixepoch')) as reading_date,
+          SUM(psd.duration) as total_duration,
+          COUNT(DISTINCT b.google_id) as books_read,
+          json_group_array(json_object(
+            'bookId', b.google_id,
+            'title', b.title,
+            'duration', psd.duration,
+            'thumbnail_url', b.thumbnail_url
+          )) as details_json
+        FROM readit_page_stat_data psd
+        JOIN readit_books b ON psd.hash = b.book_hash
+        WHERE b.user_email = ?
+      `;
+
+    const args: (string | number)[] = [userEmail];
+
+    if (filters?.year) {
+      if (filters.month) {
+        const monthStr = filters.month.toString().padStart(2, '0');
+        query += ` AND strftime('%Y-%m', datetime(psd.start_time / 1000, 'unixepoch')) = ?`;
+        args.push(`${filters.year}-${monthStr}`);
+      } else {
+        query += ` AND strftime('%Y', datetime(psd.start_time / 1000, 'unixepoch')) = ?`;
+        args.push(filters.year.toString());
+      }
+    }
+
+    if (filters?.bookId) {
+      query += ` AND b.google_id = ?`;
+      args.push(filters.bookId);
+    }
+
+    query += `
+        GROUP BY reading_date
+        ORDER BY reading_date ASC
+      `;
+
+    const result = await turso.execute({
+      sql: query,
+      args: args,
+    });
+
+    return result.rows.map((row) => {
+      // Parse details json and aggregate duration per book if multiple sessions existing for same book in same day
+      const rawDetails = JSON.parse(row.details_json as string) as {
+        bookId: string;
+        title: string;
+        duration: number;
+        thumbnail_url?: string;
+      }[];
+
+      // Aggregate sessions by bookId
+      const bookMap = new Map<
+        string,
+        {
+          bookId: string;
+          title: string;
+          duration: number;
+          thumbnail_url?: string;
+        }
+      >();
+
+      rawDetails.forEach((item) => {
+        if (bookMap.has(item.bookId)) {
+          const existing = bookMap.get(item.bookId)!;
+          existing.duration += item.duration;
+        } else {
+          bookMap.set(item.bookId, { ...item });
+        }
+      });
+
+      return {
+        date: row.reading_date as string,
+        totalDuration: Number(row.total_duration),
+        booksRead: Number(row.books_read),
+        details: Array.from(bookMap.values()),
+      };
+    });
+  }
 }
 
 const readingStatisticsRepository = new ReadingStatisticsRepository();
