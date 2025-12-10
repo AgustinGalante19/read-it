@@ -1,7 +1,5 @@
 import { ReadingTimeline } from '@/components/ReadingTimeline';
 import { getCalendarData } from '@/services/ReadingStatisticsService';
-import { redirect } from 'next/navigation';
-import { getUserEmail } from '@/services/UserService';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -12,11 +10,6 @@ interface CalendarPageProps {
 
 export default async function CalendarPage(props: CalendarPageProps) {
   const searchParams = await props.searchParams;
-  const userEmail = await getUserEmail();
-  if (!userEmail) {
-    redirect('/api/auth/signin');
-  }
-
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth() + 1;
@@ -29,7 +22,6 @@ export default async function CalendarPage(props: CalendarPageProps) {
     : currentMonth;
 
   const { success, data } = await getCalendarData(month, year);
-
   const getPreviousMonthLink = () => {
     let prevMonth = month - 1;
     let prevYear = year;

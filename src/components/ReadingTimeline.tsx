@@ -39,7 +39,7 @@ export function ReadingTimeline({ data, month }: ReadingTimelineProps) {
   const start = startOfMonth(month);
   const end = endOfMonth(month);
   const days = eachDayOfInterval({ start, end });
-
+  console.log(data);
   const formatDuration = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
