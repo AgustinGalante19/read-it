@@ -32,12 +32,13 @@ interface TimelineData {
 
 interface ReadingTimelineProps {
   data: TimelineData[];
-  month: Date;
+  year: number;
+  month: number;
 }
 
-export function ReadingTimeline({ data, month }: ReadingTimelineProps) {
-  const start = startOfMonth(month);
-  const end = endOfMonth(month);
+export function ReadingTimeline({ data, year, month }: ReadingTimelineProps) {
+  const start = new Date(year, month - 1, 1);
+  const end = endOfMonth(start);
   const days = eachDayOfInterval({ start, end });
   console.log(data);
   const formatDuration = (seconds: number) => {
@@ -68,20 +69,18 @@ export function ReadingTimeline({ data, month }: ReadingTimelineProps) {
           {days.map((day) => {
             const dateStr = format(day, 'yyyy-MM-dd');
             const dayData = data.find((d) => d.date === dateStr);
-            const isCurrentMonth = isSameMonth(day, month);
+            const isCurrentMonth = isSameMonth(day, start);
 
             return (
               <div
                 key={day.toISOString()}
-                className={`bg-background p-1.5 min-h-[90px] flex flex-col gap-1 relative group transition-colors hover:bg-muted/30 ${
-                  !isCurrentMonth ? 'text-muted-foreground/30' : ''
-                }`}
+                className={`bg-background p-1.5 min-h-[90px] flex flex-col gap-1 relative group transition-colors hover:bg-muted/30 ${!isCurrentMonth ? 'text-muted-foreground/30' : ''
+                  }`}
               >
                 <div className='flex justify-between items-start z-10'>
                   <span
-                    className={`text-xs font-medium ${
-                      dayData ? 'text-primary' : 'text-muted-foreground'
-                    }`}
+                    className={`text-xs font-medium ${dayData ? 'text-primary' : 'text-muted-foreground'
+                      }`}
                   >
                     {format(day, 'd')}
                   </span>
@@ -102,11 +101,10 @@ export function ReadingTimeline({ data, month }: ReadingTimelineProps) {
                           <TooltipTrigger asChild>
                             <Link
                               href={`/book/${book.bookId}`}
-                              className={`relative w-10 h-14 bg-muted rounded-sm overflow-hidden hover:ring-2 ring-primary transition-all hover:scale-110 shadow-sm ${
-                                book.isFinishedEvent
-                                  ? 'ring-2 ring-emerald-500'
-                                  : ''
-                              }`}
+                              className={`relative w-10 h-14 bg-muted rounded-sm overflow-hidden hover:ring-2 ring-primary transition-all hover:scale-110 shadow-sm ${book.isFinishedEvent
+                                ? 'ring-2 ring-emerald-500'
+                                : ''
+                                }`}
                             >
                               <Image
                                 src={book.thumbnail_url || '/placeholder.svg'}

@@ -77,7 +77,7 @@ export default async function CalendarPage(props: CalendarPageProps) {
         </div>
       </div>
 
-      <ReadingTimeline data={data} month={new Date(year, month - 1)} />
+      <ReadingTimeline data={data} year={year} month={month} />
     </div>
   );
 }

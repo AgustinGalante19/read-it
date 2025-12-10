@@ -47,9 +47,8 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
       <header className='flex h-[320px] justify-center items-end relative w-full pb-4'>
         <div
           style={{
-            backgroundImage: `url(${
-              book.thumbnail_url || '/small-thumbnail-fallback.jpg'
-            })`,
+            backgroundImage: `url(${book.thumbnail_url || '/small-thumbnail-fallback.jpg'
+              })`,
           }}
           className={`absolute w-full h-full bg-center bg-cover bg-no-repeat filter blur-[10px] brightness-75 z-[-1] top-0 left-0 mask-image-[linear-gradient(#393b3b_90%,_transparent)]`}
         />
@@ -123,8 +122,8 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
                 dbBook.data.finish_date
                   ? new Date(dbBook.data.finish_date)
                   : dbBook.data.start_date
-                  ? new Date(dbBook.data.start_date)
-                  : new Date()
+                    ? new Date(dbBook.data.start_date)
+                    : new Date()
               }
             />
           </div>
@@ -159,7 +158,13 @@ async function BookTimeline({
     );
   }
 
-  return <ReadingTimeline data={data} month={defaultDate} />;
+  return (
+    <ReadingTimeline
+      data={data}
+      year={defaultDate.getFullYear()}
+      month={defaultDate.getMonth() + 1}
+    />
+  );
 }
 
 
