@@ -1,12 +1,22 @@
 import { ReadingTimeline } from '@/components/ReadingTimeline';
 import { getCalendarData } from '@/services/ReadingStatisticsService';
 import DateSelector from './components/date-selector';
-import { Calendar } from 'lucide-react';
+import { Book, Calendar } from 'lucide-react';
+
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 interface CalendarPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
-
 export default async function CalendarPage(props: CalendarPageProps) {
   const searchParams = await props.searchParams;
   const currentDate = new Date();
@@ -24,11 +34,22 @@ export default async function CalendarPage(props: CalendarPageProps) {
 
   if (!success || !data) {
     return (
-      <div className='container py-10'>
-        <div className='text-center text-red-500'>
-          Error loading calendar data.
-        </div>
-      </div>
+      <Empty>
+        <EmptyHeader>
+          <EmptyMedia variant='icon'>
+            <Book />
+          </EmptyMedia>
+          <EmptyTitle>Calendar not found</EmptyTitle>
+          <EmptyDescription>
+            We can&apos;t find a calendar for the selected month and year.
+          </EmptyDescription>
+        </EmptyHeader>
+        <EmptyContent>
+          <Button asChild>
+            <Link href='/search'>Search Books</Link>
+          </Button>
+        </EmptyContent>
+      </Empty>
     );
   }
 
