@@ -1,8 +1,7 @@
 import { ReadingTimeline } from '@/components/ReadingTimeline';
 import { getCalendarData } from '@/services/ReadingStatisticsService';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import DateSelector from './components/date-selector';
+import { Calendar } from 'lucide-react';
 
 interface CalendarPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -22,29 +21,6 @@ export default async function CalendarPage(props: CalendarPageProps) {
     : currentMonth;
 
   const { success, data } = await getCalendarData(month, year);
-  const getPreviousMonthLink = () => {
-    let prevMonth = month - 1;
-    let prevYear = year;
-    if (prevMonth === 0) {
-      prevMonth = 12;
-      prevYear -= 1;
-    }
-    return `/calendar?year=${prevYear}&month=${prevMonth}`;
-  };
-
-  const getNextMonthLink = () => {
-    let nextMonth = month + 1;
-    let nextYear = year;
-    if (nextMonth === 13) {
-      nextMonth = 1;
-      nextYear += 1;
-    }
-    return `/calendar?year=${nextYear}&month=${nextMonth}`;
-  };
-
-  const monthName = new Date(year, month - 1).toLocaleString('default', {
-    month: 'long',
-  });
 
   if (!success || !data) {
     return (
@@ -58,25 +34,17 @@ export default async function CalendarPage(props: CalendarPageProps) {
 
   return (
     <div className='container py-10'>
-      <div className='mb-8 flex items-center justify-between flex-wrap'>
-        <h1 className='text-3xl font-bold'>Reading Calendar</h1>
-        <div className='flex items-center gap-4'>
-          <Button variant='outline' size='icon' asChild>
-            <Link href={getPreviousMonthLink()}>
-              <ChevronLeft className='h-4 w-4' />
-            </Link>
-          </Button>
-          <span className='min-w-[150px] text-center text-lg font-medium capitalize'>
-            {monthName} {year}
-          </span>
-          <Button variant='outline' size='icon' asChild>
-            <Link href={getNextMonthLink()}>
-              <ChevronRight className='h-4 w-4' />
-            </Link>
-          </Button>
+      <div className='mb-2 flex flex-col gap-4 items-center justify-between'>
+        <div className='flex items-center gap-2 underline decoration-primary'>
+          <h1 className='text-3xl font-bold'>Reading Calendar</h1>
+          <Calendar />
         </div>
+        <p className='px-2 text-sm text-muted-foreground max-w-2xl'>
+          Navigate between months to see your daily reading progress, track
+          completed books, and explore your reading patterns.
+        </p>
+        <DateSelector year={year} month={month} />
       </div>
-
       <ReadingTimeline data={data} year={year} month={month} />
     </div>
   );

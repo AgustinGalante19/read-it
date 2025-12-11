@@ -3,7 +3,6 @@ import { saveReadingSessions } from '@/services/ReadingStatisticsService';
 
 export async function POST(request: Request) {
   const body = await request.json();
-  console.log(body);
 
   const { lastOpen, hash, totalReadPages, totalReadTime, readingSessions } =
     body;

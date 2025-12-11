@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  eachDayOfInterval,
-  endOfMonth,
-  format,
-  isSameMonth,
-  startOfMonth,
-} from 'date-fns';
+import { eachDayOfInterval, endOfMonth, format, isSameMonth } from 'date-fns';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
 import {
@@ -40,11 +34,14 @@ export function ReadingTimeline({ data, year, month }: ReadingTimelineProps) {
   const start = new Date(year, month - 1, 1);
   const end = endOfMonth(start);
   const days = eachDayOfInterval({ start, end });
-  console.log(data);
-  const formatDuration = (seconds: number) => {
+
+  const formatDuration = (seconds: number, short = false) => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
-    if (hours > 0) return `${hours}h ${minutes}m`;
+    if (hours > 0) {
+      if (short) return `+${hours}h`;
+      return `${hours}h ${minutes}m`;
+    }
     return `${minutes}m`;
   };
 
@@ -74,19 +71,23 @@ export function ReadingTimeline({ data, year, month }: ReadingTimelineProps) {
             return (
               <div
                 key={day.toISOString()}
-                className={`bg-background p-1.5 min-h-[90px] flex flex-col gap-1 relative group transition-colors hover:bg-muted/30 ${!isCurrentMonth ? 'text-muted-foreground/30' : ''
-                  }`}
+                className={`bg-background p-1.5 min-h-[90px] flex flex-col gap-1 relative group transition-colors hover:bg-muted/30 ${
+                  !isCurrentMonth ? 'text-muted-foreground/30' : ''
+                }`}
               >
                 <div className='flex justify-between items-start z-10'>
                   <span
-                    className={`text-xs font-medium ${dayData ? 'text-primary' : 'text-muted-foreground'
-                      }`}
+                    className={`text-xs font-medium ${
+                      dayData && dayData.totalDuration >= 500
+                        ? 'text-primary'
+                        : 'text-muted-foreground'
+                    }`}
                   >
                     {format(day, 'd')}
                   </span>
                   {dayData && dayData.totalDuration >= 600 && (
                     <span className='text-[10px] font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded-full'>
-                      {formatDuration(dayData.totalDuration)}
+                      {formatDuration(dayData.totalDuration, true)}
                     </span>
                   )}
                 </div>
@@ -101,10 +102,11 @@ export function ReadingTimeline({ data, year, month }: ReadingTimelineProps) {
                           <TooltipTrigger asChild>
                             <Link
                               href={`/book/${book.bookId}`}
-                              className={`relative w-10 h-14 bg-muted rounded-sm overflow-hidden hover:ring-2 ring-primary transition-all hover:scale-110 shadow-sm ${book.isFinishedEvent
-                                ? 'ring-2 ring-emerald-500'
-                                : ''
-                                }`}
+                              className={`relative w-10 h-14 bg-muted rounded-sm overflow-hidden hover:ring-2 ring-primary transition-all hover:scale-110 shadow-sm ${
+                                book.isFinishedEvent
+                                  ? 'ring-2 ring-emerald-500'
+                                  : ''
+                              }`}
                             >
                               <Image
                                 src={book.thumbnail_url || '/placeholder.svg'}

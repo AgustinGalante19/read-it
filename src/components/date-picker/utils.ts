@@ -192,10 +192,10 @@ export const isToday = (dayData: {
   return todayNormalized.getTime() === dayNormalized.getTime();
 };
 
-export const generateYears = () => {
+export const generateYears = (min = 25) => {
   const currentYear = new Date().getFullYear();
   const years = [];
-  for (let year = currentYear - 25; year <= currentYear; year++) {
+  for (let year = currentYear - min; year <= currentYear; year++) {
     years.push(year);
   }
   return years;
