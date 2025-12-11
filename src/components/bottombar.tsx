@@ -1,10 +1,11 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { ChartBar, Home, Library, Search } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ChartBar, Home, LibraryBig, Search } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React, { useMemo, useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 const LinkItem = ({
   label,
@@ -23,20 +24,56 @@ const LinkItem = ({
     <Link
       href={url}
       className={cn(
-        'flex flex-col items-center gap-2 px-4 py-2',
-        isActive && 'text-primary'
+        'flex flex-col items-center gap-2 px-4 py-2 transition-colors',
+        isActive ? 'text-primary' : 'text-muted-foreground'
       )}
     >
-      <div
+      <div className='relative px-5 py-1.5'>
+        {isActive && (
+          <motion.div
+            className='absolute inset-0 bg-secondary-container rounded-full'
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{
+              type: 'spring',
+              stiffness: 400,
+              damping: 25,
+            }}
+          />
+        )}
+        <motion.div
+          className='relative z-10'
+          animate={isActive ? { scale: [0.8, 1] } : { scale: 1 }}
+          transition={
+            isActive
+              ? {
+                  type: 'spring',
+                  stiffness: 400,
+                  damping: 25,
+                }
+              : {}
+          }
+        >
+          {React.isValidElement(icon)
+            ? React.cloneElement(icon as React.ReactElement<SVGElement>, {
+                className: cn(
+                  'transition-colors duration-300 w-6 h-6',
+                  isActive
+                    ? 'text-secondary-container-foreground'
+                    : 'text-muted-foreground'
+                ),
+              })
+            : icon}
+        </motion.div>
+      </div>
+      <span
         className={cn(
-          'py-1 px-4',
-          isActive &&
-            'rounded-full bg-secondary-container text-secondary-container-foreground'
+          'text-xs font-medium transition-colors',
+          isActive ? 'text-secondary-foreground' : 'text-muted-foreground/80'
         )}
       >
-        {icon}
-      </div>
-      <span className='text-secondary-foreground'>{label}</span>
+        {label}
+      </span>
     </Link>
   );
 };
@@ -69,14 +106,14 @@ function BottomBar() {
   return (
     <footer
       data-bottom-bar
-      className='fixed bottom-0 left-0 right-0 bg-surface/95 backdrop-blur-sm border-t border-border z-50'
+      className='fixed bottom-0 left-0 right-0 bg-surface/90 backdrop-blur-xl border-t border-border/50 z-50 pb-safe'
     >
-      <div className='max-w-md mx-auto flex justify-between'>
+      <nav className='max-w-md mx-auto flex justify-between items-center h-full pt-2 pb-2'>
         <LinkItem label='Home' icon={<Home />} url='/' />
         <LinkItem label='Search' icon={<Search />} url='/search' />
-        <LinkItem label='Library' icon={<Library />} url='/library' />
+        <LinkItem label='Library' icon={<LibraryBig />} url='/library' />
         <LinkItem label='Stats' icon={<ChartBar />} url='/stats' />
-      </div>
+      </nav>
     </footer>
   );
 }

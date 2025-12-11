@@ -56,7 +56,7 @@ export default async function CalendarPage(props: CalendarPageProps) {
   return (
     <div className='container py-10'>
       <div className='mb-2 flex flex-col gap-4 items-center justify-between'>
-        <div className='flex items-center gap-2 underline decoration-primary'>
+        <div className='flex items-center gap-2'>
           <h1 className='text-3xl font-bold'>Reading Calendar</h1>
           <Calendar />
         </div>
