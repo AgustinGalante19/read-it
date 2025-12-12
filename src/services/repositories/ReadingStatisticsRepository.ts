@@ -187,6 +187,19 @@ class ReadingStatisticsRepository {
       };
     });
   }
+
+  async getTotalReadTimeByHash(hash: string): Promise<number> {
+    const result = await turso.execute({
+      sql: `SELECT SUM(duration) as total_duration FROM readit_page_stat_data WHERE hash = ?`,
+      args: [hash],
+    });
+
+    if (result.rows.length === 0 || !result.rows[0].total_duration) {
+      return 0;
+    }
+
+    return Number(result.rows[0].total_duration);
+  }
 }
 
 const readingStatisticsRepository = new ReadingStatisticsRepository();

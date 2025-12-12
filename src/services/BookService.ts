@@ -6,6 +6,7 @@ import { Book, BookStatus } from '@/types/Book';
 import { Result } from '@/types/Result';
 import ReadDatesHelper from './helpers/ReadDatesHelper';
 import bookRepository from './repositories/BookRepository';
+import readingStatisticsRepository from './repositories/ReadingStatisticsRepository';
 
 async function revalidateBookPaths(): Promise<void> {
   revalidatePath('/book', 'layout');
@@ -114,6 +115,14 @@ export async function existsOnLibrary(
     await isAuthenticated(userEmail);
 
     const book = await bookRepository.findBookByGoogleId(googleId, userEmail);
+
+    if (book && book.book_hash) {
+      book.book_total_read_time =
+        await readingStatisticsRepository.getTotalReadTimeByHash(
+          book.book_hash
+        );
+    }
+
     return { success: true, data: book };
   } catch (error) {
     console.error('Error checking if book exists:', error);

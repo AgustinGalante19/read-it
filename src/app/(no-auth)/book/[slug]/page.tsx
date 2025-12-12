@@ -1,5 +1,5 @@
 import BackButton from '@/components/ui/back-button';
-import { BookText, Calendar, Minus } from 'lucide-react';
+import { BookText, Calendar, Calendar1, Clock, Minus } from 'lucide-react';
 import Image from 'next/image';
 import Categories from './components/categories';
 import LibraryActions from './components/library-actions';
@@ -41,14 +41,14 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
   const slug = (await params).slug;
   const book = await booksSearcher.getById(slug);
   const dbBook = await existsOnLibrary(book.google_id);
-
   return (
     <article>
       <header className='flex h-[320px] justify-center items-end relative w-full pb-4'>
         <div
           style={{
-            backgroundImage: `url(${book.thumbnail_url || '/small-thumbnail-fallback.jpg'
-              })`,
+            backgroundImage: `url(${
+              book.thumbnail_url || '/small-thumbnail-fallback.jpg'
+            })`,
           }}
           className={`absolute w-full h-full bg-center bg-cover bg-no-repeat filter blur-[10px] brightness-75 z-[-1] top-0 left-0 mask-image-[linear-gradient(#393b3b_90%,_transparent)]`}
         />
@@ -83,11 +83,23 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
           <div className='flex flex-col justify-start items-end gap-2'>
             <LibraryActions dbBook={dbBook.data} googleBook={book} />
             {dbBook.data && dbBook.data.finish_date && (
-              <span className='text-xs text-surface-foreground'>
+              <span className='text-xs text-surface-foreground flex items-center gap-1'>
                 Finished at:{' '}
                 {new Date(dbBook.data.finish_date).toLocaleDateString()}
+                <Calendar1 size={14} />
               </span>
             )}
+            {dbBook.data &&
+              typeof dbBook.data.book_total_read_time === 'number' &&
+              dbBook.data.book_total_read_time > 0 && (
+                <span className='text-xs text-surface-foreground flex items-center gap-1'>
+                  Time to read:{' '}
+                  {datesHelper.formatSecondsToDuration(
+                    dbBook.data.book_total_read_time
+                  )}
+                  <Clock size={14} />
+                </span>
+              )}
           </div>
         </div>
         <Categories categories={book.tags ? book.tags.split('/') : []} />
@@ -113,59 +125,9 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
         <BookDescription
           description={book?.description || '<p>Description not provided</p>'}
         />
-        {dbBook.data && (
-          <div className="mt-8">
-            <h3 className="mb-4 text-lg font-bold">Reading Activity</h3>
-            <BookTimeline
-              bookId={book.google_id}
-              defaultDate={
-                dbBook.data.finish_date
-                  ? new Date(dbBook.data.finish_date)
-                  : dbBook.data.start_date
-                    ? new Date(dbBook.data.start_date)
-                    : new Date()
-              }
-            />
-          </div>
-        )}
       </div>
     </article>
   );
 }
-
-
-import { getReadingTimeline } from '@/services/ReadingStatisticsService';
-import { ReadingTimeline } from '@/components/ReadingTimeline';
-
-async function BookTimeline({
-  bookId,
-  defaultDate,
-}: {
-  bookId: string;
-  defaultDate: Date;
-}) {
-  const { success, data } = await getReadingTimeline({
-    bookId,
-    month: defaultDate.getMonth() + 1,
-    year: defaultDate.getFullYear(),
-  });
-
-  if (!success || !data || data.length === 0) {
-    return (
-      <p className="text-sm text-muted-foreground">
-        No reading activity recorded for this month.
-      </p>
-    );
-  }
-
-  return (
-    <ReadingTimeline
-      data={data}
-      year={defaultDate.getFullYear()}
-      month={defaultDate.getMonth() + 1}
-    />
-  );
-}
-
 
 export default BookPerId;
