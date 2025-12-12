@@ -41,6 +41,7 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
   const slug = (await params).slug;
   const book = await booksSearcher.getById(slug);
   const dbBook = await existsOnLibrary(book.google_id);
+
   return (
     <article>
       <header className='flex h-[320px] justify-center items-end relative w-full pb-4'>
@@ -93,11 +94,25 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
               typeof dbBook.data.book_total_read_time === 'number' &&
               dbBook.data.book_total_read_time > 0 && (
                 <span className='text-xs text-surface-foreground flex items-center gap-1'>
-                  Time to read:{' '}
+                  Reading time:{' '}
                   {datesHelper.formatSecondsToDuration(
                     dbBook.data.book_total_read_time
                   )}
                   <Clock size={14} />
+                </span>
+              )}
+            {dbBook.data &&
+              dbBook.data.id_book_status === 2 &&
+              dbBook.data.book_total_read_pages &&
+              dbBook.data.page_count > 0 && (
+                <span className='text-xs text-surface-foreground flex items-center gap-1'>
+                  Progress:{' '}
+                  {Math.round(
+                    (dbBook.data.book_total_read_pages /
+                      dbBook.data.page_count) *
+                      100
+                  )}
+                  %
                 </span>
               )}
           </div>
