@@ -16,6 +16,7 @@ export interface Book {
   book_last_open?: string | null;
   book_total_read_time?: number | null;
   book_total_read_pages?: number | null;
+  book_type_id: number;
 }
 
 export interface BookPageStatData {

@@ -130,6 +130,24 @@ export async function existsOnLibrary(
   }
 }
 
+export async function updateBookType(
+  bookTypeId: number,
+  googleId: string
+): Promise<Result<string>> {
+  try {
+    const userEmail = await getUserEmail();
+    await isAuthenticated(userEmail);
+
+    await bookRepository.updateBookType(bookTypeId, googleId, userEmail);
+    await revalidateBookPaths();
+
+    return { success: true, data: 'Book type updated successfully' };
+  } catch (error) {
+    console.error('Error updating book type:', error);
+    return { success: false, error: 'Failed to update book type' };
+  }
+}
+
 export async function updateBookHash(
   hash: string,
   googleId: string,

@@ -24,7 +24,7 @@ function renderBookIcon(statusId: number) {
 }
 
 function LibraryActions({
-  dbBook: book,
+  dbBook,
   googleBook,
 }: {
   dbBook: (Book & { ds_status: string }) | null | undefined;
@@ -46,8 +46,8 @@ function LibraryActions({
       return toast.error('book not found');
     }
 
-    if (book?.id_book_status) {
-      await removeFromLibrary(book.google_id);
+    if (dbBook?.id_book_status) {
+      await removeFromLibrary(dbBook.google_id);
       return;
     }
 
@@ -60,11 +60,11 @@ function LibraryActions({
 
   return (
     <div className='flex items-center gap-1'>
-      {book ? (
+      {dbBook ? (
         <div className='flex items-center gap-1'>
           <Button onClick={handleAddBook} className='custom-radius1'>
-            {renderBookIcon(book.id_book_status)}
-            {book.ds_status}
+            {renderBookIcon(dbBook.id_book_status)}
+            {dbBook.ds_status}
           </Button>
           <Button onClick={() => setIsOpen(true)} className='custom-radius2'>
             <ChevronDown />
@@ -79,7 +79,7 @@ function LibraryActions({
       <BookMenu
         isOpen={isOpen}
         close={() => setIsOpen(false)}
-        book={book}
+        book={dbBook}
         googleBook={googleBook}
       />
     </div>

@@ -1,7 +1,15 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { BadgeCheck, Bookmark, BookOpen, Calendar, Trash } from 'lucide-react';
+import {
+  BadgeCheck,
+  BookIcon,
+  Bookmark,
+  BookOpen,
+  Calendar,
+  Tablet,
+  Trash,
+} from 'lucide-react';
 import { toast } from 'sonner';
 import { Book } from '@/types/Book';
 import { Button } from '@/components/ui/button';
@@ -13,10 +21,13 @@ import {
   DrawerTitle,
 } from '@/components/ui/drawer';
 import { Separator } from '@/components/ui/separator';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   removeFromLibrary,
   updateBookDates,
   updateBookStatus,
+  updateBookType,
 } from '@/services/BookService';
 import DatePicker from '@/components/date-picker';
 import { DateRange } from '@/components/date-picker/types';
@@ -77,6 +88,19 @@ function BookMenu({ isOpen, close, book, googleBook }: BookMenuProps) {
     toast.success(data);
     setIsWorking(false);
     setIsBookDateModalOpen(false);
+  };
+
+  const handleBookTypeValueChange = async (value: string) => {
+    if (!book) return;
+
+    updateBookType(parseInt(value), book.google_id)
+      .then(({ success, data }) => {
+        if (success) {
+          toast.success(data);
+        }
+      })
+      .catch(() => toast.error('Failed to update book type'));
+    close();
   };
 
   const handleRemove = async () => {
@@ -153,6 +177,28 @@ function BookMenu({ isOpen, close, book, googleBook }: BookMenuProps) {
               <Calendar />
               Dates read
             </Button>
+            <Separator />
+            <span className='text-sm'>Book Type</span>
+            <RadioGroup
+              defaultValue={book?.book_type_id?.toString()}
+              className='space-y-2'
+              onValueChange={handleBookTypeValueChange}
+            >
+              <div className='flex items-center space-x-2'>
+                <RadioGroupItem value='1' id='option-one' />
+                <Label htmlFor='option-one' className='flex items-center gap-1'>
+                  <Tablet size={16} />
+                  Electronic
+                </Label>
+              </div>
+              <div className='flex items-center space-x-2'>
+                <RadioGroupItem value='2' id='option-two' />
+                <Label htmlFor='option-two' className='flex items-center gap-1'>
+                  <BookIcon size={16} />
+                  Physical
+                </Label>
+              </div>
+            </RadioGroup>
           </div>
         </DrawerContent>
       </Drawer>

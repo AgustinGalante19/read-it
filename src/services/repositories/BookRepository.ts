@@ -76,8 +76,8 @@ class BookRepository {
 
   async createBook(bookData: Book): Promise<void> {
     await turso.execute({
-      sql: `INSERT INTO readit_books (google_id, title, thumbnail_url, authors, publish_date, page_count, tags, user_email, id_book_status) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      sql: `INSERT INTO readit_books (google_id, title, thumbnail_url, authors, publish_date, page_count, tags, user_email, id_book_status, book_type_id) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       args: [
         bookData.google_id,
         bookData.title,
@@ -88,6 +88,7 @@ class BookRepository {
         bookData.tags,
         bookData.user_email,
         1, // Default status: not read
+        1, // Default book type: electronic
       ],
     });
   }
@@ -178,6 +179,17 @@ class BookRepository {
                 book_last_open = ?
             WHERE book_hash = ?`,
       args: [totalReadPages, totalReadTime, lastOpen, hash],
+    });
+  }
+
+  async updateBookType(
+    bookTypeId: number,
+    googleId: string,
+    userEmail: string
+  ): Promise<void> {
+    await turso.execute({
+      sql: `UPDATE readit_books SET book_type_id = ? WHERE google_id = ? AND user_email = ?`,
+      args: [bookTypeId, googleId, userEmail],
     });
   }
 }

@@ -36,6 +36,7 @@ function mapBaseBookProperties(book: DatabaseRow): Book {
     book_total_read_pages: book.book_total_read_pages
       ? Number(book.book_total_read_pages)
       : null,
+    book_type_id: Number(book.book_type_id),
   };
 }
 
@@ -81,6 +82,7 @@ export function mapGoogleBookToBook(
       ? googleBook.volumeInfo.categories.join('/')
       : '',
     description: googleBook.volumeInfo.description,
+    book_type_id: 0,
   };
 }
 
