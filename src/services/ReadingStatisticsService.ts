@@ -18,10 +18,15 @@ interface ReadingSession {
  */
 export async function saveReadingSessions(
   hash: string,
-  sessions: ReadingSession[]
+  sessions: ReadingSession[],
+  deviceCode: string
 ): Promise<Result<string>> {
   try {
-    await readingStatisticsRepository.saveReadingSessions(hash, sessions);
+    await readingStatisticsRepository.saveReadingSessions(
+      hash,
+      sessions,
+      deviceCode
+    );
     return {
       success: true,
       data: `${sessions.length} reading sessions saved successfully`,
@@ -29,60 +34,6 @@ export async function saveReadingSessions(
   } catch (error) {
     console.error('Error saving reading sessions:', error);
     return { success: false, error: 'Failed to save reading sessions' };
-  }
-}
-
-/**
- * Obtiene las sesiones de lectura de un libro por su hash
- * @param hash - Hash del libro
- */
-export async function getReadingSessionsByHash(
-  hash: string
-): Promise<Result<ReadingSession[]>> {
-  try {
-    const sessions = await readingStatisticsRepository.getReadingSessionsByHash(
-      hash
-    );
-    return { success: true, data: sessions };
-  } catch (error) {
-    console.error('Error fetching reading sessions:', error);
-    return { success: false, error: 'Failed to fetch reading sessions' };
-  }
-}
-
-export async function getReadingTimeline(filters?: {
-  month?: number;
-  year?: number;
-  bookId?: string;
-}): Promise<
-  Result<
-    {
-      date: string;
-      totalDuration: number;
-      booksRead: number;
-      details: {
-        bookId: string;
-        title: string;
-        duration: number;
-        thumbnail_url?: string;
-      }[];
-    }[]
-  >
-> {
-  try {
-    const userEmail = await getUserEmail();
-    if (!userEmail) {
-      return { success: false, error: 'User not authenticated' };
-    }
-
-    const timeline = await readingStatisticsRepository.getDailyReadingStats(
-      userEmail,
-      filters
-    );
-    return { success: true, data: timeline };
-  } catch (error) {
-    console.error('Error fetching reading timeline:', error);
-    return { success: false, error: 'Failed to fetch reading timeline' };
   }
 }
 

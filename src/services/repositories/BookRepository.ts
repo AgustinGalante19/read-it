@@ -149,15 +149,21 @@ class BookRepository {
   async updateHash(
     googleId: string,
     hash: string,
-    pageCount: number
+    pageCount: number,
+    deviceCode: string
   ): Promise<void> {
     await turso.execute({
       sql: `
       UPDATE readit_books 
       SET book_hash = ?,
           page_count = ? 
-      WHERE google_id = ? AND user_email = ?`,
-      args: [hash, pageCount, googleId, 'agustin.19.galante@gmail.com'],
+      WHERE google_id = ? 
+      AND user_email = (
+        SELECT user_email 
+        FROM readit_user_devices 
+        WHERE device_code = ?
+      )`,
+      args: [hash, pageCount, googleId, deviceCode],
     });
   }
 
@@ -166,19 +172,26 @@ class BookRepository {
     totalReadTime,
     lastOpen,
     hash,
+    deviceCode,
   }: {
     totalReadPages: number;
     totalReadTime: number;
     lastOpen: string;
     hash: string;
+    deviceCode: string;
   }): Promise<void> {
     await turso.execute({
       sql: `UPDATE readit_books 
             SET book_total_read_pages = ?,
                 book_total_read_time =  ?,
                 book_last_open = ?
-            WHERE book_hash = ?`,
-      args: [totalReadPages, totalReadTime, lastOpen, hash],
+            WHERE book_hash = ? 
+            AND user_email = (
+              SELECT user_email 
+              FROM readit_user_devices 
+              WHERE device_code = ?
+            )`,
+      args: [totalReadPages, totalReadTime, lastOpen, hash, deviceCode],
     });
   }
 

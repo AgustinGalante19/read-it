@@ -7,14 +7,15 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { LogOut } from 'lucide-react';
+import { LogOut, ScreenShare } from 'lucide-react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 function Topbar() {
   const { data } = useSession();
+  const router = useRouter();
 
   return (
     <header className='w-full flex p-4 justify-between items-center container mx-auto'>
@@ -36,7 +37,10 @@ function Topbar() {
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => router.push('/devices')}>
+            <ScreenShare />
+            Devices
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={() => signOut()}>
             <LogOut />
             Sign Out

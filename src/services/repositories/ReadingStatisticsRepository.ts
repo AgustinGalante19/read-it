@@ -15,7 +15,8 @@ class ReadingStatisticsRepository {
    */
   async saveReadingSessions(
     hash: string,
-    sessions: ReadingSession[]
+    sessions: ReadingSession[],
+    deviceCode: string
   ): Promise<void> {
     if (!sessions || sessions.length === 0) {
       return;
@@ -28,9 +29,9 @@ class ReadingStatisticsRepository {
       // Verificar si ya existe la sesión
       const existing = await turso.execute({
         sql: `SELECT 1 FROM readit_page_stat_data 
-              WHERE hash = ? AND start_time = ? AND page = ? 
+              WHERE hash = ? AND start_time = ? AND page = ? AND user_device_code = ?
               LIMIT 1`,
-        args: [hash, startTimeTimestamp, session.page],
+        args: [hash, startTimeTimestamp, session.page, deviceCode],
       });
 
       if (existing.rows.length > 0) {
@@ -38,26 +39,28 @@ class ReadingStatisticsRepository {
         await turso.execute({
           sql: `UPDATE readit_page_stat_data 
                 SET duration = ?, total_pages = ?
-                WHERE hash = ? AND start_time = ? AND page = ?`,
+                WHERE hash = ? AND start_time = ? AND page = ? AND user_device_code = ?`,
           args: [
             session.duration,
             session.totalPages,
             hash,
             startTimeTimestamp,
             session.page,
+            deviceCode,
           ],
         });
       } else {
         // Insertar si no existe
         await turso.execute({
-          sql: `INSERT INTO readit_page_stat_data (hash, page, start_time, duration, total_pages)
-                VALUES (?, ?, ?, ?, ?)`,
+          sql: `INSERT INTO readit_page_stat_data (hash, page, start_time, duration, total_pages, user_device_code)
+                VALUES (?, ?, ?, ?, ?, ?)`,
           args: [
             hash,
             session.page,
             startTimeTimestamp,
             session.duration,
             session.totalPages,
+            deviceCode,
           ],
         });
       }
@@ -69,13 +72,17 @@ class ReadingStatisticsRepository {
    * @param hash - Hash del libro
    * @returns Array de sesiones de lectura
    */
-  async getReadingSessionsByHash(hash: string): Promise<ReadingSession[]> {
+  async getReadingSessionsByHash(
+    hash: string,
+    deviceCode: string
+  ): Promise<ReadingSession[]> {
     const result = await turso.execute({
       sql: `SELECT page, start_time, duration, total_pages 
             FROM readit_page_stat_data 
             WHERE hash = ? 
+            AND user_device_code = ?
             ORDER BY start_time DESC`,
-      args: [hash],
+      args: [hash, deviceCode],
     });
 
     return result.rows.map((row) => {
@@ -201,10 +208,22 @@ class ReadingStatisticsRepository {
     });
   }
 
-  async getTotalReadTimeByHash(hash: string): Promise<number> {
+  async getTotalReadTimeByHash(
+    hash: string,
+    userEmail: string
+  ): Promise<number> {
     const result = await turso.execute({
-      sql: `SELECT SUM(duration) as total_duration FROM readit_page_stat_data WHERE hash = ?`,
-      args: [hash],
+      sql: `
+            SELECT SUM(duration) as total_duration 
+            FROM readit_page_stat_data 
+            WHERE hash = ? 
+            AND user_device_code = (
+              SELECT device_code 
+              FROM readit_user_devices 
+              WHERE user_email = ?
+            )
+            `,
+      args: [hash, userEmail],
     });
 
     if (result.rows.length === 0 || !result.rows[0].total_duration) {

@@ -119,7 +119,8 @@ export async function existsOnLibrary(
     if (book && book.book_hash) {
       book.book_total_read_time =
         await readingStatisticsRepository.getTotalReadTimeByHash(
-          book.book_hash
+          book.book_hash,
+          userEmail
         );
     }
 
@@ -151,10 +152,11 @@ export async function updateBookType(
 export async function updateBookHash(
   hash: string,
   googleId: string,
-  pageCount: number
+  pageCount: number,
+  deviceCode: string
 ): Promise<Result<string>> {
   try {
-    await bookRepository.updateHash(googleId, hash, pageCount);
+    await bookRepository.updateHash(googleId, hash, pageCount, deviceCode);
     return { success: true, data: 'Book hash updated successfully' };
   } catch (error) {
     console.error('Error updating book hash:', error);
@@ -167,6 +169,7 @@ export async function recordLastReadingInfo(data: {
   totalReadTime: number;
   lastOpen: string;
   hash: string;
+  deviceCode: string;
 }): Promise<Result<string>> {
   try {
     await bookRepository.recordLastReadingInfo(data);
