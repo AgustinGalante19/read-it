@@ -98,6 +98,7 @@ export async function getCalendarData(
       details: {
         bookId: string;
         title: string;
+        start_date: string;
         duration: number;
         thumbnail_url?: string;
         isFinishedEvent?: boolean;
@@ -135,6 +136,7 @@ export async function getCalendarData(
         details: {
           bookId: string;
           title: string;
+          start_date: string;
           duration: number;
           thumbnail_url?: string;
           isFinishedEvent?: boolean;
@@ -183,6 +185,7 @@ export async function getCalendarData(
           title: book.title,
           duration: 0, // No duration for this specific event
           thumbnail_url: book.thumbnail_url,
+          start_date: book.start_date || '',
           isFinishedEvent: true,
         });
         // We don't increment booksRead or totalDuration necessarily if it's just a status update event

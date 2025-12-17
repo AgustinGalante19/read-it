@@ -78,12 +78,21 @@ class ReadingStatisticsRepository {
       args: [hash],
     });
 
-    return result.rows.map((row) => ({
-      page: row.page as number,
-      startTime: new Date(Number(row.start_time)).toISOString(),
-      duration: row.duration as number,
-      totalPages: row.total_pages as number,
-    }));
+    return result.rows.map((row) => {
+      const startTime = Number(row.start_time);
+      // If timestamp is less than 10 billion (approx year 2286 in seconds), treat as seconds
+      // Otherwise treat as milliseconds
+      const date = new Date(
+        startTime < 10000000000 ? startTime * 1000 : startTime
+      );
+
+      return {
+        page: row.page as number,
+        startTime: date.toISOString(),
+        duration: row.duration as number,
+        totalPages: row.total_pages as number,
+      };
+    });
   }
   /**
    * Obtiene las estadísticas diarias de lectura para un usuario
@@ -101,6 +110,7 @@ class ReadingStatisticsRepository {
       details: {
         bookId: string;
         title: string;
+        start_date: string;
         duration: number;
         thumbnail_url?: string;
       }[];
@@ -108,12 +118,13 @@ class ReadingStatisticsRepository {
   > {
     let query = `
         SELECT 
-          date(datetime(psd.start_time / 1000, 'unixepoch')) as reading_date,
+          date(datetime(CASE WHEN psd.start_time < 10000000000 THEN psd.start_time ELSE psd.start_time / 1000 END, 'unixepoch')) as reading_date,
           SUM(psd.duration) as total_duration,
           COUNT(DISTINCT b.google_id) as books_read,
           json_group_array(json_object(
             'bookId', b.google_id,
             'title', b.title,
+            'start_date', b.start_date,
             'duration', psd.duration,
             'thumbnail_url', b.thumbnail_url
           )) as details_json
@@ -127,10 +138,10 @@ class ReadingStatisticsRepository {
     if (filters?.year) {
       if (filters.month) {
         const monthStr = filters.month.toString().padStart(2, '0');
-        query += ` AND strftime('%Y-%m', datetime(psd.start_time / 1000, 'unixepoch')) = ?`;
+        query += ` AND strftime('%Y-%m', datetime(CASE WHEN psd.start_time < 10000000000 THEN psd.start_time ELSE psd.start_time / 1000 END, 'unixepoch')) = ?`;
         args.push(`${filters.year}-${monthStr}`);
       } else {
-        query += ` AND strftime('%Y', datetime(psd.start_time / 1000, 'unixepoch')) = ?`;
+        query += ` AND strftime('%Y', datetime(CASE WHEN psd.start_time < 10000000000 THEN psd.start_time ELSE psd.start_time / 1000 END, 'unixepoch')) = ?`;
         args.push(filters.year.toString());
       }
     }
@@ -155,6 +166,7 @@ class ReadingStatisticsRepository {
       const rawDetails = JSON.parse(row.details_json as string) as {
         bookId: string;
         title: string;
+        start_date: string;
         duration: number;
         thumbnail_url?: string;
       }[];
@@ -165,6 +177,7 @@ class ReadingStatisticsRepository {
         {
           bookId: string;
           title: string;
+          start_date: string;
           duration: number;
           thumbnail_url?: string;
         }

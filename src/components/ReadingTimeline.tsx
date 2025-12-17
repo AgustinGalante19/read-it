@@ -18,6 +18,7 @@ interface TimelineData {
   details: {
     bookId: string;
     title: string;
+    start_date?: string;
     duration: number;
     thumbnail_url?: string;
     isFinishedEvent?: boolean;
@@ -94,7 +95,16 @@ export function ReadingTimeline({ data, year, month }: ReadingTimelineProps) {
 
                 <div className='flex flex-wrap gap-1 mt-auto items-center justify-center'>
                   {dayData?.details.map((book) => {
-                    if (book.duration <= 500 && !book.isFinishedEvent)
+                    const isStartDate =
+                      book.start_date &&
+                      format(new Date(book.start_date), 'yyyy-MM-dd') ===
+                        dateStr;
+
+                    if (
+                      book.duration <= 500 &&
+                      !book.isFinishedEvent &&
+                      !isStartDate
+                    )
                       return null;
                     return (
                       <TooltipProvider key={book.bookId}>
@@ -105,6 +115,8 @@ export function ReadingTimeline({ data, year, month }: ReadingTimelineProps) {
                               className={`relative w-10 h-14 bg-muted rounded-sm overflow-hidden hover:ring-2 ring-primary transition-all hover:scale-110 shadow-sm ${
                                 book.isFinishedEvent
                                   ? 'ring-2 ring-emerald-500'
+                                  : isStartDate
+                                  ? 'ring-2 ring-blue-500'
                                   : ''
                               }`}
                             >
@@ -119,6 +131,13 @@ export function ReadingTimeline({ data, year, month }: ReadingTimelineProps) {
                                 <div className='absolute inset-x-0 bottom-0 top-1/2 bg-gradient-to-t from-emerald-500/80 to-transparent flex items-end justify-center pb-1'>
                                   <span className='text-[8px] font-bold text-white uppercase tracking-tighter'>
                                     Done
+                                  </span>
+                                </div>
+                              )}
+                              {isStartDate && !book.isFinishedEvent && (
+                                <div className='absolute inset-x-0 top-0 bottom-1/2 bg-gradient-to-b from-accent/80 to-transparent flex items-start justify-center pt-1'>
+                                  <span className='text-[8px] font-bold text-white uppercase tracking-tighter'>
+                                    Start
                                   </span>
                                 </div>
                               )}
@@ -137,6 +156,11 @@ export function ReadingTimeline({ data, year, month }: ReadingTimelineProps) {
                               {book.isFinishedEvent && (
                                 <span className='text-xs font-bold text-emerald-500'>
                                   Finished this day!
+                                </span>
+                              )}
+                              {isStartDate && (
+                                <span className='text-xs font-bold text-blue-500'>
+                                  Started this day!
                                 </span>
                               )}
                             </div>
