@@ -159,7 +159,7 @@ export function ReadingTimeline({ data, year, month }: ReadingTimelineProps) {
                                 </span>
                               )}
                               {isStartDate && (
-                                <span className='text-xs font-bold text-blue-500'>
+                                <span className='text-xs font-bold text-accent-foreground'>
                                   Started this day!
                                 </span>
                               )}
