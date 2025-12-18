@@ -32,6 +32,22 @@ class UserDevicesRepository {
 
     return { device_name, device_code };
   }
+
+  async deleteDevice(deviceId: number): Promise<void> {
+    await turso.execute({
+      sql: `UPDATE readit_page_stat_data
+            SET user_device_code = NULL
+            WHERE user_device_code = (
+              SELECT device_code FROM readit_user_devices WHERE id = ?
+            )`,
+      args: [deviceId],
+    });
+
+    await turso.execute({
+      sql: `DELETE FROM readit_user_devices WHERE id = ?`,
+      args: [deviceId],
+    });
+  }
 }
 
 export const userDevicesRepository = new UserDevicesRepository();

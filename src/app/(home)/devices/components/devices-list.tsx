@@ -20,13 +20,24 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { deleteUserDevice } from '@/services/UserDevicesService';
+import { toast } from 'sonner';
 
 function DevicesList({ devices }: { devices: UserDevices[] }) {
   const [isUserDeviceModalOpen, setIsUserDeviceModalOpen] = useState(false);
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
-  const handleDeleteDevice = (deviceId: number) => {
-    // Aquí puedes implementar la lógica para eliminar el dispositivo
-    console.log('Eliminar dispositivo:', deviceId);
+  const handleDeleteDevice = async (deviceId: number) => {
+    setIsDeleteLoading(true);
+    try {
+      const { success, data, error } = await deleteUserDevice(deviceId);
+      if (success) toast.success(data || 'Device deleted successfully');
+      else toast.error(error || 'Failed to delete device');
+    } catch {
+      toast.error('Failed to delete device');
+    } finally {
+      setIsDeleteLoading(false);
+    }
   };
 
   return (
@@ -65,6 +76,7 @@ function DevicesList({ devices }: { devices: UserDevices[] }) {
                   <Button
                     variant='ghost'
                     size='icon'
+                    isLoading={isDeleteLoading}
                     onClick={() => handleDeleteDevice(device.id)}
                     className='text-destructive hover:text-destructive hover:bg-destructive/10'
                   >

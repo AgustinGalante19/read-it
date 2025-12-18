@@ -42,3 +42,16 @@ export async function addUserDevice(
     return { success: false, error: 'Failed to add user device' };
   }
 }
+
+export async function deleteUserDevice(
+  deviceId: number
+): Promise<Result<string>> {
+  try {
+    await userDevicesRepository.deleteDevice(deviceId);
+    revalidatePath('/devices');
+    return { success: true, data: 'Device deleted successfully' };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: 'Failed to delete user device' };
+  }
+}
