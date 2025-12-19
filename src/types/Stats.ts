@@ -14,4 +14,10 @@ export default interface Stats {
   };
   page: { totalPageCount: number; lastMonthCount: number };
   last6MonthsReadedBooks: Book[];
+  activity: {
+    week: { pages: number; duration: number };
+    month: { pages: number; duration: number };
+  };
+  dailyActivity: { date: string; pages: number; duration: number }[];
+  hourlyActivity: { hour: number; pages: number; duration: number }[];
 }

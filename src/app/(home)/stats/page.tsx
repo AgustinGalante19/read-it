@@ -8,6 +8,9 @@ import TagsRadarChart from './components/tags-radar-chart';
 import { getMyStats } from '@/services/StatsService';
 import BooksGrid from './components/books-grid';
 
+import DailyActivityChart from './components/daily-activity-chart';
+import HourlyActivityChart from './components/hourly-activity-chart';
+
 async function StatsPage() {
   const { data } = await getMyStats();
   if (!data) {
@@ -22,8 +25,15 @@ async function StatsPage() {
         </h1>
         <ChartBar />
       </header>
-      <GeneralStats book={data.book} page={data.page} tag={data.tag} />
+      <GeneralStats
+        book={data.book}
+        page={data.page}
+        tag={data.tag}
+        activity={data.activity}
+      />
       <div className='px-4 space-y-4 mt-2'>
+        <DailyActivityChart data={data.dailyActivity} />
+        <HourlyActivityChart data={data.hourlyActivity} />
         <LastBooksGraph last6MonthsReadedBooks={data.last6MonthsReadedBooks} />
         <TagsRadarChart radarData={data.tag.radarData} />
         <BooksGrid books={data.book.totalBooks} />

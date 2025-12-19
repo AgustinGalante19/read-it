@@ -88,7 +88,7 @@ export default function LibraryContent() {
         <span className='text-2xl font-bold text-white flex items-center gap-2 underline decoration-primary'>
           My Library
         </span>
-        <Button onClick={() => router.push('/calendar')}>
+        <Button isLoading onClick={() => router.push('/calendar')}>
           <Calendar />
           Calendar
         </Button>

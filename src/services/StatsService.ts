@@ -8,6 +8,7 @@ import { getMyBooks } from './BookService';
 import StatsRepositoryV2 from './repositories/StatsRepository';
 import bookTagsHelper from './helpers/BookTagsHelper';
 import datesHelper from './helpers/DatesHelper';
+import readingStatisticsRepository from './repositories/ReadingStatisticsRepository';
 
 export async function getPageCount(status = 3): Promise<Result<number>> {
   try {
@@ -96,6 +97,7 @@ export async function getMyStats(): Promise<Result<Stats>> {
         error: 'Failed to fetch books from last 6 months',
       };
     }
+    const last6MonthsReadedBooks = last6MonthsResult.data;
 
     // Get books from last month
     const lastMonthResult = await getBooksFromDateRange(
@@ -135,13 +137,18 @@ export async function getMyStats(): Promise<Result<Stats>> {
     }
 
     const { data: totalBooks } = await getMyBooks(BookStatus.READ);
+    const activityStats = await readingStatisticsRepository.getAggregatedStats(
+      userEmail
+    );
+    const dailyActivity = await readingStatisticsRepository.getLast30DaysDailyStats(userEmail);
+    const hourlyActivity = await readingStatisticsRepository.getHourlyStats(userEmail);
 
     const stats: Stats = {
       book: {
         count: tagsResult.data.length,
         lastRead: {
-          title: last6MonthsResult.data[0]?.title || '',
-          googleId: last6MonthsResult.data[0]?.google_id || '',
+          title: last6MonthsReadedBooks[0]?.title || '',
+          googleId: last6MonthsReadedBooks[0]?.google_id || '',
         },
         totalBooks: totalBooks || [],
       },
@@ -154,11 +161,15 @@ export async function getMyStats(): Promise<Result<Stats>> {
         tagCount: unrepeatedTags.size,
         radarData: radarData,
       },
-      last6MonthsReadedBooks: last6MonthsResult.data,
+      last6MonthsReadedBooks: last6MonthsReadedBooks,
+      activity: activityStats,
+      dailyActivity,
+      hourlyActivity,
     };
 
     return { success: true, data: stats };
-  } catch {
+  } catch (e) {
+    console.error(e);
     return { success: false, error: 'Failed to fetch stats' };
   }
 }

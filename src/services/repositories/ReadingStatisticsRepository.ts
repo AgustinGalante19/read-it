@@ -232,6 +232,97 @@ class ReadingStatisticsRepository {
 
     return Number(result.rows[0].total_duration);
   }
+
+  async getAggregatedStats(userEmail: string): Promise<{
+    week: { pages: number; duration: number };
+    month: { pages: number; duration: number };
+  }> {
+    const result = await turso.execute({
+      sql: `
+        SELECT 
+          COUNT(CASE WHEN date(datetime(CASE WHEN psd.start_time < 10000000000 THEN psd.start_time ELSE psd.start_time / 1000 END, 'unixepoch')) >= date('now', '-7 days') THEN 1 END) as week_pages,
+          SUM(CASE WHEN date(datetime(CASE WHEN psd.start_time < 10000000000 THEN psd.start_time ELSE psd.start_time / 1000 END, 'unixepoch')) >= date('now', '-7 days') THEN psd.duration ELSE 0 END) as week_duration,
+          COUNT(CASE WHEN strftime('%Y-%m', datetime(CASE WHEN psd.start_time < 10000000000 THEN psd.start_time ELSE psd.start_time / 1000 END, 'unixepoch')) = strftime('%Y-%m', 'now') THEN 1 END) as month_pages,
+          SUM(CASE WHEN strftime('%Y-%m', datetime(CASE WHEN psd.start_time < 10000000000 THEN psd.start_time ELSE psd.start_time / 1000 END, 'unixepoch')) = strftime('%Y-%m', 'now') THEN psd.duration ELSE 0 END) as month_duration
+        FROM readit_page_stat_data psd
+        JOIN readit_books b ON psd.hash = b.book_hash
+        WHERE b.user_email = ?
+      `,
+      args: [userEmail],
+    });
+
+    const row = result.rows[0];
+    return {
+      week: {
+        pages: Number(row.week_pages) || 0,
+        duration: Number(row.week_duration) || 0,
+      },
+      month: {
+        pages: Number(row.month_pages) || 0,
+        duration: Number(row.month_duration) || 0,
+      },
+    };
+  }
+
+  async getLast30DaysDailyStats(userEmail: string): Promise<{ date: string; pages: number; duration: number }[]> {
+    const result = await turso.execute({
+      sql: `
+        SELECT 
+          date(datetime(CASE WHEN psd.start_time < 10000000000 THEN psd.start_time ELSE psd.start_time / 1000 END, 'unixepoch')) as reading_date,
+          COUNT(*) as pages,
+          SUM(psd.duration) as duration
+        FROM readit_page_stat_data psd
+        JOIN readit_books b ON psd.hash = b.book_hash
+        WHERE b.user_email = ? 
+        AND reading_date >= date('now', '-30 days')
+        GROUP BY reading_date
+        ORDER BY reading_date ASC
+      `,
+      args: [userEmail],
+    });
+
+    return result.rows.map(row => ({
+      date: row.reading_date as string,
+      pages: Number(row.pages),
+      duration: Number(row.duration)
+    }));
+  }
+
+  async getHourlyStats(userEmail: string): Promise<{ hour: number; pages: number; duration: number }[]> {
+    const result = await turso.execute({
+      sql: `
+          SELECT 
+            strftime('%H', datetime(CASE WHEN psd.start_time < 10000000000 THEN psd.start_time ELSE psd.start_time / 1000 END, 'unixepoch')) as reading_hour,
+            COUNT(*) as pages,
+            SUM(psd.duration) as duration
+          FROM readit_page_stat_data psd
+          JOIN readit_books b ON psd.hash = b.book_hash
+          WHERE b.user_email = ?
+          GROUP BY reading_hour
+          ORDER BY reading_hour ASC
+        `,
+      args: [userEmail],
+    });
+
+    // Initialize array with all 24 hours
+    const hoursMap = new Map<number, { hour: number; pages: number; duration: number }>();
+    for (let i = 0; i < 24; i++) {
+      hoursMap.set(i, { hour: i, pages: 0, duration: 0 });
+    }
+
+    result.rows.forEach(row => {
+      const hour = Number(row.reading_hour);
+      if (hoursMap.has(hour)) {
+        hoursMap.set(hour, {
+          hour,
+          pages: Number(row.pages),
+          duration: Number(row.duration)
+        });
+      }
+    });
+
+    return Array.from(hoursMap.values());
+  }
 }
 
 const readingStatisticsRepository = new ReadingStatisticsRepository();
