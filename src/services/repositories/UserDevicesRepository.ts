@@ -35,8 +35,8 @@ class UserDevicesRepository {
 
   async deleteDevice(deviceId: number): Promise<void> {
     await turso.execute({
-      sql: `UPDATE readit_page_stat_data
-            SET user_device_code = NULL
+      sql: `DELETE 
+            FROM readit_page_stat_data 
             WHERE user_device_code = (
               SELECT device_code FROM readit_user_devices WHERE id = ?
             )`,

@@ -22,21 +22,22 @@ import {
 } from '@/components/ui/card';
 import { deleteUserDevice } from '@/services/UserDevicesService';
 import { toast } from 'sonner';
+import ConfirmationModal from './confirmation-modal';
 
 function DevicesList({ devices }: { devices: UserDevices[] }) {
   const [isUserDeviceModalOpen, setIsUserDeviceModalOpen] = useState(false);
-  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
-  const handleDeleteDevice = async (deviceId: number) => {
-    setIsDeleteLoading(true);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedDeviceId, setSelectedDeviceId] = useState(0);
+
+  const handleDeleteDevice = async () => {
     try {
-      const { success, data, error } = await deleteUserDevice(deviceId);
+      setIsDeleteDialogOpen(false);
+      const { success, data, error } = await deleteUserDevice(selectedDeviceId);
       if (success) toast.success(data || 'Device deleted successfully');
       else toast.error(error || 'Failed to delete device');
     } catch {
       toast.error('Failed to delete device');
-    } finally {
-      setIsDeleteLoading(false);
     }
   };
 
@@ -76,8 +77,10 @@ function DevicesList({ devices }: { devices: UserDevices[] }) {
                   <Button
                     variant='ghost'
                     size='icon'
-                    isLoading={isDeleteLoading}
-                    onClick={() => handleDeleteDevice(device.id)}
+                    onClick={() => {
+                      setSelectedDeviceId(device.id);
+                      setIsDeleteDialogOpen(true);
+                    }}
                     className='text-destructive hover:text-destructive hover:bg-destructive/10'
                   >
                     <Trash2 className='size-4' />
@@ -98,6 +101,11 @@ function DevicesList({ devices }: { devices: UserDevices[] }) {
       <BookDeviceModal
         open={isUserDeviceModalOpen}
         onOpenChange={() => setIsUserDeviceModalOpen(false)}
+      />
+      <ConfirmationModal
+        open={isDeleteDialogOpen}
+        onOpenChange={() => setIsDeleteDialogOpen(false)}
+        onSubmit={handleDeleteDevice}
       />
     </div>
   );
