@@ -1,4 +1,4 @@
-'use server';
+export const dynamic = 'force-dynamic';
 
 import GeneralStats from './components/general-stats';
 import { ChartBar } from 'lucide-react';

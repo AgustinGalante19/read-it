@@ -1,3 +1,6 @@
+export const dynamic = 'force-dynamic';
+
+
 import { ReadingTimeline } from '@/components/ReadingTimeline';
 import { getCalendarData } from '@/services/ReadingStatisticsService';
 import DateSelector from './components/date-selector';
