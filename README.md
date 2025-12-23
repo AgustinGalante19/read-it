@@ -91,7 +91,7 @@ The app is designed with a mobile-first approach, featuring a clean bottom navig
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## �️ Getting Started
+## 🧑‍💻 Getting Started
 
 ### Prerequisites
 
@@ -132,6 +132,6 @@ pnpm dev
 
 6. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-## �📄 License
+## 📄 License
 
 This project is open source and available under the [MIT License](LICENSE).
