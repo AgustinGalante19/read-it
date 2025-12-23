@@ -13,8 +13,8 @@ Your personal reading hub that displays:
 - **Completed Books**: Your reading achievements
 - **All Books**: Complete library overview
 
-<img width="850" height="1630" alt="read-it-blush vercel app_HOME" src="![Screenshot_20251223_122436_Chrome](https://github.com/user-attachments/assets/d926cf62-581b-4445-8663-06614add065a)
-" />
+![Screenshot_20251223_122436_Chrome](https://github.com/user-attachments/assets/b6dd0de7-e52d-4ba9-bd2a-52ccf60525c7)
+
 
 ### 🔍 Search & Discovery
 
@@ -25,8 +25,8 @@ Powerful book search functionality:
 - Detailed book information and previews
 - Easy addition to your personal library
 
-<img width="850" height="1630" alt="read-it-blush vercel app_search_" src="![Screenshot_20251223_122447_Chrome](https://github.com/user-attachments/assets/4452c574-59c6-448f-a2d6-2ac1a1e13159)
-" />
+![Screenshot_20251223_122447_Chrome](https://github.com/user-attachments/assets/f04e1a58-8f10-4510-8df7-56b2063abb4f)
+
 
 ### 📘 Book Details
 
@@ -38,8 +38,8 @@ Complete view of each book's information:
 - Tags and categories
 - Actions to manage your reading
 
-<img width="850" height="1630" alt="book-details" src="![Screenshot_20251223_124041_Chrome](https://github.com/user-attachments/assets/69c28345-598a-4cb3-a73e-f57ec83b3d0d)
-" />
+![Screenshot_20251223_124041_Chrome](https://github.com/user-attachments/assets/36673349-b3c1-430c-9360-f95049d184e9)
+
 
 ### 📖 Library Management
 
@@ -50,8 +50,8 @@ Comprehensive library organization:
 - Detailed book information and management
 - Reading progress tracking
 
-<img width="850" height="1630" alt="read-it-blush vercel app_library" src="![Screenshot_20251223_122505_Chrome](https://github.com/user-attachments/assets/8696c0f0-9131-4335-a42f-27e1b384dd9c)
-" />
+![Screenshot_20251223_122505_Chrome](https://github.com/user-attachments/assets/53e5a545-803b-4977-a258-783238bbb7a1)
+
 
 ### 📊 Reading Statistics
 
@@ -62,7 +62,8 @@ Insightful analytics about your reading habits:
 - Genre/tag analysis with radar charts
 - Visual book grid and timeline
 
-<img width="850" height="1718" alt="read-it-blush vercel app_" src="https://github.com/user-attachments/assets/43136223-db1b-4c81-939b-eeb43e72bf0c" />
+![Screenshot_20251223_122536_Chrome](https://github.com/user-attachments/assets/0d1a10f7-9dc8-4f7e-8972-7304166cccd0)
+
 
 ### 📅 Reading Calendar
 
@@ -74,9 +75,8 @@ Visual representation of your reading journey:
 
 > **Note**: Supports automatic synchronization with [Read-It KOReader plugin](https://github.com/AgustinGalante19/readit.koplugin) for seamless reading progress tracking across devices.
 
+![Screenshot_20251223_124008_Chrome](https://github.com/user-attachments/assets/c7904372-4a28-463b-9eee-335fec7263a3)
 
-<img width="850" height="1718" alt="localhost_3000_calendar" src="![Screenshot_20251223_124008_Chrome](https://github.com/user-attachments/assets/cda7bec5-e870-4c25-8fd8-53be40914419)
-" />
 
 ## 🚀 Tech Stack
 
