@@ -7,11 +7,13 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { LogOut, ScreenShare } from 'lucide-react';
+import { Github, LogOut, ScreenShare } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 function Topbar() {
   const { data } = useSession();
@@ -44,6 +46,16 @@ function Topbar() {
           <DropdownMenuItem onClick={() => signOut()}>
             <LogOut />
             Sign Out
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <Link
+              href={'https://github.com/AgustinGalante19/read-it'}
+              target='_blank'
+            >
+              <Github />
+              Contribute
+            </Link>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
