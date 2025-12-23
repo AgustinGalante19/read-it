@@ -15,7 +15,6 @@ Your personal reading hub that displays:
 
 ![Screenshot_20251223_122436_Chrome](https://github.com/user-attachments/assets/b6dd0de7-e52d-4ba9-bd2a-52ccf60525c7)
 
-
 ### 🔍 Search & Discovery
 
 Powerful book search functionality:
@@ -26,7 +25,6 @@ Powerful book search functionality:
 - Easy addition to your personal library
 
 ![Screenshot_20251223_122447_Chrome](https://github.com/user-attachments/assets/f04e1a58-8f10-4510-8df7-56b2063abb4f)
-
 
 ### 📘 Book Details
 
@@ -40,7 +38,6 @@ Complete view of each book's information:
 
 ![Screenshot_20251223_124041_Chrome](https://github.com/user-attachments/assets/36673349-b3c1-430c-9360-f95049d184e9)
 
-
 ### 📖 Library Management
 
 Comprehensive library organization:
@@ -51,7 +48,6 @@ Comprehensive library organization:
 - Reading progress tracking
 
 ![Screenshot_20251223_122505_Chrome](https://github.com/user-attachments/assets/53e5a545-803b-4977-a258-783238bbb7a1)
-
 
 ### 📊 Reading Statistics
 
@@ -64,7 +60,6 @@ Insightful analytics about your reading habits:
 
 ![Screenshot_20251223_122536_Chrome](https://github.com/user-attachments/assets/0d1a10f7-9dc8-4f7e-8972-7304166cccd0)
 
-
 ### 📅 Reading Calendar
 
 Visual representation of your reading journey:
@@ -76,7 +71,6 @@ Visual representation of your reading journey:
 > **Note**: Supports automatic synchronization with [Read-It KOReader plugin](https://github.com/AgustinGalante19/readit.koplugin) for seamless reading progress tracking across devices.
 
 ![Screenshot_20251223_124008_Chrome](https://github.com/user-attachments/assets/c7904372-4a28-463b-9eee-335fec7263a3)
-
 
 ## 🚀 Tech Stack
 
@@ -97,6 +91,47 @@ The app is designed with a mobile-first approach, featuring a clean bottom navig
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## 📄 License
+## �️ Getting Started
+
+### Prerequisites
+
+- Node.js 18+ installed
+- pnpm package manager
+- Turso database account
+
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/AgustinGalante19/read-it.git
+cd read-it
+```
+
+2. Install dependencies:
+
+```bash
+pnpm install
+```
+
+3. Set up environment variables:
+
+   - Copy `.env.example` to `.env.local`
+   - Fill in the required environment variables (database credentials, authentication keys, etc.)
+
+4. Set up the database:
+
+   - The SQL script to create the necessary tables is located in `scripts/tables.sql`
+   - Run this script in your Turso database
+
+5. Run the development server:
+
+```bash
+pnpm dev
+```
+
+6. Open [http://localhost:3000](http://localhost:3000) in your browser
+
+## �📄 License
 
 This project is open source and available under the [MIT License](LICENSE).
