@@ -8,6 +8,13 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import type { DatePickerProps, DateRange } from './types';
 import { MONTHNAMES } from './constants';
 import {
@@ -97,7 +104,7 @@ function DatePicker({
     [currentMonth]
   );
 
-  const yearOptions = useMemo(() => generateYears(), []);
+  const yearOptions = useMemo(() => generateYears(10), []);
 
   const goToPreviousMonth = () => {
     setCurrentMonth(
@@ -168,36 +175,36 @@ function DatePicker({
         {/* Month picker */}
         <div className='flex items-center justify-between'>
           <div className='flex items-center gap-2'>
-            <select
-              className='font-medium text-sm border border-secondary-container py-1 px-2 rounded-md text-secondary-foreground  outline-none cursor-pointer'
-              value={currentMonth.getMonth()}
-              onChange={(e) => handleMonthChange(parseInt(e.target.value))}
+            <Select
+              value={currentMonth.getMonth().toString()}
+              onValueChange={(value) => handleMonthChange(parseInt(value))}
             >
-              {MONTHNAMES.map((month, index) => (
-                <option
-                  key={index}
-                  value={index}
-                  className='bg-secondary-container text-secondary-container-foreground'
-                >
-                  {month}
-                </option>
-              ))}
-            </select>
-            <select
-              className='font-medium text-sm border border-secondary-container py-1 px-2 rounded-md text-secondary-foreground outline-none cursor-pointer'
-              value={currentMonth.getFullYear()}
-              onChange={(e) => handleYearChange(parseInt(e.target.value))}
+              <SelectTrigger size='sm' className='w-fit'>
+                <SelectValue placeholder='Select month' />
+              </SelectTrigger>
+              <SelectContent>
+                {MONTHNAMES.map((month, index) => (
+                  <SelectItem key={index} value={index.toString()}>
+                    {month}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select
+              value={currentMonth.getFullYear().toString()}
+              onValueChange={(value) => handleYearChange(parseInt(value))}
             >
-              {yearOptions.map((year) => (
-                <option
-                  key={year}
-                  value={year}
-                  className='bg-secondary-container text-secondary-container-foreground'
-                >
-                  {year}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger size='sm' className='w-fit'>
+                <SelectValue placeholder='Select year' />
+              </SelectTrigger>
+              <SelectContent>
+                {yearOptions.map((year) => (
+                  <SelectItem key={year} value={year.toString()}>
+                    {year}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className='flex items-center gap-2'>
             <Button variant={'ghost'} size={'icon'} onClick={goToPreviousMonth}>
