@@ -1,13 +1,19 @@
 import { turso } from '@/services/database/turso';
 import { BookStatus } from '@/types/Book';
 import { NextRequest } from 'next/server';
+import { validateDeviceCode } from '@/lib/validateDevice';
 
 export async function GET(
   _req: NextRequest,
   ctx: RouteContext<'/api/koreader/books/[deviceCode]'>
 ) {
   const { deviceCode } = await ctx.params;
-  console.log({ deviceCode });
+
+  const validation = await validateDeviceCode(deviceCode);
+  if (!validation.valid) {
+    return Response.json({ error: validation.error }, { status: 401 });
+  }
+
   const { rows } = await turso.execute({
     sql: `
           SELECT b.id, b.google_id as googleId, CONCAT(b.title,' - ', b.authors) as bookInfo 

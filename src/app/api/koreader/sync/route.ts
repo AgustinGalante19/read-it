@@ -1,5 +1,6 @@
 import { recordLastReadingInfo } from '@/services/BookService';
 import { saveReadingSessions } from '@/services/ReadingStatisticsService';
+import { validateDeviceCode } from '@/lib/validateDevice';
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -13,7 +14,11 @@ export async function POST(request: Request) {
     deviceCode,
   } = body;
 
-  // Actualizar información general del libro
+  const validation = await validateDeviceCode(deviceCode);
+  if (!validation.valid) {
+    return Response.json({ error: validation.error }, { status: 401 });
+  }
+
   await recordLastReadingInfo({
     totalReadPages: totalReadPages,
     totalReadTime: totalReadTime,
@@ -21,8 +26,7 @@ export async function POST(request: Request) {
     hash,
     deviceCode,
   });
-  console.log(readingSessions);
-  // Guardar sesiones de lectura
+
   if (readingSessions && readingSessions.length > 0) {
     await saveReadingSessions(hash, readingSessions, deviceCode);
   }
