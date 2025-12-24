@@ -9,6 +9,10 @@ import { toast } from 'sonner';
 import BookMenu from './book-menu';
 import { useState } from 'react';
 import { addBook, removeFromLibrary } from '@/services/BookService';
+import {
+  ButtonGroup,
+  ButtonGroupSeparator,
+} from '@/components/ui/button-group';
 
 function renderBookIcon(statusId: number) {
   switch (statusId) {
@@ -61,15 +65,16 @@ function LibraryActions({
   return (
     <div className='flex items-center gap-1'>
       {dbBook ? (
-        <div className='flex items-center gap-1'>
-          <Button onClick={handleAddBook} className='custom-radius1'>
+        <ButtonGroup>
+          <Button onClick={handleAddBook}>
             {renderBookIcon(dbBook.id_book_status)}
             {dbBook.ds_status}
           </Button>
-          <Button onClick={() => setIsOpen(true)} className='custom-radius2'>
+          <ButtonGroupSeparator />
+          <Button onClick={() => setIsOpen(true)}>
             <ChevronDown />
           </Button>
-        </div>
+        </ButtonGroup>
       ) : (
         <Button onClick={handleAddBook}>
           <Bookmark />
