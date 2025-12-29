@@ -21,3 +21,14 @@ export default interface Stats {
   dailyActivity: { date: string; pages: number; duration: number }[];
   hourlyActivity: { hour: number; pages: number; duration: number }[];
 }
+
+export interface YearlyRecap {
+  year: number;
+  totalBooks: number;
+  totalPages: number;
+  books: Book[];
+  topGenres: { tag: string; count: number }[];
+  longestBook?: Book;
+  shortestBook?: Book;
+  mostActiveMonth: { month: string; count: number };
+}
