@@ -20,7 +20,7 @@ function BookCard({
   const imageSize = useMemo(() => {
     return mode === 'horizontal'
       ? { width: 53, height: 77 }
-      : { width: 128, height: 205 };
+      : { width: 150, height: 230 };
   }, [mode]);
 
   return (
@@ -30,7 +30,7 @@ function BookCard({
           'my-2 text-white',
           mode === 'horizontal'
             ? 'flex max-h-20 w-[244px]'
-            : 'flex flex-col h-64 w-32'
+            : 'flex flex-col w-[144px]'
         )}
       >
         <Image
@@ -57,7 +57,10 @@ function BookCard({
             {book.authors}
           </span>
           <div
-            className={cn('flex', mode === 'horizontal' ? 'gap-4' : 'gap-1')}
+            className={cn(
+              'flex',
+              mode === 'horizontal' ? 'gap-4' : 'justify-between'
+            )}
           >
             <div className='flex gap-1 items-center text-muted-foreground'>
               <Calendar size={14} />
