@@ -1,7 +1,6 @@
 'use client';
 
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { signOut, useSession } from 'next-auth/react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +13,8 @@ import { Github, LogOut, ScreenShare } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { signOut } from 'better-auth/api';
+import { useSession } from '@/lib/auth/auth-client';
 
 function Topbar() {
   const { data } = useSession();
