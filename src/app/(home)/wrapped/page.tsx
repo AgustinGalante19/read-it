@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { getYearlyRecap } from '@/services/StatsService';
 import WrappedStory from './components/wrapped-story';
 import { ArrowLeft } from 'lucide-react';
