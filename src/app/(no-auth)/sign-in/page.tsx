@@ -2,7 +2,7 @@
 
 import GoogleIcon from '@/components/icons/google';
 import { Button } from '@/components/ui/button';
-import { signIn, useSession } from 'next-auth/react';
+import { signIn, useSession } from '@/lib/auth/auth-client';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -31,7 +31,7 @@ function SignInPage() {
             className='w-full'
             onClick={async () => {
               setIsLoading(true);
-              await signIn('google');
+              await signIn.social({ provider: 'google' });
               setIsLoading(false);
               push('/');
             }}

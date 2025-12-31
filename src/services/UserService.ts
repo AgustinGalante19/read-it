@@ -1,10 +1,12 @@
 'use server';
 
-import { getServerSession } from 'next-auth';
+import { auth } from '@/lib/auth/auth-instance';
+import { headers } from 'next/headers';
 
 export async function getUserEmail() {
-  const session = await getServerSession();
-
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
   return session?.user?.email as string;
 }
 

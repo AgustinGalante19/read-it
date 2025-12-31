@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
 import {
   Dialog,
   DialogContent,
@@ -13,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { addUserDevice } from '@/services/UserDevicesService';
 import { toast } from 'sonner';
+import { useSession } from '@/lib/auth/auth-client';
 
 interface BookDeviceModalProps {
   open: boolean;
@@ -38,6 +38,7 @@ export function BookDeviceModal({ open, onOpenChange }: BookDeviceModalProps) {
 
   useEffect(() => {
     if (open) {
+      //TODO: FIX THIS
       setCode(generateRandomCode());
       setName('');
     }

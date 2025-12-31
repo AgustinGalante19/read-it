@@ -3,7 +3,6 @@
 import { Button } from '@/components/ui/button';
 import { Book } from '@/types/Book';
 import { BadgeCheck, Bookmark, BookOpen, ChevronDown } from 'lucide-react';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import BookMenu from './book-menu';
@@ -13,6 +12,7 @@ import {
   ButtonGroup,
   ButtonGroupSeparator,
 } from '@/components/ui/button-group';
+import { useSession } from '@/lib/auth/auth-client';
 
 function renderBookIcon(statusId: number) {
   switch (statusId) {
@@ -34,14 +34,14 @@ function LibraryActions({
   dbBook: (Book & { ds_status: string }) | null | undefined;
   googleBook: Book | null;
 }) {
-  const { status: sessionStatus } = useSession();
+  const { data: sessionData } = useSession();
 
   const { push } = useRouter();
 
   const [isOpen, setIsOpen] = useState(false);
 
   const handleAddBook = async () => {
-    if (sessionStatus === 'unauthenticated') {
+    if (!sessionData) {
       push('/sign-in');
       return;
     }
