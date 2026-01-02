@@ -36,6 +36,29 @@ const truncateLabel = (text: string, maxLength: number = 10): string => {
   return text.substring(0, maxLength) + '...';
 };
 
+const CustomTooltip = ({
+  active,
+  payload,
+}: {
+  active?: boolean;
+  payload?: unknown[];
+}) => {
+  if (active && payload && payload.length) {
+    const data = (
+      payload[0] as { payload: TagRadarData & { originalTag: string } }
+    ).payload;
+    return (
+      <div className='rounded border bg-background p-2 shadow-md'>
+        <p className='font-medium'>{data.originalTag}</p>
+        <p className='text-sm text-muted-foreground'>
+          {data.count} book{data.count !== 1 ? 's' : ''}
+        </p>
+      </div>
+    );
+  }
+  return null;
+};
+
 function TagsRadarChart({ radarData }: { radarData: TagRadarData[] }) {
   if (!radarData || radarData.length === 0) {
     return (
@@ -61,29 +84,6 @@ function TagsRadarChart({ radarData }: { radarData: TagRadarData[] }) {
     tag: truncateLabel(item.tag, 9),
     originalTag: item.tag,
   }));
-
-  const CustomTooltip = ({
-    active,
-    payload,
-  }: {
-    active?: boolean;
-    payload?: unknown[];
-  }) => {
-    if (active && payload && payload.length) {
-      const data = (
-        payload[0] as { payload: TagRadarData & { originalTag: string } }
-      ).payload;
-      return (
-        <div className='rounded border bg-background p-2 shadow-md'>
-          <p className='font-medium'>{data.originalTag}</p>
-          <p className='text-sm text-muted-foreground'>
-            {data.count} book{data.count !== 1 ? 's' : ''}
-          </p>
-        </div>
-      );
-    }
-    return null;
-  };
 
   return (
     <section>
