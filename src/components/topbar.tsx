@@ -13,8 +13,7 @@ import { Github, LogOut, ScreenShare } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { signOut } from 'better-auth/api';
-import { useSession } from '@/lib/auth/auth-client';
+import { authClient, useSession } from '@/lib/auth/auth-client';
 
 function Topbar() {
   const { data } = useSession();
@@ -44,7 +43,12 @@ function Topbar() {
             <ScreenShare />
             Devices
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => signOut()}>
+          <DropdownMenuItem
+            onClick={async () => {
+              await authClient.signOut();
+              router.push('/sign-in');
+            }}
+          >
             <LogOut />
             Sign Out
           </DropdownMenuItem>
