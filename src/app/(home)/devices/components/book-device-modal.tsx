@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -32,17 +32,13 @@ function generateRandomCode(length: number = 8): string {
 export function BookDeviceModal({ open, onOpenChange }: BookDeviceModalProps) {
   const { data: session } = useSession();
 
-  const [code, setCode] = useState('');
+  const code = useMemo(() => {
+    if (open) return generateRandomCode();
+    return '';
+  }, [open]);
+
   const [name, setName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    if (open) {
-      //TODO: FIX THIS
-      setCode(generateRandomCode());
-      setName('');
-    }
-  }, [open]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

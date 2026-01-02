@@ -45,10 +45,11 @@ function DatePicker({
   isWorking?: boolean;
 }) {
   const [dateRange, setDateRange] = useState<DateRange>(
-    defaultValue || {
-      from: undefined,
-      to: undefined,
-    }
+    () =>
+      defaultValue || {
+        from: undefined,
+        to: undefined,
+      }
   );
   const [currentMonth, setCurrentMonth] = useState(() => {
     // Si hay un defaultValue, inicializar el mes actual con el mes de 'from' o 'to'
@@ -67,37 +68,6 @@ function DatePicker({
     }
     return new Date();
   });
-
-  // Efecto para actualizar el dateRange cuando cambie defaultValue o cuando se abra el modal
-  useEffect(() => {
-    if (isOpen) {
-      if (defaultValue) {
-        setDateRange(defaultValue);
-        // También actualizar el mes actual si hay una fecha 'from'
-        if (defaultValue.from) {
-          setCurrentMonth(
-            new Date(
-              defaultValue.from.getFullYear(),
-              defaultValue.from.getMonth(),
-              1
-            )
-          );
-        } else if (defaultValue.to) {
-          setCurrentMonth(
-            new Date(
-              defaultValue.to.getFullYear(),
-              defaultValue.to.getMonth(),
-              1
-            )
-          );
-        }
-      } else {
-        // Si no hay defaultValue, resetear al estado inicial
-        setDateRange({ from: undefined, to: undefined });
-        setCurrentMonth(new Date());
-      }
-    }
-  }, [defaultValue, isOpen]);
 
   const calendarDays = useMemo(
     () => generateCalendarDays(currentMonth),
