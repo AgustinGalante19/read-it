@@ -108,6 +108,9 @@ importers:
       '@eslint/eslintrc':
         specifier: ^3.3.1
         version: 3.3.3
+      '@next/eslint-plugin-next':
+        specifier: ^16.1.1
+        version: 16.1.1
       '@tailwindcss/postcss':
         specifier: ^4.1.12
         version: 4.1.12
@@ -126,6 +129,9 @@ importers:
       eslint-config-next:
         specifier: 16.1.0
         version: 16.1.0(@typescript-eslint/parser@8.50.0(eslint@9.39.2(jiti@2.5.1))(typescript@5.8.3))(eslint@9.39.2(jiti@2.5.1))(typescript@5.8.3)
+      eslint-config-prettier:
+        specifier: ^10.1.8
+        version: 10.1.8(eslint@9.39.2(jiti@2.5.1))
       postcss:
         specifier: ^8
         version: 8.5.3
@@ -581,6 +587,9 @@ packages:
 
   '@next/eslint-plugin-next@16.1.0':
     resolution: {integrity: sha512-sooC/k0LCF4/jLXYHpgfzJot04lZQqsttn8XJpTguP8N3GhqXN3wSkh68no2OcZzS/qeGwKDFTqhZ8WofdXmmQ==}
+
+  '@next/eslint-plugin-next@16.1.1':
+    resolution: {integrity: sha512-Ovb/6TuLKbE1UiPcg0p39Ke3puyTCIKN9hGbNItmpQsp+WX3qrjO3WaMVSi6JHr9X1NrmthqIguVHodMJbh/dw==}
 
   '@next/swc-darwin-arm64@16.1.1':
     resolution: {integrity: sha512-JS3m42ifsVSJjSTzh27nW+Igfha3NdBOFScr9C80hHGrWx55pTrVL23RJbqir7k7/15SKlrLHhh/MQzqBBYrQA==}
@@ -1975,6 +1984,12 @@ packages:
     peerDependenciesMeta:
       typescript:
         optional: true
+
+  eslint-config-prettier@10.1.8:
+    resolution: {integrity: sha512-82GZUjRS0p/jganf6q1rEO25VSoHH0hKPCTrgillPjdI/3bgBhAE1QzHrHTizjpRvy6pGAvKjDJtk2pF9NDq8w==}
+    hasBin: true
+    peerDependencies:
+      eslint: '>=7.0.0'
 
   eslint-import-resolver-node@0.3.9:
     resolution: {integrity: sha512-WFj2isz22JahUv+B788TlO3N6zL3nNJGU8CcZbPZvVEkBPaJdCV4vy5wyghty5ROFbCRnm132v8BScu5/1BQ8g==}
@@ -3748,6 +3763,10 @@ snapshots:
     dependencies:
       fast-glob: 3.3.1
 
+  '@next/eslint-plugin-next@16.1.1':
+    dependencies:
+      fast-glob: 3.3.1
+
   '@next/swc-darwin-arm64@16.1.1':
     optional: true
 
@@ -5178,6 +5197,10 @@ snapshots:
       - eslint-import-resolver-webpack
       - eslint-plugin-import-x
       - supports-color
+
+  eslint-config-prettier@10.1.8(eslint@9.39.2(jiti@2.5.1)):
+    dependencies:
+      eslint: 9.39.2(jiti@2.5.1)
 
   eslint-import-resolver-node@0.3.9:
     dependencies:
