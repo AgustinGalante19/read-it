@@ -75,3 +75,72 @@ CREATE TABLE
     user_device_code TEXT references readit_user_devices (device_code),
     UNIQUE (hash, start_time, page)
   );
+
+-- readit_book_highlights definition
+CREATE TABLE
+  readit_books_highlights (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    device_code TEXT,
+    highlight_text TEXT,
+    book_hash TEXT,
+    page NUMBER,
+    created_at TEXT,
+    FOREIGN KEY (device_code) REFERENCES readit_user_devices (device_code),
+    FOREIGN KEY (book_hash) REFERENCES readit_books (book_hash)
+  );
+
+-- better-auth user definition
+CREATE TABLE
+  user (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    emailVerified INTEGER NOT NULL DEFAULT 0,
+    image TEXT,
+    createdAt TEXT NOT NULL,
+    updatedAt TEXT NOT NULL
+  );
+
+-- better-auth session definition
+CREATE TABLE
+  session (
+    id TEXT PRIMARY KEY,
+    userId TEXT NOT NULL,
+    token TEXT NOT NULL,
+    expiresAt TEXT NOT NULL,
+    ipAddress TEXT,
+    userAgent TEXT,
+    createdAt TEXT NOT NULL,
+    updatedAt TEXT NOT NULL,
+    FOREIGN KEY (userId) REFERENCES user (id) ON DELETE CASCADE
+  );
+
+-- better-auth account definition
+CREATE TABLE
+  account (
+    id TEXT PRIMARY KEY,
+    userId TEXT NOT NULL,
+    accountId TEXT NOT NULL,
+    providerId TEXT NOT NULL,
+    accessToken TEXT,
+    refreshToken TEXT,
+    accessTokenExpiresAt TEXT,
+    refreshTokenExpiresAt TEXT,
+    scope TEXT,
+    idToken TEXT,
+    password TEXT,
+    createdAt TEXT NOT NULL,
+    updatedAt TEXT NOT NULL,
+    FOREIGN KEY (userId) REFERENCES user (id) ON DELETE CASCADE
+  );
+
+-- better-auth verification definition
+CREATE TABLE
+  verification (
+    id TEXT PRIMARY KEY,
+    identifier TEXT NOT NULL,
+    value TEXT NOT NULL,
+    expiresAt TEXT NOT NULL,
+    createdAt TEXT NOT NULL,
+    updatedAt TEXT NOT NULL
+  );
