@@ -40,6 +40,14 @@ export enum BookStatus {
   ALL = 0,
 }
 
+export const BookStatusDictionary: { [key in BookStatus]: string } = {
+  [BookStatus.WANT_TO_READ]: 'Want to Read',
+  [BookStatus.READING]: 'Currently Reading',
+  [BookStatus.READ]: 'Read',
+  [BookStatus.NOT_FINISH]: 'Not Finish',
+  [BookStatus.ALL]: 'All',
+};
+
 export interface GoogleBooksResponse {
   kind: string;
   totalItems: number;

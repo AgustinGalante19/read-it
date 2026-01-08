@@ -47,18 +47,6 @@ export default function BookAdapter(dbResponse: ResultSet): Book[] {
   return dbResponse.rows.map(mapBaseBookProperties);
 }
 
-/**
- * Adapter para libros que incluye la propiedad ds_status
- */
-export function BookAdapterWithStatus(
-  dbResponse: ResultSet
-): (Book & { ds_status: string })[] {
-  return dbResponse.rows.map((book) => ({
-    ...mapBaseBookProperties(book),
-    ds_status: String(book.ds_status),
-  }));
-}
-
 export function mapGoogleBookToBook(
   googleBook: GoogleBookItem
 ): ExtendedBookData {

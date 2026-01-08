@@ -36,12 +36,7 @@ function DatePicker({
   book,
   isWorking = false,
 }: DatePickerProps & {
-  book:
-    | (Book & {
-        ds_status: string;
-      })
-    | null
-    | undefined;
+  book: Book | null | undefined;
   isWorking?: boolean;
 }) {
   const [dateRange, setDateRange] = useState<DateRange>(

@@ -1,5 +1,13 @@
 import BackButton from '@/components/ui/back-button';
-import { BookText, Calendar, Calendar1, Clock, Minus } from 'lucide-react';
+import {
+  BookText,
+  Calendar,
+  Calendar1,
+  ChartBar,
+  Clock,
+  EqualApproximately,
+  Minus,
+} from 'lucide-react';
 import Image from 'next/image';
 import Categories from './components/categories';
 import LibraryActions from './components/library-actions';
@@ -8,9 +16,7 @@ import BookDescription from './components/book-description';
 import { existsOnLibrary } from '@/services/BookService';
 import datesHelper from '@/services/helpers/DatesHelper';
 import bookHelper from '@/services/helpers/BookHelper';
-import Link from 'next/link';
 import booksSearcher from '@/services/repositories/BooksSearcher';
-
 export async function generateMetadata({
   params,
 }: {
@@ -61,44 +67,35 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
           className='blur-bottom-image'
         />
       </header>
-      <div className='p-4 text-white mb-3'>
+      <div className='p-4 text-white mb-3 space-y-2'>
         <div className='flex items-center gap-4 mt-2'>
           <BackButton />
           <h2 className='font-bold text-2xl'>{book.title}</h2>
         </div>
-        <div className='flex items-start justify-between gap-2'>
-          <div className='flex flex-col h-max'>
-            <span className='font-semibold'>
-              {bookHelper.getBookAuthors(book.authors)}
-            </span>
-            <Link
-              className='text-accent-foreground underline mt-3 '
-              target='_blank'
-              href={`https://annas-archive.org/search?${new URLSearchParams({
-                q: `${book.title} ${bookHelper.getBookAuthors(book.authors)}`,
-              })}`}
-            >
-              Search on Anna&apos;s Archive
-            </Link>
-          </div>
-          <div className='flex flex-col justify-start items-end gap-2'>
-            <LibraryActions dbBook={dbBook.data} googleBook={book} />
+        <div className='flex items-center justify-between gap-2'>
+          <span className='font-semibold'>
+            {bookHelper.getBookAuthors(book.authors)}
+          </span>
+          <LibraryActions dbBook={dbBook.data} googleBook={book} />
+        </div>
+        <div className='flex justify-between'>
+          <div>
             {dbBook.data && dbBook.data.finish_date && (
               <span className='text-xs text-surface-foreground flex items-center gap-1'>
+                <Calendar1 size={14} />
                 Finished at:{' '}
                 {new Date(dbBook.data.finish_date).toLocaleDateString()}
-                <Calendar1 size={14} />
               </span>
             )}
             {dbBook.data &&
               typeof dbBook.data.book_total_read_time === 'number' &&
               dbBook.data.book_total_read_time > 0 && (
                 <span className='text-xs text-surface-foreground flex items-center gap-1'>
+                  <Clock size={14} />
                   Reading time:{' '}
                   {datesHelper.formatSecondsToDuration(
                     dbBook.data.book_total_read_time
                   )}
-                  <Clock size={14} />
                 </span>
               )}
             {dbBook.data &&
@@ -106,6 +103,7 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
               dbBook.data.book_total_read_pages &&
               dbBook.data.page_count > 0 && (
                 <span className='text-xs text-surface-foreground flex items-center gap-1'>
+                  <EqualApproximately size={14} />
                   Progress:{' '}
                   {Math.round(
                     (dbBook.data.book_total_read_pages /
@@ -115,6 +113,11 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
                   %
                 </span>
               )}
+          </div>
+          <div>
+            <span className='text-xs text-surface-foreground flex items-center gap-1'>
+              <ChartBar size={14} /> {dbBook.metadata?.lastSyncDate}
+            </span>
           </div>
         </div>
         <Categories categories={book.tags ? book.tags.split('/') : []} />

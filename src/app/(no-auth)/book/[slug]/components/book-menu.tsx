@@ -37,7 +37,7 @@ import bookHelper from '@/services/helpers/BookHelper';
 interface BookMenuProps {
   isOpen: boolean;
   close: () => void;
-  book: (Book & { ds_status: string }) | null | undefined;
+  book: Book | null | undefined;
   googleBook: Book | null;
 }
 

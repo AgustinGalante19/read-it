@@ -3,10 +3,11 @@
 import { revalidatePath } from 'next/cache';
 import { getUserEmail, isAuthenticated } from './UserService';
 import { Book, BookStatus } from '@/types/Book';
-import { Result } from '@/types/Result';
+import { Result, ResultWithMetadata } from '@/types/Result';
 import ReadDatesHelper from './helpers/ReadDatesHelper';
 import bookRepository from './repositories/BookRepository';
 import readingStatisticsRepository from './repositories/ReadingStatisticsRepository';
+import { format, parseISO } from 'date-fns';
 
 async function revalidateBookPaths(): Promise<void> {
   revalidatePath('/book', 'layout');
@@ -109,12 +110,13 @@ export async function removeFromLibrary(
 
 export async function existsOnLibrary(
   googleId: string
-): Promise<Result<(Book & { ds_status: string }) | null>> {
+): Promise<ResultWithMetadata<Book | null, { lastSyncDate: string | null }>> {
   try {
     const userEmail = await getUserEmail();
     await isAuthenticated(userEmail);
 
     const book = await bookRepository.findBookByGoogleId(googleId, userEmail);
+    let lastSyncDate: string | null = null;
 
     if (book && book.book_hash) {
       book.book_total_read_time =
@@ -122,9 +124,19 @@ export async function existsOnLibrary(
           book.book_hash,
           userEmail
         );
-    }
 
-    return { success: true, data: book };
+      lastSyncDate = await readingStatisticsRepository.getLastSyncDate(
+        userEmail,
+        book.book_hash
+      );
+      const date = parseISO(lastSyncDate || '');
+      lastSyncDate = format(date, 'dd/MM/yyyy HH:mm');
+    }
+    return {
+      success: true,
+      data: book,
+      metadata: { lastSyncDate },
+    };
   } catch (error) {
     console.error('Error checking if book exists:', error);
     return { success: false, error: 'Failed to check book existence' };

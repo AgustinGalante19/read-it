@@ -1,6 +1,6 @@
 import { Book, BookStatus } from '@/types/Book';
 import { turso } from '../database/turso';
-import BookAdapter, { BookAdapterWithStatus } from '../adapters/BookAdapter';
+import BookAdapter from '../adapters/BookAdapter';
 import datesHelper from '../helpers/DatesHelper';
 
 class BookRepository {
@@ -60,18 +60,17 @@ class BookRepository {
   async findBookByGoogleId(
     googleId: string,
     userEmail: string
-  ): Promise<(Book & { ds_status: string }) | null> {
+  ): Promise<Book | null> {
     const result = await turso.execute({
-      sql: `SELECT b.*, bs.ds_status  
-            FROM readit_books b 
-            JOIN readit_book_status bs ON b.id_book_status = bs.id  
+      sql: `SELECT *
+            FROM readit_books 
             WHERE google_id = ? 
-            AND user_email = ?;`,
+            AND user_email = ?`,
       args: [googleId, userEmail],
     });
 
     if (result.rows.length === 0) return null;
-    return BookAdapterWithStatus(result)[0];
+    return BookAdapter(result)[0];
   }
 
   async createBook(bookData: Book): Promise<void> {

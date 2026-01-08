@@ -3,3 +3,8 @@ export interface Result<T> {
   data?: T;
   error?: string;
 }
+
+export interface ResultWithMetadata<T, M = Record<string, any>>
+  extends Result<T> {
+  metadata?: M;
+}

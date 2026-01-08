@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Book } from '@/types/Book';
+import { Book, BookStatusDictionary } from '@/types/Book';
 import { BadgeCheck, Bookmark, BookOpen, ChevronDown } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -31,7 +31,7 @@ function LibraryActions({
   dbBook,
   googleBook,
 }: {
-  dbBook: (Book & { ds_status: string }) | null | undefined;
+  dbBook: Book | null | undefined;
   googleBook: Book | null;
 }) {
   const { data: sessionData } = useSession();
@@ -68,7 +68,11 @@ function LibraryActions({
         <ButtonGroup>
           <Button onClick={handleAddBook}>
             {renderBookIcon(dbBook.id_book_status)}
-            {dbBook.ds_status}
+            {
+              BookStatusDictionary[
+                dbBook.id_book_status as keyof typeof BookStatusDictionary
+              ]
+            }
           </Button>
           <ButtonGroupSeparator />
           <Button onClick={() => setIsOpen(true)}>

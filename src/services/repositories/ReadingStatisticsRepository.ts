@@ -264,7 +264,9 @@ class ReadingStatisticsRepository {
     };
   }
 
-  async getLast30DaysDailyStats(userEmail: string): Promise<{ date: string; pages: number; duration: number }[]> {
+  async getLast30DaysDailyStats(
+    userEmail: string
+  ): Promise<{ date: string; pages: number; duration: number }[]> {
     const result = await turso.execute({
       sql: `
         SELECT 
@@ -281,14 +283,16 @@ class ReadingStatisticsRepository {
       args: [userEmail],
     });
 
-    return result.rows.map(row => ({
+    return result.rows.map((row) => ({
       date: row.reading_date as string,
       pages: Number(row.pages),
-      duration: Number(row.duration)
+      duration: Number(row.duration),
     }));
   }
 
-  async getHourlyStats(userEmail: string): Promise<{ hour: number; pages: number; duration: number }[]> {
+  async getHourlyStats(
+    userEmail: string
+  ): Promise<{ hour: number; pages: number; duration: number }[]> {
     const result = await turso.execute({
       sql: `
           SELECT 
@@ -305,23 +309,52 @@ class ReadingStatisticsRepository {
     });
 
     // Initialize array with all 24 hours
-    const hoursMap = new Map<number, { hour: number; pages: number; duration: number }>();
+    const hoursMap = new Map<
+      number,
+      { hour: number; pages: number; duration: number }
+    >();
     for (let i = 0; i < 24; i++) {
       hoursMap.set(i, { hour: i, pages: 0, duration: 0 });
     }
 
-    result.rows.forEach(row => {
+    result.rows.forEach((row) => {
       const hour = Number(row.reading_hour);
       if (hoursMap.has(hour)) {
         hoursMap.set(hour, {
           hour,
           pages: Number(row.pages),
-          duration: Number(row.duration)
+          duration: Number(row.duration),
         });
       }
     });
 
     return Array.from(hoursMap.values());
+  }
+
+  async getLastSyncDate(
+    userEmail: string,
+    book_hash: string
+  ): Promise<string | null> {
+    const { rows } = await turso.execute({
+      sql: `
+      SELECT rpsd.start_time, rpsd.id, rpsd.hash, rpsd.page FROM readit_page_stat_data  rpsd
+      JOIN readit_user_devices rud on rud.device_code = rpsd.user_device_code
+      WHERE hash = ?
+      AND rud.user_email = ?
+      ORDER BY rpsd.id DESC LIMIT 1`,
+      args: [book_hash, userEmail],
+    });
+
+    if (rows.length === 0 || !rows[0].start_time) {
+      return null;
+    }
+
+    const startTime = Number(rows[0].start_time);
+    // Si el timestamp es menor a 10 billones, tratarlo como segundos, sino como milisegundos
+    const date = new Date(
+      startTime < 10000000000 ? startTime * 1000 : startTime
+    );
+    return date.toISOString();
   }
 }
 
