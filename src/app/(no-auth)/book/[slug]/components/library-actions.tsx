@@ -13,6 +13,7 @@ import {
   ButtonGroupSeparator,
 } from '@/components/ui/button-group';
 import { useSession } from '@/lib/auth/auth-client';
+import { BookHighlightPreview } from '@/types/BookHighlight';
 
 function renderBookIcon(statusId: number) {
   switch (statusId) {
@@ -30,9 +31,11 @@ function renderBookIcon(statusId: number) {
 function LibraryActions({
   dbBook,
   googleBook,
+  bookhighlights,
 }: {
   dbBook: Book | null | undefined;
   googleBook: Book | null;
+  bookhighlights: BookHighlightPreview[];
 }) {
   const { data: sessionData } = useSession();
 
@@ -90,6 +93,7 @@ function LibraryActions({
         close={() => setIsOpen(false)}
         book={dbBook}
         googleBook={googleBook}
+        bookHighlights={bookhighlights}
       />
     </div>
   );

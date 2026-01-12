@@ -7,6 +7,7 @@ import {
   Bookmark,
   BookOpen,
   Calendar,
+  NotebookText,
   Tablet,
   Trash,
 } from 'lucide-react';
@@ -33,15 +34,24 @@ import DatePicker from '@/components/date-picker';
 import { DateRange } from '@/components/date-picker/types';
 import datesHelper from '@/services/helpers/DatesHelper';
 import bookHelper from '@/services/helpers/BookHelper';
+import HighlightsModal from '@/components/book/highlights-modal';
+import { BookHighlightPreview } from '@/types/BookHighlight';
 
 interface BookMenuProps {
   isOpen: boolean;
   close: () => void;
   book: Book | null | undefined;
   googleBook: Book | null;
+  bookHighlights: BookHighlightPreview[];
 }
 
-function BookMenu({ isOpen, close, book, googleBook }: BookMenuProps) {
+function BookMenu({
+  isOpen,
+  close,
+  book,
+  googleBook,
+  bookHighlights,
+}: BookMenuProps) {
   const [isLoading, setIsLoading] = useState({
     currentlyReading: false,
     wantToRead: false,
@@ -49,6 +59,7 @@ function BookMenu({ isOpen, close, book, googleBook }: BookMenuProps) {
     remove: false,
   });
 
+  const [isHighlightsModalOpen, setIsHighlightsModalOpen] = useState(false);
   const [isBookDateModalOpen, setIsBookDateModalOpen] = useState(false);
   const [isWorking, setIsWorking] = useState(false);
 
@@ -111,6 +122,7 @@ function BookMenu({ isOpen, close, book, googleBook }: BookMenuProps) {
     close();
   };
 
+  console.log(bookHighlights);
   return (
     <>
       <Drawer open={isOpen} onOpenChange={close}>
@@ -177,6 +189,14 @@ function BookMenu({ isOpen, close, book, googleBook }: BookMenuProps) {
               <Calendar />
               Dates read
             </Button>
+            <Button
+              variant={'ghost'}
+              className='w-full justify-start rounded-lg'
+              onClick={() => setIsHighlightsModalOpen(true)}
+            >
+              <NotebookText />
+              Highlights
+            </Button>
             <Separator />
             <span className='text-sm'>Book Type</span>
             <RadioGroup
@@ -209,6 +229,11 @@ function BookMenu({ isOpen, close, book, googleBook }: BookMenuProps) {
         book={book}
         defaultValue={defaultDateRange}
         isWorking={isWorking}
+      />
+      <HighlightsModal
+        isOpen={isHighlightsModalOpen}
+        onOpenChange={setIsHighlightsModalOpen}
+        highlights={bookHighlights}
       />
     </>
   );

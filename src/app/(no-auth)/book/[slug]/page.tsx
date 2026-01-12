@@ -13,7 +13,7 @@ import Categories from './components/categories';
 import LibraryActions from './components/library-actions';
 import { Metadata } from 'next';
 import BookDescription from './components/book-description';
-import { existsOnLibrary } from '@/services/BookService';
+import { existsOnLibrary, getBookHighlights } from '@/services/BookService';
 import datesHelper from '@/services/helpers/DatesHelper';
 import bookHelper from '@/services/helpers/BookHelper';
 import booksSearcher from '@/services/repositories/BooksSearcher';
@@ -47,6 +47,7 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
   const slug = (await params).slug;
   const book = await booksSearcher.getById(slug);
   const dbBook = await existsOnLibrary(book.google_id);
+  const bookHighlights = await getBookHighlights(book.google_id);
 
   return (
     <article>
@@ -76,7 +77,11 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
           <span className='font-semibold'>
             {bookHelper.getBookAuthors(book.authors)}
           </span>
-          <LibraryActions dbBook={dbBook.data} googleBook={book} />
+          <LibraryActions
+            dbBook={dbBook.data}
+            googleBook={book}
+            bookhighlights={bookHighlights.data || []}
+          />
         </div>
         <div className='flex justify-between'>
           <div>

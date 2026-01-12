@@ -1,7 +1,8 @@
 import { Book, BookStatus } from '@/types/Book';
 import { turso } from '../database/turso';
-import BookAdapter from '../adapters/BookAdapter';
+import BookAdapter, { highlightAdapter } from '../adapters/BookAdapter';
 import datesHelper from '../helpers/DatesHelper';
+import { BookHighlightPreview } from '@/types/BookHighlight';
 
 class BookRepository {
   async findBooksByStatus(
@@ -203,6 +204,21 @@ class BookRepository {
       sql: `UPDATE readit_books SET book_type_id = ? WHERE google_id = ? AND user_email = ?`,
       args: [bookTypeId, googleId, userEmail],
     });
+  }
+
+  async getHighlights(
+    googleId: string,
+    userEmail: string
+  ): Promise<BookHighlightPreview[]> {
+    const result = await turso.execute({
+      sql: `
+      SELECT rb.id, rb.title, rb.authors, rbh.highlight_text, rbh.page, rbh.created_at
+      FROM readit_books rb
+      JOIN readit_books_highlights  rbh ON rb.book_hash = rbh.book_hash
+      WHERE rb.google_id  = ? and rb.user_email = ?`,
+      args: [googleId, userEmail],
+    });
+    return highlightAdapter(result);
   }
 }
 

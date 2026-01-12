@@ -356,6 +356,29 @@ class ReadingStatisticsRepository {
     );
     return date.toISOString();
   }
+
+  /**
+   * Elimina todas las estadísticas de lectura de un libro identificado por google_id
+   * @param googleId - ID de Google del libro
+   * @param userEmail - Email del usuario
+   * @returns Promise<void>
+   */
+  async deleteReadingStatsByGoogleId(
+    googleId: string,
+    userEmail: string
+  ): Promise<void> {
+    await turso.execute({
+      sql: `
+        DELETE FROM readit_page_stat_data
+        WHERE hash IN (
+          SELECT book_hash 
+          FROM readit_books 
+          WHERE google_id = ? AND user_email = ?
+        )
+      `,
+      args: [googleId, userEmail],
+    });
+  }
 }
 
 const readingStatisticsRepository = new ReadingStatisticsRepository();

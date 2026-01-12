@@ -6,3 +6,12 @@ export default interface BookHighlight {
   page: number;
   created_at: Date;
 }
+
+export interface BookHighlightPreview {
+  id: number;
+  title: string;
+  author: string;
+  highlight_text: string;
+  page: number;
+  created_at: string;
+}

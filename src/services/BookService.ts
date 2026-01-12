@@ -8,6 +8,7 @@ import ReadDatesHelper from './helpers/ReadDatesHelper';
 import bookRepository from './repositories/BookRepository';
 import readingStatisticsRepository from './repositories/ReadingStatisticsRepository';
 import { format, parseISO } from 'date-fns';
+import { BookHighlightPreview } from '@/types/BookHighlight';
 
 async function revalidateBookPaths(): Promise<void> {
   revalidatePath('/book', 'layout');
@@ -152,6 +153,11 @@ export async function updateBookType(
     await isAuthenticated(userEmail);
 
     await bookRepository.updateBookType(bookTypeId, googleId, userEmail);
+    await readingStatisticsRepository.deleteReadingStatsByGoogleId(
+      googleId,
+      userEmail
+    );
+
     await revalidateBookPaths();
 
     return { success: true, data: 'Book type updated successfully' };
@@ -189,5 +195,20 @@ export async function recordLastReadingInfo(data: {
   } catch (error) {
     console.error('Error updating book last open:', error);
     return { success: false, error: 'Failed to update book last open' };
+  }
+}
+
+export async function getBookHighlights(
+  googleId: string
+): Promise<Result<BookHighlightPreview[]>> {
+  try {
+    const userEmail = await getUserEmail();
+    await isAuthenticated(userEmail);
+
+    const highlights = await bookRepository.getHighlights(googleId, userEmail);
+    return { success: true, data: highlights };
+  } catch (error) {
+    console.error('Error getting book highlights:', error);
+    return { success: false, error: 'Failed to get book highlights' };
   }
 }

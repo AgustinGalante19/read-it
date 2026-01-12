@@ -2,6 +2,7 @@ import { Book, ExtendedBookData, GoogleBookItem } from '@/types/Book';
 import { ResultSet } from '@libsql/client/web';
 import datesHelper from '../helpers/DatesHelper';
 import bookHelper from '../helpers/BookHelper';
+import { BookHighlightPreview } from '@/types/BookHighlight';
 
 /**
  * Tipo para representar una fila de la base de datos
@@ -77,4 +78,19 @@ export function mapGoogleBookToBook(
 export function mapGoogleBooksArray(googleBook: GoogleBookItem[]): Book[] {
   if (!googleBook) return [];
   return googleBook.map((book) => mapGoogleBookToBook(book));
+}
+
+export function highlightAdapter(
+  dbResponse: ResultSet
+): BookHighlightPreview[] {
+  return dbResponse.rows.map((row) => ({
+    id: Number(row.id),
+    book_google_id: String(row.book_google_id),
+    title: String(row.title),
+    author: String(row.authors),
+    page: Number(row.page),
+    content: String(row.content),
+    created_at: String(row.created_at),
+    highlight_text: String(row.highlight_text),
+  }));
 }

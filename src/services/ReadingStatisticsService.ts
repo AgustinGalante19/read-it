@@ -157,3 +157,31 @@ export async function getCalendarData(
     return { success: false, error: 'Failed to fetch calendar data' };
   }
 }
+
+/**
+ * Elimina todas las estadísticas de lectura de un libro
+ * @param googleId - ID de Google del libro
+ */
+export async function deleteReadingStatsByGoogleId(
+  googleId: string
+): Promise<Result<string>> {
+  try {
+    const userEmail = await getUserEmail();
+    if (!userEmail) {
+      return { success: false, error: 'User not authenticated' };
+    }
+
+    await readingStatisticsRepository.deleteReadingStatsByGoogleId(
+      googleId,
+      userEmail
+    );
+
+    return {
+      success: true,
+      data: 'Reading statistics deleted successfully',
+    };
+  } catch (error) {
+    console.error('Error deleting reading statistics:', error);
+    return { success: false, error: 'Failed to delete reading statistics' };
+  }
+}
