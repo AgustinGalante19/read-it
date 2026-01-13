@@ -14,6 +14,11 @@ class BookHelper {
     switch (status) {
       case BookStatus.READ:
         books = booksList.filter((book) => book.id_book_status === 3);
+        books = books.sort((a, b) => {
+          const dateA = a.finish_date ? new Date(a.finish_date) : new Date(0);
+          const dateB = b.finish_date ? new Date(b.finish_date) : new Date(0);
+          return dateB.getTime() - dateA.getTime();
+        });
         break;
       case BookStatus.READING:
         books = booksList.filter((book) => book.id_book_status === 2);
