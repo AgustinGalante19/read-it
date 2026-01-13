@@ -1,4 +1,4 @@
-export const dynamic = 'force-dynamic';
+/* export const dynamic = 'force-dynamic';
 
 import { getYearlyRecap } from '@/services/StatsService';
 import WrappedStory from './components/wrapped-story';
@@ -30,3 +30,10 @@ export default async function WrappedPage() {
     </main>
   );
 }
+ */
+
+function WrappedPage() {
+  return <div>Come back later...</div>;
+}
+
+export default WrappedPage;
