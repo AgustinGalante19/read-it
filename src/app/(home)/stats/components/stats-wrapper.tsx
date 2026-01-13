@@ -10,6 +10,7 @@ import LastBooksGraph from './last-books-graph';
 import TagsRadarChart from './tags-radar-chart';
 import BooksGrid from './books-grid';
 import LastbooksList from './last-books-list';
+import Loading from '../loading';
 
 export default function StatsWrapper() {
   const [stats, setStats] = useState<Stats | null>(null);
@@ -31,7 +32,7 @@ export default function StatsWrapper() {
   }, []);
 
   if (loading) {
-    return <div className='p-4'>Cargando estadísticas...</div>;
+    return <Loading />;
   }
 
   if (!stats) {

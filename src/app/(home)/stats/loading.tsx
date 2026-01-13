@@ -14,6 +14,8 @@ function Loading() {
           <Skeleton className='w-[250px] h-[130px]' />
         </div>
         <Skeleton className='w-[416x] h-[343px] mx-auto mt-4' />
+        <Skeleton className='w-[416x] h-[343px] mx-auto mt-4' />
+        <Skeleton className='w-[416x] h-[343px] mx-auto mt-4' />
         <div className='mt-4'>
           <div className='flex items-center justify-between'>
             <Skeleton className='w-[145px] h-[32px]' />
