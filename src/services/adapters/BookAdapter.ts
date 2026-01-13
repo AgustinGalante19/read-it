@@ -84,12 +84,11 @@ export function highlightAdapter(
   dbResponse: ResultSet
 ): BookHighlightPreview[] {
   return dbResponse.rows.map((row) => ({
-    id: Number(row.id),
-    book_google_id: String(row.book_google_id),
+    highlight_id: Number(row.highlight_id),
+    book_id: Number(row.book_id),
     title: String(row.title),
     author: String(row.authors),
     page: Number(row.page),
-    content: String(row.content),
     created_at: String(row.created_at),
     highlight_text: String(row.highlight_text),
   }));

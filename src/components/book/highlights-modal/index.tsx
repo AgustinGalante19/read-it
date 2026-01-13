@@ -1,3 +1,5 @@
+'use client';
+
 import { BookHighlightPreview } from '@/types/BookHighlight';
 import {
   Dialog,
@@ -8,14 +10,35 @@ import {
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button';
+import { Trash } from 'lucide-react';
+import { deleteBookHighlight } from '@/services/BookHighlightService';
+import { toast } from 'sonner';
 
 const HighlightItem = ({ highlight }: { highlight: BookHighlightPreview }) => {
+  const handleDeleteHighlight = async () => {
+    try {
+      await deleteBookHighlight(highlight.highlight_id);
+      toast.success('Highlight deleted successfully');
+    } catch {
+      toast.error('Failed to delete highlight');
+    }
+  };
+
   return (
     <div className='space-y-3'>
-      <div className='relative pl-4 border-l-4 border-primary/20'>
+      <div className='relative pl-4 border-l-4 border-primary/20 flex justify-between gap-2'>
         <blockquote className='text-base leading-relaxed'>
           &quot;{highlight.highlight_text}&quot;
         </blockquote>
+        <Button
+          onClick={handleDeleteHighlight}
+          variant={'ghost'}
+          className='text-destructive hover:text-destructive hover:bg-destructive/10'
+          size={'icon'}
+        >
+          <Trash />
+        </Button>
       </div>
 
       <div className='flex items-center justify-between gap-2'>
@@ -57,10 +80,10 @@ function HighlightsModal({
           </DialogDescription>
         </DialogHeader>
 
-        <ScrollArea className='max-h-[60vh] pr-4'>
+        <ScrollArea className='max-h-[60vh]'>
           <div className='space-y-6'>
-            {highlights.map((highlight, index) => (
-              <div key={highlight.id}>
+            {highlights.map((highlight) => (
+              <div key={highlight.highlight_id}>
                 <HighlightItem highlight={highlight} />
               </div>
             ))}

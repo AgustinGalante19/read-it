@@ -8,7 +8,8 @@ export default interface BookHighlight {
 }
 
 export interface BookHighlightPreview {
-  id: number;
+  highlight_id: number;
+  book_id: number;
   title: string;
   author: string;
   highlight_text: string;

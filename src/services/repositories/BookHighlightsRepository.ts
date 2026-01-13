@@ -15,6 +15,16 @@ class BookHighlightsRepository {
       args: [device_code, highlight_text, book_hash, page, created_at],
     });
   }
+
+  async deleteHighlight(highlightId: number): Promise<void> {
+    await turso.execute({
+      sql: `
+      DELETE FROM readit_books_highlights 
+      WHERE id = ?
+      `,
+      args: [highlightId],
+    });
+  }
 }
 
 const bookHighlightsRepository = new BookHighlightsRepository();

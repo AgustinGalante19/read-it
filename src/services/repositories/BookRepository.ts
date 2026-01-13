@@ -212,7 +212,7 @@ class BookRepository {
   ): Promise<BookHighlightPreview[]> {
     const result = await turso.execute({
       sql: `
-      SELECT rb.id, rb.title, rb.authors, rbh.highlight_text, rbh.page, rbh.created_at
+      SELECT rb.id AS book_id, rbh.id AS highlight_id, rb.title, rb.authors, rbh.highlight_text, rbh.page, rbh.created_at
       FROM readit_books rb
       JOIN readit_books_highlights  rbh ON rb.book_hash = rbh.book_hash
       WHERE rb.google_id  = ? and rb.user_email = ?`,
