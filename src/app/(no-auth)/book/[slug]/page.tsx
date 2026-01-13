@@ -1,13 +1,5 @@
 import BackButton from '@/components/ui/back-button';
-import {
-  BookText,
-  Calendar,
-  Calendar1,
-  ChartBar,
-  Clock,
-  EqualApproximately,
-  Minus,
-} from 'lucide-react';
+import { BookText, Calendar, Minus } from 'lucide-react';
 import Image from 'next/image';
 import Categories from './components/categories';
 import LibraryActions from './components/library-actions';
@@ -17,6 +9,7 @@ import { existsOnLibrary, getBookHighlights } from '@/services/BookService';
 import datesHelper from '@/services/helpers/DatesHelper';
 import bookHelper from '@/services/helpers/BookHelper';
 import booksSearcher from '@/services/repositories/BooksSearcher';
+import UserBookStats from './components/user-book-stats';
 export async function generateMetadata({
   params,
 }: {
@@ -83,50 +76,7 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
             bookhighlights={bookHighlights.data || []}
           />
         </div>
-        <div className='flex justify-between'>
-          <div>
-            {dbBook.data && dbBook.data.finish_date && (
-              <span className='text-xs text-surface-foreground flex items-center gap-1'>
-                <Calendar1 size={14} />
-                Finished at:{' '}
-                {new Date(dbBook.data.finish_date).toLocaleDateString()}
-              </span>
-            )}
-            {dbBook.data &&
-              typeof dbBook.data.book_total_read_time === 'number' &&
-              dbBook.data.book_total_read_time > 0 && (
-                <span className='text-xs text-surface-foreground flex items-center gap-1'>
-                  <Clock size={14} />
-                  Reading time:{' '}
-                  {datesHelper.formatSecondsToDuration(
-                    dbBook.data.book_total_read_time
-                  )}
-                </span>
-              )}
-            {dbBook.data &&
-              dbBook.data.id_book_status === 2 &&
-              dbBook.data.book_total_read_pages &&
-              dbBook.data.page_count > 0 && (
-                <span className='text-xs text-surface-foreground flex items-center gap-1'>
-                  <EqualApproximately size={14} />
-                  Progress:{' '}
-                  {Math.round(
-                    (dbBook.data.book_total_read_pages /
-                      dbBook.data.page_count) *
-                      100
-                  )}
-                  %
-                </span>
-              )}
-          </div>
-          {dbBook.metadata?.lastSyncDate && (
-            <div>
-              <span className='text-xs text-surface-foreground flex items-center gap-1'>
-                <ChartBar size={14} /> {dbBook.metadata?.lastSyncDate}
-              </span>
-            </div>
-          )}
-        </div>
+        <UserBookStats userBookData={dbBook} />
         <Categories categories={book.tags ? book.tags.split('/') : []} />
         <div className='grid grid-cols-2 bg-secondary items-center justify-between rounded-full py-2 mb-6 relative'>
           <div>

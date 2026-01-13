@@ -7,7 +7,6 @@ import { Result, ResultWithMetadata } from '@/types/Result';
 import ReadDatesHelper from './helpers/ReadDatesHelper';
 import bookRepository from './repositories/BookRepository';
 import readingStatisticsRepository from './repositories/ReadingStatisticsRepository';
-import { format, parseISO } from 'date-fns';
 import { BookHighlightPreview } from '@/types/BookHighlight';
 
 async function revalidateBookPaths(): Promise<void> {
@@ -130,8 +129,6 @@ export async function existsOnLibrary(
         userEmail,
         book.book_hash
       );
-      const date = parseISO(lastSyncDate || '');
-      lastSyncDate = format(date, 'dd/MM/yyyy HH:mm');
     }
     return {
       success: true,
