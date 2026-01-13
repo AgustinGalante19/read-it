@@ -119,11 +119,13 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
                 </span>
               )}
           </div>
-          <div>
-            <span className='text-xs text-surface-foreground flex items-center gap-1'>
-              <ChartBar size={14} /> {dbBook.metadata?.lastSyncDate}
-            </span>
-          </div>
+          {dbBook.metadata?.lastSyncDate && (
+            <div>
+              <span className='text-xs text-surface-foreground flex items-center gap-1'>
+                <ChartBar size={14} /> {dbBook.metadata?.lastSyncDate}
+              </span>
+            </div>
+          )}
         </div>
         <Categories categories={book.tags ? book.tags.split('/') : []} />
         <div className='grid grid-cols-2 bg-secondary items-center justify-between rounded-full py-2 mb-6 relative'>
