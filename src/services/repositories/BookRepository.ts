@@ -43,7 +43,6 @@ class BookRepository {
     year: number
   ): Promise<Book[]> {
     const monthStr = month.toString().padStart(2, '0');
-
     const result = await db
       .selectFrom('readit_books')
       .selectAll()
