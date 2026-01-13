@@ -1,51 +1,37 @@
 import { Book, ExtendedBookData, GoogleBookItem } from '@/types/Book';
-import { ResultSet } from '@libsql/client/web';
 import datesHelper from '../helpers/DatesHelper';
 import bookHelper from '../helpers/BookHelper';
 import { BookHighlightPreview } from '@/types/BookHighlight';
+import { BookHighlightRow, BookRow } from '@/types/ReadItDatabase';
 
-/**
- * Tipo para representar una fila de la base de datos
- */
-type DatabaseRow = Record<string, unknown>;
-
-/**
- * Función base para mapear las propiedades comunes de un libro desde la base de datos
- */
-function mapBaseBookProperties(book: DatabaseRow): Book {
+function mapBaseBookProperties(book: BookRow): Book {
   return {
-    id: Number(book.id),
-    google_id: String(book.google_id),
-    title: String(book.title),
-    thumbnail_url: String(book.thumbnail_url),
-    authors: String(book.authors),
-    publish_date: String(book.publish_date),
-    page_count: Number(book.page_count),
-    inserted_at: String(book.inserted_at),
-    start_date:
-      String(book.start_date) === 'null' ? null : String(book.start_date),
-    finish_date:
-      String(book.finish_date) === 'null' ? null : String(book.finish_date),
-    tags: String(book.tags),
-    user_email: String(book.user_email),
-    id_book_status: Number(book.id_book_status),
-    book_hash: book.book_hash ? String(book.book_hash) : null,
-    book_last_open: book.book_last_open ? String(book.book_last_open) : null,
-    book_total_read_time: book.book_total_read_time
-      ? Number(book.book_total_read_time)
-      : null,
-    book_total_read_pages: book.book_total_read_pages
-      ? Number(book.book_total_read_pages)
-      : null,
-    book_type_id: Number(book.book_type_id),
+    id: book.id ?? 0,
+    google_id: book.google_id,
+    title: book.title,
+    thumbnail_url: book.thumbnail_url ?? '',
+    authors: book.authors ?? '',
+    publish_date: book.publish_date ?? '',
+    page_count: book.page_count ?? 0,
+    inserted_at: book.inserted_at,
+    start_date: book.start_date ?? null,
+    finish_date: book.finish_date ?? null,
+    tags: book.tags ?? '',
+    user_email: book.user_email ?? '',
+    id_book_status: book.id_book_status ?? 1,
+    book_hash: book.book_hash ?? null,
+    book_last_open: book.book_last_open ?? null,
+    book_total_read_time: book.book_total_read_time ?? null,
+    book_total_read_pages: book.book_total_read_pages ?? null,
+    book_type_id: book.book_type_id ?? 1,
   };
 }
 
 /**
- * Adapter estándar para libros sin propiedades adicionales
+ * Adapter estándar para libros desde Kysely
  */
-export default function BookAdapter(dbResponse: ResultSet): Book[] {
-  return dbResponse.rows.map(mapBaseBookProperties);
+export default function BookAdapter(dbResponse: BookRow[]): Book[] {
+  return dbResponse.map(mapBaseBookProperties);
 }
 
 export function mapGoogleBookToBook(
@@ -81,13 +67,13 @@ export function mapGoogleBooksArray(googleBook: GoogleBookItem[]): Book[] {
 }
 
 export function highlightAdapter(
-  dbResponse: ResultSet
+  dbResponse: BookHighlightRow[]
 ): BookHighlightPreview[] {
-  return dbResponse.rows.map((row) => ({
+  return dbResponse.map((row) => ({
     highlight_id: Number(row.highlight_id),
     book_id: Number(row.book_id),
     title: String(row.title),
-    author: String(row.authors),
+    author: String(row.authors ?? ''),
     page: Number(row.page),
     created_at: String(row.created_at),
     highlight_text: String(row.highlight_text),

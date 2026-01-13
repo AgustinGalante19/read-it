@@ -1,4 +1,4 @@
-import type { ColumnType } from 'kysely';
+import type { ColumnType, Selectable } from 'kysely';
 
 export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
@@ -142,3 +142,14 @@ export interface ReadItDB {
   account: Account;
   verification: Verification;
 }
+
+export type BookRow = Selectable<ReaditBooks>;
+export type BookHighlightRow = Selectable<{
+  authors: string | null;
+  title: string | null;
+  created_at: string | null;
+  highlight_text: string | null;
+  page: string | null;
+  book_id: number | null;
+  highlight_id: number | null;
+}>;

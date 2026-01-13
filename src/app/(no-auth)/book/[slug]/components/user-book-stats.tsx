@@ -16,7 +16,9 @@ function UserBookStats({
   >;
 }) {
   const lastSyncDate = useMemo(() => {
-    const date = parseISO(userBookData.metadata?.lastSyncDate || '');
+    if (!userBookData.metadata?.lastSyncDate) return '';
+
+    const date = parseISO(userBookData.metadata?.lastSyncDate);
     return format(date, 'dd/MM/yyyy HH:mm');
   }, [userBookData.metadata?.lastSyncDate]);
 

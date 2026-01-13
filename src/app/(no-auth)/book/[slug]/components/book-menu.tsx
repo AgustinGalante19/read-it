@@ -12,7 +12,7 @@ import {
   Trash,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { Book } from '@/types/Book';
+import { Book, BookStatus } from '@/types/Book';
 import { Button } from '@/components/ui/button';
 import {
   Drawer,
@@ -73,7 +73,7 @@ function BookMenu({
 
   const handleAction = async (
     action: keyof typeof isLoading,
-    newStatus: number
+    newStatus: BookStatus
   ) => {
     if (!book) return;
     setIsLoading((prev) => ({ ...prev, [action]: true }));
@@ -139,7 +139,9 @@ function BookMenu({
             <Button
               className='w-full justify-start rounded-lg'
               isLoading={isLoading.wantToRead}
-              onClick={() => handleAction('wantToRead', 1)}
+              onClick={() =>
+                handleAction('wantToRead', BookStatus.WANT_TO_READ)
+              }
               variant={book?.id_book_status === 1 ? 'secondary' : 'ghost'}
             >
               <Bookmark
@@ -150,7 +152,9 @@ function BookMenu({
             <Button
               className='w-full justify-start rounded-lg'
               isLoading={isLoading.currentlyReading}
-              onClick={() => handleAction('currentlyReading', 2)}
+              onClick={() =>
+                handleAction('currentlyReading', BookStatus.READING)
+              }
               variant={book?.id_book_status === 2 ? 'secondary' : 'ghost'}
             >
               <BookOpen
@@ -161,7 +165,7 @@ function BookMenu({
             <Button
               className='w-full justify-start rounded-lg'
               isLoading={isLoading.read}
-              onClick={() => handleAction('read', 3)}
+              onClick={() => handleAction('read', BookStatus.READ)}
               variant={book?.id_book_status === 3 ? 'secondary' : 'ghost'}
             >
               <BadgeCheck
