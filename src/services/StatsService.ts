@@ -64,7 +64,9 @@ export async function getBooksFromDateRange(
   }
 }
 
-export async function getMyStats(): Promise<Result<Stats>> {
+export async function getMyStats(
+  timezoneOffsetMinutes?: number
+): Promise<Result<Stats>> {
   try {
     const userEmail = await getUserEmail();
     if (!userEmail) {
@@ -140,8 +142,12 @@ export async function getMyStats(): Promise<Result<Stats>> {
     const activityStats = await readingStatisticsRepository.getAggregatedStats(
       userEmail
     );
-    const dailyActivity = await readingStatisticsRepository.getLast30DaysDailyStats(userEmail);
-    const hourlyActivity = await readingStatisticsRepository.getHourlyStats(userEmail);
+    const dailyActivity =
+      await readingStatisticsRepository.getLast30DaysDailyStats(userEmail);
+    const hourlyActivity = await readingStatisticsRepository.getHourlyStats(
+      userEmail,
+      timezoneOffsetMinutes
+    );
 
     const stats: Stats = {
       book: {
@@ -174,7 +180,9 @@ export async function getMyStats(): Promise<Result<Stats>> {
   }
 }
 
-export async function getYearlyRecap(year: number): Promise<Result<YearlyRecap>> {
+export async function getYearlyRecap(
+  year: number
+): Promise<Result<YearlyRecap>> {
   try {
     const userEmail = await getUserEmail();
     if (!userEmail) {
@@ -184,7 +192,11 @@ export async function getYearlyRecap(year: number): Promise<Result<YearlyRecap>>
     const startDate = new Date(year, 0, 1);
     const endDate = new Date(year, 11, 31, 23, 59, 59);
 
-    const booksResult = await getBooksFromDateRange(startDate, endDate, BookStatus.READ);
+    const booksResult = await getBooksFromDateRange(
+      startDate,
+      endDate,
+      BookStatus.READ
+    );
 
     if (!booksResult.success || !booksResult.data) {
       return { success: false, error: 'Failed to fetch books for recap' };
@@ -194,25 +206,33 @@ export async function getYearlyRecap(year: number): Promise<Result<YearlyRecap>>
     const totalBooks = books.length;
 
     // Total pages
-    const totalPages = books.reduce((sum, book) => sum + (book.page_count || 0), 0);
+    const totalPages = books.reduce(
+      (sum, book) => sum + (book.page_count || 0),
+      0
+    );
 
     // Longest and shortest book
-    const sortedByLength = [...books].sort((a, b) => (b.page_count || 0) - (a.page_count || 0));
+    const sortedByLength = [...books].sort(
+      (a, b) => (b.page_count || 0) - (a.page_count || 0)
+    );
     const longestBook = sortedByLength[0];
     const shortestBook = sortedByLength[sortedByLength.length - 1];
 
     // Top genres
     const tagCounts: Record<string, number> = {};
-    books.forEach(book => {
+    books.forEach((book) => {
       if (book.tags) {
-        // Assume tags are comma separated or similar. 
+        // Assume tags are comma separated or similar.
         // bookTagsHelper.normalizeBookTags uses string[] input.
-        // Let's assume tags is a string, possibly multiple tags. 
+        // Let's assume tags is a string, possibly multiple tags.
         // Looking at Book.ts, tags: string.
         // I should check how they are stored. Usually comma separated?
         // Let's try to split by comma if it looks like that, otherwise just count as one.
-        const tags = book.tags.split(',').map(t => t.trim()).filter(t => t);
-        tags.forEach(tag => {
+        const tags = book.tags
+          .split(',')
+          .map((t) => t.trim())
+          .filter((t) => t);
+        tags.forEach((tag) => {
           tagCounts[tag] = (tagCounts[tag] || 0) + 1;
         });
       }
@@ -225,7 +245,7 @@ export async function getYearlyRecap(year: number): Promise<Result<YearlyRecap>>
 
     // Most active month
     const monthCounts: Record<string, number> = {};
-    books.forEach(book => {
+    books.forEach((book) => {
       // Use finish_date if available
       if (book.finish_date) {
         const date = new Date(book.finish_date);
@@ -234,13 +254,13 @@ export async function getYearlyRecap(year: number): Promise<Result<YearlyRecap>>
       }
     });
 
-    const mostActiveMonthEntry = Object.entries(monthCounts)
-      .sort((a, b) => b[1] - a[1])[0];
+    const mostActiveMonthEntry = Object.entries(monthCounts).sort(
+      (a, b) => b[1] - a[1]
+    )[0];
 
     const mostActiveMonth = mostActiveMonthEntry
       ? { month: mostActiveMonthEntry[0], count: mostActiveMonthEntry[1] }
       : { month: 'N/A', count: 0 };
-
 
     return {
       success: true,
@@ -252,10 +272,9 @@ export async function getYearlyRecap(year: number): Promise<Result<YearlyRecap>>
         topGenres,
         longestBook,
         shortestBook,
-        mostActiveMonth
-      }
+        mostActiveMonth,
+      },
     };
-
   } catch (e) {
     console.error(e);
     return { success: false, error: 'Failed to generate yearly recap' };

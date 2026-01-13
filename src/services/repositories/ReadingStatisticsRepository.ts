@@ -291,12 +291,17 @@ class ReadingStatisticsRepository {
   }
 
   async getHourlyStats(
-    userEmail: string
+    userEmail: string,
+    timezoneOffsetMinutes?: number
   ): Promise<{ hour: number; pages: number; duration: number }[]> {
+    // If no timezone offset provided, use UTC (0)
+    const offsetMinutes = timezoneOffsetMinutes ?? 0;
+    const offsetSeconds = offsetMinutes * 60;
+
     const result = await turso.execute({
       sql: `
           SELECT 
-            strftime('%H', datetime(CASE WHEN psd.start_time < 10000000000 THEN psd.start_time ELSE psd.start_time / 1000 END, 'unixepoch')) as reading_hour,
+            strftime('%H', datetime(CASE WHEN psd.start_time < 10000000000 THEN psd.start_time ELSE psd.start_time / 1000 END, 'unixepoch', ? || ' seconds')) as reading_hour,
             COUNT(*) as pages,
             SUM(psd.duration) as duration
           FROM readit_page_stat_data psd
@@ -305,7 +310,7 @@ class ReadingStatisticsRepository {
           GROUP BY reading_hour
           ORDER BY reading_hour ASC
         `,
-      args: [userEmail],
+      args: [offsetSeconds.toString(), userEmail],
     });
 
     // Initialize array with all 24 hours
