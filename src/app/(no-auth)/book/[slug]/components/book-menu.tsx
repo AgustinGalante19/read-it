@@ -68,12 +68,12 @@ function BookMenu({
       from: book?.start_date ? new Date(book.start_date) : undefined,
       to: book?.finish_date ? new Date(book.finish_date) : undefined,
     }),
-    [book]
+    [book],
   );
 
   const handleAction = async (
     action: keyof typeof isLoading,
-    newStatus: BookStatus
+    newStatus: BookStatus,
   ) => {
     if (!book) return;
     setIsLoading((prev) => ({ ...prev, [action]: true }));
@@ -122,7 +122,6 @@ function BookMenu({
     close();
   };
 
-  console.log(bookHighlights);
   return (
     <>
       <Drawer open={isOpen} onOpenChange={close}>

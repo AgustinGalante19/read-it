@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getMyStats } from '@/services/StatsService';
 import Stats from '@/types/Stats';
 import GeneralStats from './general-stats';
 import DailyActivityChart from './daily-activity-chart';
@@ -11,6 +10,8 @@ import TagsRadarChart from './tags-radar-chart';
 import BooksGrid from './books-grid';
 import LastbooksList from './last-books-list';
 import Loading from '../loading';
+import { toast } from 'sonner';
+import { getMyStats } from '@/services/ReadingStatisticsService';
 
 export default function StatsWrapper() {
   const [stats, setStats] = useState<Stats | null>(null);
@@ -24,6 +25,8 @@ export default function StatsWrapper() {
       const result = await getMyStats(timezoneOffsetMinutes);
       if (result.success && result.data) {
         setStats(result.data);
+      } else {
+        toast.error(result.error);
       }
       setLoading(false);
     }
