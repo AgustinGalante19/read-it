@@ -1,7 +1,7 @@
 import { db } from '@/services/database/kysely';
 
 export async function validateDeviceCode(
-  deviceCode: string | undefined | null
+  deviceCode: string | undefined | null,
 ): Promise<{ valid: boolean; error?: string }> {
   if (!deviceCode) {
     return { valid: false, error: 'Device code is required' };

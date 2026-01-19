@@ -1,4 +1,3 @@
-import { turso } from '@/services/database/turso';
 import { BookStatus } from '@/types/Book';
 import { NextRequest } from 'next/server';
 import { validateDeviceCode } from '@/lib/validateDevice';
@@ -6,7 +5,7 @@ import { db } from '@/services/database/kysely';
 
 export async function GET(
   _req: NextRequest,
-  ctx: RouteContext<'/api/koreader/books/[deviceCode]'>
+  ctx: RouteContext<'/api/koreader/books/[deviceCode]'>,
 ) {
   const { deviceCode } = await ctx.params;
 
@@ -22,7 +21,7 @@ export async function GET(
       'rb.id',
       'rb.google_id',
       fn<string>('concat', ['rb.title', val(' - '), 'rb.authors']).as(
-        'bookInfo'
+        'bookInfo',
       ),
     ])
     .where('rud.device_code', '=', deviceCode)
@@ -30,7 +29,7 @@ export async function GET(
       eb.or([
         eb('rb.id_book_status', '=', BookStatus.READING),
         eb('rb.id_book_status', '=', BookStatus.WANT_TO_READ),
-      ])
+      ]),
     )
     .execute();
 

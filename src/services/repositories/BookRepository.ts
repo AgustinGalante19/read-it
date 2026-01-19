@@ -1,5 +1,4 @@
 import { Book, BookStatus } from '@/types/Book';
-import { turso } from '../database/turso';
 import BookAdapter, { highlightAdapter } from '../adapters/BookAdapter';
 import datesHelper from '../helpers/DatesHelper';
 import { BookHighlightPreview } from '@/types/BookHighlight';
@@ -9,7 +8,7 @@ import { sql } from 'kysely';
 class BookRepository {
   async findBooksByStatus(
     userEmail: string,
-    status: BookStatus
+    status: BookStatus,
   ): Promise<Book[]> {
     const query = db
       .selectFrom('readit_books')
@@ -40,7 +39,7 @@ class BookRepository {
   async getBooksFinishedInMonth(
     userEmail: string,
     month: number,
-    year: number
+    year: number,
   ): Promise<Book[]> {
     const monthStr = month.toString().padStart(2, '0');
     const result = await db
@@ -58,7 +57,7 @@ class BookRepository {
 
   async findBookByGoogleId(
     googleId: string,
-    userEmail: string
+    userEmail: string,
   ): Promise<Book | null> {
     const result = await db
       .selectFrom('readit_books')
@@ -93,7 +92,7 @@ class BookRepository {
     googleId: string,
     userEmail: string,
     newStatus: number,
-    dates?: { startDate?: string; finishDate?: string }
+    dates?: { startDate?: string; finishDate?: string },
   ): Promise<void> {
     const query = db
       .updateTable('readit_books')
@@ -137,7 +136,7 @@ class BookRepository {
     googleId: string,
     userEmail: string,
     start_date: string | null,
-    finish_date: string | null
+    finish_date: string | null,
   ): Promise<void> {
     await db
       .updateTable('readit_books')
@@ -162,7 +161,7 @@ class BookRepository {
     googleId: string,
     hash: string,
     pageCount: number,
-    deviceCode: string
+    deviceCode: string,
   ): Promise<void> {
     await db
       .updateTable('readit_books')
@@ -175,7 +174,7 @@ class BookRepository {
         eb
           .selectFrom('readit_user_devices')
           .select('user_email')
-          .where('device_code', '=', deviceCode)
+          .where('device_code', '=', deviceCode),
       )
       .execute();
   }
@@ -205,7 +204,7 @@ class BookRepository {
         eb
           .selectFrom('readit_user_devices')
           .select('user_email')
-          .where('device_code', '=', deviceCode)
+          .where('device_code', '=', deviceCode),
       )
       .execute();
   }
@@ -213,7 +212,7 @@ class BookRepository {
   async updateBookType(
     book_type_id: number,
     googleId: string,
-    userEmail: string
+    userEmail: string,
   ): Promise<void> {
     await db
       .updateTable('readit_books')
@@ -225,14 +224,14 @@ class BookRepository {
 
   async getHighlights(
     googleId: string,
-    userEmail: string
+    userEmail: string,
   ): Promise<BookHighlightPreview[]> {
     const result = await db
       .selectFrom('readit_books as rb')
       .fullJoin(
         'readit_books_highlights as rbh',
         'rb.book_hash',
-        'rbh.book_hash'
+        'rbh.book_hash',
       )
       .select([
         'rb.id as book_id',

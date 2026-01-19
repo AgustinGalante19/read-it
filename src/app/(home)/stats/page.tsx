@@ -1,7 +1,6 @@
 export const dynamic = 'force-dynamic';
 
-import { ChartBar, PlayCircle } from 'lucide-react';
-import Link from 'next/link';
+import { ChartBar } from 'lucide-react';
 import StatsWrapper from './components/stats-wrapper';
 
 async function StatsPage() {

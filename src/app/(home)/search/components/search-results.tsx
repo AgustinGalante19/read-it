@@ -5,6 +5,7 @@ import React, { useCallback } from 'react';
 import BookCard from '@/components/book/book-card';
 import { bookSearchService } from '@/services/SearchsService';
 import { Book } from '@/types/Book';
+import { toast } from 'sonner';
 
 function SearchResults({ books }: { books: Book[] }) {
   const router = useRouter();
@@ -14,19 +15,19 @@ function SearchResults({ books }: { books: Book[] }) {
       try {
         const recentSearchesResult = await bookSearchService.getIDBBooks();
         const alreadyExists = recentSearchesResult.find(
-          (el) => el.google_id === book.google_id
+          (el) => el.google_id === book.google_id,
         );
         if (alreadyExists) {
           return;
         }
         await bookSearchService.addIDBBook(book);
-      } catch (err) {
-        console.log('Error on save data: ', err);
+      } catch {
+        toast.error('Error saving recent search');
       } finally {
         router.push(`/book/${book.google_id}`);
       }
     },
-    [router]
+    [router],
   );
 
   return (

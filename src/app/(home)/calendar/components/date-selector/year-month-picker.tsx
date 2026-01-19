@@ -11,17 +11,19 @@ import {
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useState, useMemo, useCallback } from 'react';
 
+interface YearMonthPickerProps {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+  currentYearValue?: number;
+  currentMonthValue?: string;
+}
+
 function YearMonthPicker({
   isOpen,
   onOpenChange,
   currentMonthValue,
   currentYearValue,
-}: {
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
-  currentYearValue?: number;
-  currentMonthValue?: string;
-}) {
+}: YearMonthPickerProps) {
   const [pickMode, setPickMode] = useState<'year' | 'month'>('month');
 
   // Generar nombres de meses según la configuración regional del usuario
@@ -43,12 +45,12 @@ function YearMonthPicker({
 
       return params.toString();
     },
-    [searchParams]
+    [searchParams],
   );
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className='w-[328px] h-[400px] flex flex-col'>
+      <DialogContent className='w-82 h-100 flex flex-col'>
         <DialogHeader>
           <DialogTitle className='text-sm text-start font-normal'>
             Select Date
@@ -90,7 +92,7 @@ function YearMonthPicker({
                       router.push(
                         pathname +
                           '?' +
-                          createQueryString('month', (index + 1).toString())
+                          createQueryString('month', (index + 1).toString()),
                       );
                     }}
                   >
@@ -105,7 +107,7 @@ function YearMonthPicker({
                       router.push(
                         pathname +
                           '?' +
-                          createQueryString('year', year.toString())
+                          createQueryString('year', year.toString()),
                       );
                     }}
                   >

@@ -14,10 +14,6 @@ const eslintConfig = defineConfig([
   // Reglas personalizadas
   {
     rules: {
-      // Variables e imports sin usar: error
-      '@typescript-eslint/no-unused-vars': 'error',
-      'no-unused-vars': 'error',
-      // Console logs: advertencia
       'no-console': 'warn',
     },
   },

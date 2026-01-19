@@ -46,7 +46,7 @@ export default function WrappedStory({ recap }: WrappedStoryProps) {
           >
             YOUR {recap.year}
             <br />
-            <span className='text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600'>
+            <span className='text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-pink-600'>
               WRAPPED
             </span>
           </motion.h1>
@@ -142,8 +142,8 @@ export default function WrappedStory({ recap }: WrappedStoryProps) {
                   index === 0
                     ? 'bg-white text-emerald-900 text-2xl'
                     : index === 1
-                    ? 'bg-emerald-200 text-emerald-900 text-xl'
-                    : 'bg-emerald-900/50 border border-emerald-500/30 text-emerald-100'
+                      ? 'bg-emerald-200 text-emerald-900 text-xl'
+                      : 'bg-emerald-900/50 border border-emerald-500/30 text-emerald-100',
                 )}
               >
                 {genre.tag}
@@ -247,7 +247,7 @@ export default function WrappedStory({ recap }: WrappedStoryProps) {
                   }
                   loading='lazy'
                   className={cn(
-                    'max-h-[205px] min-h-[77px] rounded-md shadow-lg'
+                    'max-h-[205px] min-h-[77px] rounded-md shadow-lg',
                   )}
                 />
               </div>
@@ -399,7 +399,7 @@ export default function WrappedStory({ recap }: WrappedStoryProps) {
           }}
           className={cn(
             'absolute inset-0 w-full h-full',
-            slides[currentSlide].bg
+            slides[currentSlide].bg,
           )}
           onClick={(e) => {
             // Click right side to go next, left to go prev (Instagram story style)
