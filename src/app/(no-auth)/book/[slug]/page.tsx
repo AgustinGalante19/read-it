@@ -5,11 +5,12 @@ import Categories from './components/categories';
 import LibraryActions from './components/library-actions';
 import { Metadata } from 'next';
 import BookDescription from './components/book-description';
-import { existsOnLibrary, getBookHighlights } from '@/services/BookService';
+import { existsOnLibrary } from '@/services/BookService';
 import datesHelper from '@/services/helpers/DatesHelper';
 import bookHelper from '@/services/helpers/BookHelper';
 import booksSearcher from '@/services/repositories/BooksSearcher';
 import UserBookStats from './components/user-book-stats';
+import { getBookHighlights } from '@/services/BookHighlightService';
 export async function generateMetadata({
   params,
 }: {
@@ -44,7 +45,7 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
 
   return (
     <article>
-      <header className='flex h-[320px] justify-center items-end relative w-full pb-4'>
+      <header className='flex h-80 justify-center items-end relative w-full pb-4'>
         <div
           style={{
             backgroundImage: `url(${

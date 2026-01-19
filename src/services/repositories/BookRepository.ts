@@ -221,33 +221,6 @@ class BookRepository {
       .where('user_email', '=', userEmail)
       .execute();
   }
-
-  async getHighlights(
-    googleId: string,
-    userEmail: string,
-  ): Promise<BookHighlightPreview[]> {
-    const result = await db
-      .selectFrom('readit_books as rb')
-      .fullJoin(
-        'readit_books_highlights as rbh',
-        'rb.book_hash',
-        'rbh.book_hash',
-      )
-      .select([
-        'rb.id as book_id',
-        'rbh.id as highlight_id',
-        'rb.title',
-        'rb.authors',
-        'rbh.highlight_text',
-        'rbh.page',
-        'rbh.created_at',
-      ])
-      .where('rb.google_id', '=', googleId)
-      .where('rb.user_email', '=', userEmail)
-      .execute();
-
-    return highlightAdapter(result);
-  }
 }
 
 const bookRepository = new BookRepository();

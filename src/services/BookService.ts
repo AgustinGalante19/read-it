@@ -7,7 +7,6 @@ import { Result, ResultWithMetadata } from '@/types/Result';
 import ReadDatesHelper from './helpers/ReadDatesHelper';
 import bookRepository from './repositories/BookRepository';
 import readingStatisticsRepository from './repositories/ReadingStatisticsRepository';
-import { BookHighlightPreview } from '@/types/BookHighlight';
 
 async function revalidateBookPaths(): Promise<void> {
   revalidatePath('/book', 'layout');
@@ -48,7 +47,7 @@ export async function addBook(book: Book): Promise<Result<string>> {
 
 export async function updateBookStatus(
   newStatus: number,
-  googleId: string
+  googleId: string,
 ): Promise<Result<string>> {
   try {
     const userEmail = await getUserEmail();
@@ -56,7 +55,7 @@ export async function updateBookStatus(
 
     const existingBook = await bookRepository.findBookByGoogleId(
       googleId,
-      userEmail
+      userEmail,
     );
     const dates = ReadDatesHelper(newStatus, existingBook);
 
@@ -64,7 +63,7 @@ export async function updateBookStatus(
       googleId,
       userEmail,
       newStatus,
-      dates
+      dates,
     );
     await revalidateBookPaths();
 
@@ -76,7 +75,7 @@ export async function updateBookStatus(
 
 export async function updateBookDates(
   googleId: string,
-  { from, to }: { from: string | null; to: string | null }
+  { from, to }: { from: string | null; to: string | null },
 ): Promise<Result<string>> {
   try {
     const userEmail = await getUserEmail();
@@ -92,7 +91,7 @@ export async function updateBookDates(
 }
 
 export async function removeFromLibrary(
-  googleId: string
+  googleId: string,
 ): Promise<Result<boolean>> {
   try {
     const userEmail = await getUserEmail();
@@ -109,7 +108,7 @@ export async function removeFromLibrary(
 }
 
 export async function existsOnLibrary(
-  googleId: string
+  googleId: string,
 ): Promise<ResultWithMetadata<Book | null, { lastSyncDate: string | null }>> {
   try {
     const userEmail = await getUserEmail();
@@ -122,12 +121,12 @@ export async function existsOnLibrary(
       book.book_total_read_time =
         await readingStatisticsRepository.getTotalReadTimeByHash(
           book.book_hash,
-          userEmail
+          userEmail,
         );
 
       lastSyncDate = await readingStatisticsRepository.getLastSyncDate(
         userEmail,
-        book.book_hash
+        book.book_hash,
       );
     }
     return {
@@ -143,7 +142,7 @@ export async function existsOnLibrary(
 
 export async function updateBookType(
   bookTypeId: number,
-  googleId: string
+  googleId: string,
 ): Promise<Result<string>> {
   try {
     const userEmail = await getUserEmail();
@@ -152,7 +151,7 @@ export async function updateBookType(
     await bookRepository.updateBookType(bookTypeId, googleId, userEmail);
     await readingStatisticsRepository.deleteReadingStatsByGoogleId(
       googleId,
-      userEmail
+      userEmail,
     );
 
     await revalidateBookPaths();
@@ -168,7 +167,7 @@ export async function updateBookHash(
   hash: string,
   googleId: string,
   pageCount: number,
-  deviceCode: string
+  deviceCode: string,
 ): Promise<Result<string>> {
   try {
     await bookRepository.updateHash(googleId, hash, pageCount, deviceCode);
@@ -192,20 +191,5 @@ export async function recordLastReadingInfo(data: {
   } catch (error) {
     console.error('Error updating book last open:', error);
     return { success: false, error: 'Failed to update book last open' };
-  }
-}
-
-export async function getBookHighlights(
-  googleId: string
-): Promise<Result<BookHighlightPreview[]>> {
-  try {
-    const userEmail = await getUserEmail();
-    await isAuthenticated(userEmail);
-
-    const highlights = await bookRepository.getHighlights(googleId, userEmail);
-    return { success: true, data: highlights };
-  } catch (error) {
-    console.error('Error getting book highlights:', error);
-    return { success: false, error: 'Failed to get book highlights' };
   }
 }
