@@ -1,6 +1,6 @@
-import { turso } from '@/services/database/turso';
 import type { NextRequest } from 'next/server';
 import { validateDeviceCode } from '@/lib/validateDevice';
+import { db } from '@/services/database/kysely';
 
 export async function GET(
   _req: NextRequest,
@@ -13,17 +13,17 @@ export async function GET(
     return Response.json({ error: validation.error }, { status: 401 });
   }
 
-  const { rows } = await turso.execute({
-    sql: `SELECT book_last_open 
-          FROM readit_books
-          WHERE book_hash = ? 
-          AND user_email = (
-            SELECT user_email 
-            FROM readit_user_devices 
-            WHERE device_code = ?)
-          `,
-    args: [hash, deviceCode],
-  });
+  const result = await db
+    .selectFrom('readit_books')
+    .select('book_last_open')
+    .where('book_hash', '=', hash)
+    .where('user_email', '=', (eb) =>
+      eb
+        .selectFrom('readit_user_devices')
+        .select('user_email')
+        .where('device_code', '=', deviceCode)
+    )
+    .executeTakeFirst();
 
-  return Response.json({ last_open: rows[0]?.book_last_open || null });
+  return Response.json({ last_open: result?.book_last_open || null });
 }

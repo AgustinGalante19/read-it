@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import BackButton from '@/components/ui/back-button';
 import { BookText, Calendar, Minus } from 'lucide-react';
 import Image from 'next/image';
@@ -5,18 +6,24 @@ import Categories from './components/categories';
 import LibraryActions from './components/library-actions';
 import { Metadata } from 'next';
 import BookDescription from './components/book-description';
-import { existsOnLibrary, getBookHighlights } from '@/services/BookService';
+import { existsOnLibrary } from '@/services/BookService';
 import datesHelper from '@/services/helpers/DatesHelper';
 import bookHelper from '@/services/helpers/BookHelper';
 import booksSearcher from '@/services/repositories/BooksSearcher';
 import UserBookStats from './components/user-book-stats';
+import { getBookHighlights } from '@/services/BookHighlightService';
+
+const getBook = cache(async (slug: string) => {
+  return booksSearcher.getById(slug);
+});
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const slug = (await params).slug;
-  const book = await booksSearcher.getById(slug);
+  const book = await getBook(slug);
 
   if (!book) {
     return {
@@ -38,13 +45,15 @@ export async function generateMetadata({
 
 async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
   const slug = (await params).slug;
-  const book = await booksSearcher.getById(slug);
-  const dbBook = await existsOnLibrary(book.google_id);
-  const bookHighlights = await getBookHighlights(book.google_id);
+  const book = await getBook(slug);
+  const [dbBook, bookHighlights] = await Promise.all([
+    existsOnLibrary(book.google_id),
+    getBookHighlights(book.google_id),
+  ]);
 
   return (
     <article>
-      <header className='flex h-[320px] justify-center items-end relative w-full pb-4'>
+      <header className='flex h-80 justify-center items-end relative w-full pb-4'>
         <div
           style={{
             backgroundImage: `url(${

@@ -1,11 +1,11 @@
-import { turso } from '@/services/database/turso';
 import { BookStatus } from '@/types/Book';
 import { NextRequest } from 'next/server';
 import { validateDeviceCode } from '@/lib/validateDevice';
+import { db } from '@/services/database/kysely';
 
 export async function GET(
   _req: NextRequest,
-  ctx: RouteContext<'/api/koreader/books/[deviceCode]'>
+  ctx: RouteContext<'/api/koreader/books/[deviceCode]'>,
 ) {
   const { deviceCode } = await ctx.params;
 
@@ -14,15 +14,24 @@ export async function GET(
     return Response.json({ error: validation.error }, { status: 401 });
   }
 
-  const { rows } = await turso.execute({
-    sql: `
-          SELECT b.id, b.google_id as googleId, CONCAT(b.title,' - ', b.authors) as bookInfo 
-          FROM readit_books b
-          INNER JOIN readit_user_devices d ON b.user_email = d.user_email
-          WHERE d.device_code = ? 
-          AND (b.id_book_status = ? OR b.id_book_status = ?)
-          `,
-    args: [deviceCode, BookStatus.READING, BookStatus.WANT_TO_READ],
-  });
-  return Response.json(rows);
+  const result = await db
+    .selectFrom('readit_books as rb')
+    .fullJoin('readit_user_devices as rud', 'rb.user_email', 'rud.user_email')
+    .select(({ fn, val }) => [
+      'rb.id',
+      'rb.google_id',
+      fn<string>('concat', ['rb.title', val(' - '), 'rb.authors']).as(
+        'bookInfo',
+      ),
+    ])
+    .where('rud.device_code', '=', deviceCode)
+    .where((eb) =>
+      eb.or([
+        eb('rb.id_book_status', '=', BookStatus.READING),
+        eb('rb.id_book_status', '=', BookStatus.WANT_TO_READ),
+      ]),
+    )
+    .execute();
+
+  return Response.json(result);
 }

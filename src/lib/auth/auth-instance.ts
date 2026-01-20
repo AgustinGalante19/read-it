@@ -3,7 +3,7 @@ import { betterAuth } from 'better-auth';
 import { nextCookies } from 'better-auth/next-js';
 import { createAuthMiddleware } from 'better-auth/api';
 import { checkIfUserExists, createUser } from '@/services/UserService';
-import { db } from './auth-db';
+import { db } from '@/services/database/kysely';
 
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL,
@@ -20,7 +20,7 @@ export const auth = betterAuth({
   },
   plugins: [nextCookies()],
   database: {
-    db: db,
+    db,
     type: 'sqlite',
   },
   hooks: {

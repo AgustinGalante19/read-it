@@ -1,21 +1,18 @@
-import { turso } from '@/services/database/turso';
+import { db } from '@/services/database/kysely';
 
 export async function validateDeviceCode(
-  deviceCode: string | undefined | null
+  deviceCode: string | undefined | null,
 ): Promise<{ valid: boolean; error?: string }> {
   if (!deviceCode) {
     return { valid: false, error: 'Device code is required' };
   }
 
   try {
-    const { rows } = await turso.execute({
-      sql: 'SELECT 1 FROM readit_user_devices WHERE device_code = ?',
-      args: [deviceCode],
-    });
-
-    if (rows.length === 0) {
-      return { valid: false, error: 'Invalid device code' };
-    }
+    await db
+      .selectFrom('readit_user_devices')
+      .select('id')
+      .where('device_code', '=', deviceCode)
+      .executeTakeFirstOrThrow();
 
     return { valid: true };
   } catch (error) {

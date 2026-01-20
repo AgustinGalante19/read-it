@@ -1,13 +1,13 @@
 'use client';
 
-import React, { ChangeEvent, useEffect, useState } from 'react';
-import { useDebounce } from '@uidotdev/usehooks';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { SearchIcon } from 'lucide-react';
+import { useDebounce } from '@uidotdev/usehooks';
 import { Book } from '@/types/Book';
+import booksSearcher from '@/services/repositories/BooksSearcher';
 import { Input } from '@/components/ui/input';
 import SearchResults from './components/search-results';
 import RecentSearches from './components/recent-searches';
-import booksSearcher from '@/services/repositories/BooksSearcher';
 
 function Search() {
   const [searchTerm, setSearchTerm] = useState('');

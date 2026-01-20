@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import {
   Dialog,
@@ -44,7 +44,7 @@ function DatePicker({
       defaultValue || {
         from: undefined,
         to: undefined,
-      }
+      },
   );
   const [currentMonth, setCurrentMonth] = useState(() => {
     // Si hay un defaultValue, inicializar el mes actual con el mes de 'from' o 'to'
@@ -52,13 +52,13 @@ function DatePicker({
       return new Date(
         defaultValue.from.getFullYear(),
         defaultValue.from.getMonth(),
-        1
+        1,
       );
     } else if (defaultValue?.to) {
       return new Date(
         defaultValue.to.getFullYear(),
         defaultValue.to.getMonth(),
-        1
+        1,
       );
     }
     return new Date();
@@ -66,20 +66,20 @@ function DatePicker({
 
   const calendarDays = useMemo(
     () => generateCalendarDays(currentMonth),
-    [currentMonth]
+    [currentMonth],
   );
 
   const yearOptions = useMemo(() => generateYears(10), []);
 
   const goToPreviousMonth = () => {
     setCurrentMonth(
-      (prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1)
+      (prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1),
     );
   };
 
   const goToNextMonth = () => {
     setCurrentMonth(
-      (prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1)
+      (prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1),
     );
   };
 
@@ -218,7 +218,7 @@ function DatePicker({
                 className={cn('w-8 h-8 rounded-full text-sm relative', {
                   'bg-secondary text-primary hover:bg-primary/20': isDayInRange(
                     dayData,
-                    dateRange
+                    dateRange,
                   ),
                   'hover:bg-secondary':
                     !isDaySelected(dayData, dateRange) &&
@@ -241,8 +241,8 @@ function DatePicker({
                       new Date(
                         dayData.date.getFullYear(),
                         dayData.date.getMonth(),
-                        1
-                      )
+                        1,
+                      ),
                     );
                   }
                 }}

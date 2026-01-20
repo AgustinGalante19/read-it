@@ -1,13 +1,15 @@
 import UserDevices from '@/types/UserDevices';
-import { turso } from '../database/turso';
+import { db } from '../database/kysely';
 
 class UserDevicesRepository {
   async getDevicesByUserEmail(user_email: string): Promise<UserDevices[]> {
-    const result = await turso.execute({
-      sql: `SELECT * FROM readit_user_devices WHERE user_email = ?`,
-      args: [user_email],
-    });
-    return result.rows.map(
+    const result = await db
+      .selectFrom('readit_user_devices')
+      .selectAll()
+      .where('user_email', '=', user_email)
+      .execute();
+
+    return result.map(
       ({ id, user_email, device_name, device_code, created_at }) => {
         return {
           id: Number(id),
@@ -16,37 +18,44 @@ class UserDevicesRepository {
           device_code: String(device_code),
           created_at: String(created_at),
         };
-      }
+      },
     );
   }
 
   async addDevice(
     user_email: string,
     device_name: string,
-    device_code: string
+    device_code: string,
   ): Promise<{ device_name: string; device_code: string }> {
-    await turso.execute({
-      sql: `INSERT INTO readit_user_devices (user_email, device_name, device_code) VALUES (?, ?, ?)`,
-      args: [user_email, device_name, device_code],
-    });
+    await db
+      .insertInto('readit_user_devices')
+      .values({
+        user_email,
+        device_name,
+        device_code,
+      })
+      .execute();
 
     return { device_name, device_code };
   }
 
   async deleteDevice(deviceId: number): Promise<void> {
-    await turso.execute({
-      sql: `DELETE 
-            FROM readit_page_stat_data 
-            WHERE user_device_code = (
-              SELECT device_code FROM readit_user_devices WHERE id = ?
-            )`,
-      args: [deviceId],
-    });
+    await db
+      .deleteFrom('readit_page_stat_data')
+      .where(
+        'user_device_code',
+        '=',
+        db
+          .selectFrom('readit_user_devices')
+          .select('device_code')
+          .where('id', '=', deviceId),
+      )
+      .execute();
 
-    await turso.execute({
-      sql: `DELETE FROM readit_user_devices WHERE id = ?`,
-      args: [deviceId],
-    });
+    await db
+      .deleteFrom('readit_user_devices')
+      .where('id', '=', deviceId)
+      .execute();
   }
 }
 

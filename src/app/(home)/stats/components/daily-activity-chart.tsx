@@ -1,6 +1,6 @@
 'use client';
 
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts';
 import {
   ChartConfig,
   ChartContainer,
@@ -18,11 +18,11 @@ import {
 const chartConfig = {
   duration: {
     label: 'Minutes',
-    color: 'oklch(var(--chart-1))',
+    color: 'oklch(var(--chart-4))',
   },
   pages: {
     label: 'Pages',
-    color: 'oklch(var(--chart-2))',
+    color: 'oklch(var(--chart-1))',
   },
 } satisfies ChartConfig;
 
@@ -44,12 +44,10 @@ function DailyActivityChart({
     <Card>
       <CardHeader>
         <CardTitle>Last 30 Days Activity</CardTitle>
-        <CardDescription>
-          Daily reading duration in minutes
-        </CardDescription>
+        <CardDescription>Daily reading duration in minutes</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className='min-h-[200px] w-full'>
+        <ChartContainer config={chartConfig} className='min-h-50 w-full'>
           <BarChart accessibilityLayer data={formattedData}>
             <CartesianGrid vertical={false} />
             <XAxis

@@ -12,9 +12,8 @@ export async function getUserDevices(): Promise<Result<UserDevices[]>> {
     if (!userEmail) {
       return { success: false, error: 'User not authenticated' };
     }
-    const devices = await userDevicesRepository.getDevicesByUserEmail(
-      userEmail
-    );
+    const devices =
+      await userDevicesRepository.getDevicesByUserEmail(userEmail);
     return { success: true, data: devices };
   } catch {
     return { success: false, error: 'Failed to fetch user devices' };
@@ -23,7 +22,7 @@ export async function getUserDevices(): Promise<Result<UserDevices[]>> {
 
 export async function addUserDevice(
   deviceName: string,
-  deviceCode: string
+  deviceCode: string,
 ): Promise<Result<{ device_name: string; device_code: string }>> {
   try {
     const userEmail = await getUserEmail();
@@ -33,25 +32,25 @@ export async function addUserDevice(
     const newDevice = await userDevicesRepository.addDevice(
       userEmail,
       deviceName,
-      deviceCode
+      deviceCode,
     );
     revalidatePath('/devices');
     return { success: true, data: newDevice };
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return { success: false, error: 'Failed to add user device' };
   }
 }
 
 export async function deleteUserDevice(
-  deviceId: number
+  deviceId: number,
 ): Promise<Result<string>> {
   try {
     await userDevicesRepository.deleteDevice(deviceId);
     revalidatePath('/devices');
     return { success: true, data: 'Device deleted successfully' };
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return { success: false, error: 'Failed to delete user device' };
   }
 }

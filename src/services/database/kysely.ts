@@ -1,6 +1,6 @@
-import { Kysely } from 'kysely';
-import { LibsqlDialect } from '@libsql/kysely-libsql';
 import { ReadItDB } from '@/types/ReadItDatabase';
+import { LibsqlDialect } from '@libsql/kysely-libsql';
+import { Kysely } from 'kysely';
 
 export const db = new Kysely<ReadItDB>({
   dialect: new LibsqlDialect({

@@ -40,7 +40,7 @@ export enum BookStatus {
   ALL = 0,
 }
 
-export const BookStatusDictionary: { [key in BookStatus]: string } = {
+export const BookStatusDictionary: { [_key in BookStatus]: string } = {
   [BookStatus.WANT_TO_READ]: 'Want to Read',
   [BookStatus.READING]: 'Currently Reading',
   [BookStatus.READ]: 'Read',

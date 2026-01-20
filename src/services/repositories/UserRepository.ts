@@ -1,20 +1,18 @@
-import { turso } from '../database/turso';
+import { db } from '../database/kysely';
 
 class UserRepository {
   async checkIfUserExists(email: string) {
-    const userData = await turso.execute({
-      sql: `SELECT * FROM readit_users WHERE email = ?`,
-      args: [email],
-    });
+    const userData = await db
+      .selectFrom('readit_users')
+      .select('email')
+      .where('email', '=', email)
+      .execute();
 
-    return userData.rows.length > 0;
+    return userData.length > 0;
   }
 
   async createUser(name: string, email: string): Promise<void> {
-    await turso.execute({
-      sql: `INSERT INTO readit_users (name, email) VALUES (?, ?)`,
-      args: [name, email],
-    });
+    await db.insertInto('readit_users').values({ name, email }).execute();
   }
 }
 
