@@ -1,7 +1,3 @@
-'use client';
-
-import { useEffect, useState } from 'react';
-import Stats from '@/types/Stats';
 import GeneralStats from './general-stats';
 import DailyActivityChart from './daily-activity-chart';
 import HourlyActivityChart from './hourly-activity-chart';
@@ -9,38 +5,11 @@ import LastBooksGraph from './last-books-graph';
 import TagsRadarChart from './tags-radar-chart';
 import BooksGrid from './books-grid';
 import LastbooksList from './last-books-list';
-import Loading from '../loading';
-import { toast } from 'sonner';
 import { getMyStats } from '@/services/ReadingStatisticsService';
 
-export default function StatsWrapper() {
-  const [stats, setStats] = useState<Stats | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function loadStats() {
-      // Get timezone offset in minutes (negative for UTC+, positive for UTC-)
-      const timezoneOffsetMinutes = -new Date().getTimezoneOffset();
-
-      const result = await getMyStats(timezoneOffsetMinutes);
-      if (result.success && result.data) {
-        setStats(result.data);
-      } else {
-        toast.error(result.error);
-      }
-      setLoading(false);
-    }
-
-    loadStats();
-  }, []);
-
-  if (loading) {
-    return <Loading />;
-  }
-
-  if (!stats) {
-    return <div className='p-4'>No se encontraron estadísticas</div>;
-  }
+export default async function StatsWrapper() {
+  const { data: stats } = await getMyStats();
+  if (!stats) return <div>No statistics available.</div>;
 
   return (
     <div className='space-y-4'>

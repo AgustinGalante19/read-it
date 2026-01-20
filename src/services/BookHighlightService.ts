@@ -13,7 +13,7 @@ export async function addBookHighlight(
     await bookHighlightsRepository.createHighlight(highlightData);
     return { success: true, data: 'Book highlight added successfully' };
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return { success: false, error: 'Failed to add book highlight' };
   }
 }
@@ -26,7 +26,7 @@ export async function deleteBookHighlight(
     revalidatePath('/book/[slug]');
     return { success: true, data: 'Book highlight deleted successfully' };
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return { success: false, error: 'Failed to delete book highlight' };
   }
 }

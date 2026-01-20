@@ -355,7 +355,6 @@ export async function getMyStats(
       dailyActivity,
       hourlyActivity,
     };
-    console.log(stats);
     return { success: true, data: stats };
   } catch (e) {
     console.error(e);

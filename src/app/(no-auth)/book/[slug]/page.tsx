@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import BackButton from '@/components/ui/back-button';
 import { BookText, Calendar, Minus } from 'lucide-react';
 import Image from 'next/image';
@@ -11,13 +12,18 @@ import bookHelper from '@/services/helpers/BookHelper';
 import booksSearcher from '@/services/repositories/BooksSearcher';
 import UserBookStats from './components/user-book-stats';
 import { getBookHighlights } from '@/services/BookHighlightService';
+
+const getBook = cache(async (slug: string) => {
+  return booksSearcher.getById(slug);
+});
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const slug = (await params).slug;
-  const book = await booksSearcher.getById(slug);
+  const book = await getBook(slug);
 
   if (!book) {
     return {
@@ -39,9 +45,11 @@ export async function generateMetadata({
 
 async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
   const slug = (await params).slug;
-  const book = await booksSearcher.getById(slug);
-  const dbBook = await existsOnLibrary(book.google_id);
-  const bookHighlights = await getBookHighlights(book.google_id);
+  const book = await getBook(slug);
+  const [dbBook, bookHighlights] = await Promise.all([
+    existsOnLibrary(book.google_id),
+    getBookHighlights(book.google_id),
+  ]);
 
   return (
     <article>

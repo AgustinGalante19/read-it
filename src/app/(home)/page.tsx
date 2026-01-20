@@ -18,10 +18,14 @@ import { Button } from '@/components/ui/button';
 import { Book, BookCheck, BookMarked, BookOpen } from 'lucide-react';
 
 export default async function Home() {
-  const currentlyReading = await getMyBooks(BookStatus.READING);
-  const readList = await getMyBooks(BookStatus.WANT_TO_READ);
-  const readedBooks = await getMyBooks(BookStatus.READ);
-  const allBooks = await getMyBooks(BookStatus.ALL);
+  const [currentlyReading, readList, readedBooks, allBooks] = await Promise.all(
+    [
+      getMyBooks(BookStatus.READING),
+      getMyBooks(BookStatus.WANT_TO_READ),
+      getMyBooks(BookStatus.READ),
+      getMyBooks(BookStatus.ALL),
+    ],
+  );
 
   return (
     <main className='min-h-full'>

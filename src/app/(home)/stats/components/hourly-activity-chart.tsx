@@ -18,7 +18,7 @@ import {
 const chartConfig = {
   pages: {
     label: 'Pages Read',
-    color: 'oklch(var(--chart-3))',
+    color: 'oklch(var(--chart-4))',
   },
 } satisfies ChartConfig;
 

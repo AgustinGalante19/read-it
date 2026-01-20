@@ -18,11 +18,11 @@ import {
 const chartConfig = {
   duration: {
     label: 'Minutes',
-    color: 'oklch(var(--chart-1))',
+    color: 'oklch(var(--chart-4))',
   },
   pages: {
     label: 'Pages',
-    color: 'oklch(var(--chart-2))',
+    color: 'oklch(var(--chart-1))',
   },
 } satisfies ChartConfig;
 
