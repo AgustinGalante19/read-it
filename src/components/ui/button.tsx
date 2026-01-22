@@ -31,7 +31,7 @@ const buttonVariants = cva(
       variant: 'default',
       size: 'default',
     },
-  }
+  },
 );
 
 function Button({
@@ -57,7 +57,8 @@ function Button({
       disabled={disabled || isLoading}
       {...props}
     >
-      {isLoading ? <Spinner /> : children}
+      {children}
+      {isLoading && <Spinner />}
     </Comp>
   );
 }
