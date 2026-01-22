@@ -5,9 +5,14 @@ import { SearchIcon } from 'lucide-react';
 import { useDebounce } from '@uidotdev/usehooks';
 import { Book } from '@/types/Book';
 import booksSearcher from '@/services/repositories/BooksSearcher';
-import { Input } from '@/components/ui/input';
 import SearchResults from './components/search-results';
 import RecentSearches from './components/recent-searches';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from '@/components/ui/input-group';
+import { Spinner } from '@/components/ui/spinner';
 
 function Search() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -42,24 +47,17 @@ function Search() {
 
   return (
     <form className='container mx-auto p-4 animate-in fade-in-0 duration-500'>
-      <div className='relative flex justify-between items-center my-4'>
-        <Input
+      <InputGroup className='mb-2'>
+        <InputGroupInput
           placeholder='Search Books...'
-          className='p-4 transition-all duration-300 focus:scale-[1.02] focus:shadow-lg focus:border-primary/50'
           value={searchTerm}
           onChange={handleChange}
         />
-        <div className='h-5 w-5 absolute top-[14px] right-5 transition-all duration-200 focus:outline-hidden bg-transparent hover:bg-transparent'>
-          <button className='transition-transform duration-200 hover:scale-110'>
-            {isSearching ? (
-              <div className='animate-spin text-primary'>⏳</div>
-            ) : (
-              <SearchIcon className='transition-colors duration-200 hover:text-primary' />
-            )}
-          </button>
-        </div>
-      </div>
-      <div className='min-h-[200px]'>
+        <InputGroupAddon align='inline-end'>
+          {isSearching ? <Spinner /> : <SearchIcon />}
+        </InputGroupAddon>
+      </InputGroup>
+      <div className='min-h-52'>
         {results === null ? (
           <div className='animate-in fade-in-0 slide-in-from-left-4 duration-500'>
             <RecentSearches />

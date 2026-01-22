@@ -1,4 +1,5 @@
 import { Book } from '@/types/Book';
+import { RecentSearch } from '@/types/RecentSearch';
 import { openDB } from 'idb';
 
 class BookSearchService {
@@ -19,16 +20,26 @@ class BookSearchService {
     return db;
   }
 
-  async getIDBBooks(): Promise<Book[]> {
+  async getIDBBooks(): Promise<RecentSearch[]> {
     const db = await this.initIDB();
-    return await db.getAll(this.IDB_STORE_NAME);
+    const books = await db.getAll(this.IDB_STORE_NAME);
+    // Ordenar por timestamp más reciente primero
+    return books.sort((a, b) => b.searchTimestamp - a.searchTimestamp);
   }
 
   async addIDBBook(data: Book): Promise<void> {
     const db = await this.initIDB();
     const tx = db.transaction(this.IDB_STORE_NAME, 'readwrite');
     const store = tx.objectStore(this.IDB_STORE_NAME);
-    await store.add(data);
+
+    // Agregar timestamp al libro
+    const recentSearch: RecentSearch = {
+      ...data,
+      searchTimestamp: Date.now(),
+    };
+
+    // Usar put en lugar de add para actualizar el timestamp si ya existe
+    await store.put(recentSearch);
     await tx.done;
   }
 
