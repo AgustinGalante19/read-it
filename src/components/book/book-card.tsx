@@ -28,9 +28,7 @@ function BookCard({
       <article
         className={cn(
           'my-2 text-white',
-          mode === 'horizontal'
-            ? 'flex max-h-20 w-[244px]'
-            : 'flex flex-col w-[144px]'
+          mode === 'horizontal' ? 'flex max-h-20 w-61' : 'flex flex-col w-36',
         )}
       >
         <Image
@@ -40,14 +38,14 @@ function BookCard({
           src={book?.thumbnail_url || '/thumbnail-fallback.jpg'}
           loading='lazy'
           className={cn(
-            'max-h-[205px] min-h-[77px]',
-            mode === 'horizontal' ? 'h-[77px]' : 'h-[205px]'
+            'max-h-51.25 min-h-19.25',
+            mode === 'horizontal' ? 'h-19.25' : 'h-51.25',
           )}
         />
         <div
           className={cn(
             'flex flex-col overflow-hidden',
-            mode === 'horizontal' ? 'ml-4' : 'mt-1'
+            mode === 'horizontal' ? 'ml-4' : 'mt-1',
           )}
         >
           <span className='font-semibold truncate w-full max-w-full'>
@@ -59,7 +57,7 @@ function BookCard({
           <div
             className={cn(
               'flex',
-              mode === 'horizontal' ? 'gap-4' : 'justify-between'
+              mode === 'horizontal' ? 'gap-4' : 'justify-between',
             )}
           >
             <div className='flex gap-1 items-center text-muted-foreground'>
