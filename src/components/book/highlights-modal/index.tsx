@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Trash } from 'lucide-react';
 import { deleteBookHighlight } from '@/services/BookHighlightService';
 import { toast } from 'sonner';
-
+import { Book } from '@/types/Book';
 const HighlightItem = ({ highlight }: { highlight: BookHighlightPreview }) => {
   const handleDeleteHighlight = async () => {
     try {
@@ -63,20 +63,22 @@ function HighlightsModal({
   highlights,
   isOpen: open,
   onOpenChange,
+  book,
 }: {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   highlights: BookHighlightPreview[];
+  book: Book | null | undefined;
 }) {
-  if (!highlights || highlights.length === 0) return null;
+  if (!book) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className='sm:max-w-2xl'>
         <DialogHeader className='text-start space-y-1'>
-          <DialogTitle className='text-xl'>{highlights[0].title}</DialogTitle>
+          <DialogTitle className='text-xl'>{book?.title}</DialogTitle>
           <DialogDescription className='text-base'>
-            {highlights[0].author}
+            {book?.authors}
           </DialogDescription>
         </DialogHeader>
 
@@ -90,11 +92,15 @@ function HighlightsModal({
           </div>
         </ScrollArea>
 
-        {highlights.length > 1 && (
+        {highlights.length > 1 ? (
           <div className='text-center text-sm text-muted-foreground pt-2'>
             {highlights.length}{' '}
             {highlights.length === 1 ? 'highlight' : 'highlights'}
           </div>
+        ) : (
+          <span className='text-center text-sm text-muted-foreground'>
+            This book has no highlights
+          </span>
         )}
       </DialogContent>
     </Dialog>

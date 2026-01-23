@@ -234,6 +234,7 @@ function BookMenu({
         isWorking={isWorking}
       />
       <HighlightsModal
+        book={book}
         isOpen={isHighlightsModalOpen}
         onOpenChange={setIsHighlightsModalOpen}
         highlights={bookHighlights}

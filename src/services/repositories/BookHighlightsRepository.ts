@@ -32,7 +32,7 @@ class BookHighlightsRepository {
   ): Promise<BookHighlightPreview[]> {
     const result = await db
       .selectFrom('readit_books as rb')
-      .fullJoin(
+      .innerJoin(
         'readit_books_highlights as rbh',
         'rb.book_hash',
         'rbh.book_hash',
@@ -50,7 +50,6 @@ class BookHighlightsRepository {
       .where('rb.user_email', '=', userEmail)
       .orderBy('rbh.created_at', 'asc')
       .execute();
-
     return highlightAdapter(result);
   }
 }
