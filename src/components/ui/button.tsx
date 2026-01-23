@@ -57,8 +57,14 @@ function Button({
       disabled={disabled || isLoading}
       {...props}
     >
-      {children}
-      {isLoading && <Spinner />}
+      {asChild ? (
+        children
+      ) : (
+        <>
+          {children}
+          {isLoading && <Spinner />}
+        </>
+      )}
     </Comp>
   );
 }
