@@ -57,6 +57,19 @@ class UserDevicesRepository {
       .where('id', '=', deviceId)
       .execute();
   }
+  async checkDeviceOwnership(
+    deviceId: number,
+    userEmail: string,
+  ): Promise<boolean> {
+    const result = await db
+      .selectFrom('readit_user_devices')
+      .select('id')
+      .where('id', '=', deviceId)
+      .where('user_email', '=', userEmail)
+      .executeTakeFirst();
+
+    return result !== undefined;
+  }
 }
 
 export const userDevicesRepository = new UserDevicesRepository();

@@ -46,6 +46,13 @@ export async function deleteUserDevice(
   deviceId: number,
 ): Promise<Result<string>> {
   try {
+    const isValid = await userDevicesRepository.checkDeviceOwnership(
+      deviceId,
+      await getUserEmail(),
+    );
+    if (!isValid) {
+      return { success: false, error: 'Device does not belong to user' };
+    }
     await userDevicesRepository.deleteDevice(deviceId);
     revalidatePath('/devices');
     return { success: true, data: 'Device deleted successfully' };

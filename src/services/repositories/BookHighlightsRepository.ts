@@ -59,7 +59,9 @@ class BookHighlightsRepository {
     return highlightAdapter(result);
   }
 
-  async getAllUserHighlights(userEmail: string): Promise<BookHighlightWithBook[]> {
+  async getAllUserHighlights(
+    userEmail: string,
+  ): Promise<BookHighlightWithBook[]> {
     const result = await db
       .selectFrom('readit_books as rb')
       .innerJoin(
@@ -82,6 +84,36 @@ class BookHighlightsRepository {
       .orderBy('rbh.created_at', 'desc')
       .execute();
     return highlightWithBookAdapter(result);
+  }
+
+  async getHighlightById(
+    highlightId: number,
+    userEmail: string,
+  ): Promise<BookHighlightWithBook> {
+    const result = await db
+      .selectFrom('readit_books as rb')
+      .innerJoin(
+        'readit_books_highlights as rbh',
+        'rb.book_hash',
+        'rbh.book_hash',
+      )
+      .select([
+        'rb.id as book_id',
+        'rbh.id as highlight_id',
+        'rb.title',
+        'rb.authors',
+        'rb.google_id',
+        'rb.thumbnail_url',
+        'rbh.highlight_text',
+        'rbh.page',
+        'rbh.created_at',
+      ])
+      .where('rb.user_email', '=', userEmail)
+      .where('rbh.id', '=', highlightId)
+      .orderBy('rbh.created_at', 'desc')
+      .execute();
+
+    return highlightWithBookAdapter(result)[0];
   }
 }
 

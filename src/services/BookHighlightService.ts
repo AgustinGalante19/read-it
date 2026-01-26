@@ -25,6 +25,17 @@ export async function deleteBookHighlight(
   highlightId: number,
 ): Promise<Result<string>> {
   try {
+    const userEmail = await getUserEmail();
+    await isAuthenticated(userEmail);
+
+    const highlight = await bookHighlightsRepository.getHighlightById(
+      highlightId,
+      userEmail,
+    );
+    if (!highlight) {
+      return { success: false, error: 'Highlight not found' };
+    }
+
     await bookHighlightsRepository.deleteHighlight(highlightId);
     revalidatePath('/book/[slug]');
     revalidatePath('/highlights');
