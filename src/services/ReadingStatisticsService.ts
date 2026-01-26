@@ -68,20 +68,14 @@ export async function getCalendarData(
       return { success: false, error: 'User not authenticated' };
     }
 
-    // 1. Fetch Daily Sessions
-    const sessions = await readingStatisticsRepository.getDailyReadingStats(
-      userEmail,
-      { month, year },
-    );
+    const [sessions, finishedBooks] = await Promise.all([
+      readingStatisticsRepository.getDailyReadingStats(userEmail, {
+        month,
+        year,
+      }),
+      bookRepository.getBooksFinishedInMonth(userEmail, month, year),
+    ]);
 
-    // 2. Fetch Finished Books
-    const finishedBooks = await bookRepository.getBooksFinishedInMonth(
-      userEmail,
-      month,
-      year,
-    );
-
-    // 3. Merge Data
     // Create a map keyed by date string (YYYY-MM-DD)
     const calendarMap = new Map<
       string,
@@ -257,8 +251,34 @@ export async function getMyStats(
       return { success: false, error: 'User not authenticated' };
     }
 
-    // Get tags
-    const tagsResult = await getTags();
+    const { currentDate, result: sixMonthsAgo } = datesHelper.getDateRange(6);
+    const { result: oneMonthAgo } = datesHelper.getDateRange(1);
+
+    const [
+      tagsResult,
+      last6MonthsResult,
+      lastMonthResult,
+      pageCountResult,
+      allReadBooksResult,
+      { data: totalBooks },
+      activityStats,
+      dailyActivity,
+      hourlyActivity,
+    ] = await Promise.all([
+      getTags(),
+      await getBooksFromDateRange(sixMonthsAgo, currentDate, 3),
+      await getBooksFromDateRange(oneMonthAgo, currentDate, 3),
+      await getPageCount(),
+      await getBooksFromDateRange(new Date(0), currentDate, 3),
+      await getMyBooks(BookStatus.READ),
+      await readingStatisticsRepository.getAggregatedStats(userEmail),
+      await readingStatisticsRepository.getLast30DaysDailyStats(userEmail),
+      await readingStatisticsRepository.getHourlyStats(
+        userEmail,
+        timezoneOffsetMinutes,
+      ),
+    ]);
+
     if (!tagsResult.success || !tagsResult.data) {
       return { success: false, error: 'Failed to fetch tags' };
     }
@@ -267,30 +287,13 @@ export async function getMyStats(
       tagsResult.data.map((tag: string) => ({ tags: tag })),
     );
 
-    // Get date ranges
-    const { currentDate, result: sixMonthsAgo } = datesHelper.getDateRange(6);
-    const { result: oneMonthAgo } = datesHelper.getDateRange(1);
-
-    // Get books from last 6 months
-    const last6MonthsResult = await getBooksFromDateRange(
-      sixMonthsAgo,
-      currentDate,
-      3,
-    );
     if (!last6MonthsResult.success || !last6MonthsResult.data) {
       return {
         success: false,
         error: 'Failed to fetch books from last 6 months',
       };
     }
-    const last6MonthsReadedBooks = last6MonthsResult.data;
 
-    // Get books from last month
-    const lastMonthResult = await getBooksFromDateRange(
-      oneMonthAgo,
-      currentDate,
-      3,
-    );
     if (!lastMonthResult.success || !lastMonthResult.data) {
       return { success: false, error: 'Failed to fetch books from last month' };
     }
@@ -300,8 +303,6 @@ export async function getMyStats(
       return total + parseInt(book.page_count.toString(), 10);
     }, 0);
 
-    // Get total page count
-    const pageCountResult = await getPageCount();
     if (!pageCountResult.success) {
       return { success: false, error: 'Failed to fetch total page count' };
     }
@@ -310,34 +311,17 @@ export async function getMyStats(
     const lastBookTags = last6MonthsResult.data[0]?.tags || '';
     const mostFrequentTag = bookTagsHelper.getMostFrequentTag(lastBookTags);
 
-    // Process tags for radar chart (use all read books, not just last 6 months)
-    const allReadBooksResult = await getBooksFromDateRange(
-      new Date(0), // From beginning of time
-      currentDate,
-      3, // Only read books
-    );
-
     let radarData: TagRadarData[] = [];
     if (allReadBooksResult.success && allReadBooksResult.data) {
       radarData = bookTagsHelper.processTagsForRadar(allReadBooksResult.data);
     }
 
-    const { data: totalBooks } = await getMyBooks(BookStatus.READ);
-    const activityStats =
-      await readingStatisticsRepository.getAggregatedStats(userEmail);
-    const dailyActivity =
-      await readingStatisticsRepository.getLast30DaysDailyStats(userEmail);
-    const hourlyActivity = await readingStatisticsRepository.getHourlyStats(
-      userEmail,
-      timezoneOffsetMinutes,
-    );
-
     const stats: Stats = {
       book: {
         count: tagsResult.data.length,
         lastRead: {
-          title: last6MonthsReadedBooks[0]?.title || '',
-          googleId: last6MonthsReadedBooks[0]?.google_id || '',
+          title: last6MonthsResult.data[0]?.title || '',
+          googleId: last6MonthsResult.data[0]?.google_id || '',
         },
         totalBooks: totalBooks || [],
       },
@@ -350,7 +334,7 @@ export async function getMyStats(
         tagCount: unrepeatedTags.size,
         radarData: radarData,
       },
-      last6MonthsReadedBooks: last6MonthsReadedBooks,
+      last6MonthsReadedBooks: last6MonthsResult.data,
       activity: activityStats,
       dailyActivity,
       hourlyActivity,
