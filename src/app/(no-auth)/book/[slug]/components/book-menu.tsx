@@ -35,14 +35,13 @@ import { DateRange } from '@/components/date-picker/types';
 import datesHelper from '@/services/helpers/DatesHelper';
 import bookHelper from '@/services/helpers/BookHelper';
 import HighlightsModal from '@/components/book/highlights-modal';
-import { BookHighlightPreview } from '@/types/BookHighlight';
 
 interface BookMenuProps {
   isOpen: boolean;
   close: () => void;
   book: Book | null | undefined;
   googleBook: Book | null;
-  bookHighlights: BookHighlightPreview[];
+  handleOpenHighlightsModal: () => void;
 }
 
 function BookMenu({
@@ -50,7 +49,7 @@ function BookMenu({
   close,
   book,
   googleBook,
-  bookHighlights,
+  handleOpenHighlightsModal,
 }: BookMenuProps) {
   const [isLoading, setIsLoading] = useState({
     currentlyReading: false,
@@ -59,7 +58,6 @@ function BookMenu({
     remove: false,
   });
 
-  const [isHighlightsModalOpen, setIsHighlightsModalOpen] = useState(false);
   const [isBookDateModalOpen, setIsBookDateModalOpen] = useState(false);
   const [isWorking, setIsWorking] = useState(false);
 
@@ -195,7 +193,7 @@ function BookMenu({
             <Button
               variant={'ghost'}
               className='w-full justify-start rounded-lg'
-              onClick={() => setIsHighlightsModalOpen(true)}
+              onClick={handleOpenHighlightsModal}
             >
               <NotebookText />
               Highlights
@@ -232,12 +230,6 @@ function BookMenu({
         book={book}
         defaultValue={defaultDateRange}
         isWorking={isWorking}
-      />
-      <HighlightsModal
-        book={book}
-        isOpen={isHighlightsModalOpen}
-        onOpenChange={setIsHighlightsModalOpen}
-        highlights={bookHighlights}
       />
     </>
   );

@@ -14,7 +14,7 @@ const BookDescription = ({ description }: { description: string }) => {
       DOMPurify.sanitize(description || '<p>Description not provided</p>', {
         USE_PROFILES: { html: true },
       }),
-    [description]
+    [description],
   );
 
   const handleToggle = () => {
@@ -50,7 +50,7 @@ const BookDescription = ({ description }: { description: string }) => {
 
         {!isExpanded && sanitizedContent.length > 300 && (
           <div
-            className='absolute inset-0 bg-gradient-to-t from-background via-background/90 to-transparent pointer-events-none'
+            className='absolute inset-0 bg-linear-to-t from-background via-background/90 to-transparent pointer-events-none'
             style={{ top: '80px' }}
           />
         )}
@@ -59,7 +59,7 @@ const BookDescription = ({ description }: { description: string }) => {
       <div className='flex items-center relative z-20'>
         <Button
           variant='link'
-          className='p-0 mt-2 transition-all duration-200 hover:scale-105 hover:translate-y-[-1px] group'
+          className='p-0 mt-2 transition-all duration-200 hover:scale-105 hover:-translate-y-px group'
           onClick={handleToggle}
         >
           <span className='flex items-center gap-1'>

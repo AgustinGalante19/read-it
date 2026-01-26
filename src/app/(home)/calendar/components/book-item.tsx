@@ -19,7 +19,7 @@ export const BookItem: React.FC<BookItemProps> = ({ book, booksForDay }) => {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <div className='relative h-[80px] w-full'>
+          <div className='relative h-20 w-full'>
             <Link href={`/book/${book.google_id}`}>
               <Image
                 src={book.thumbnail_url || '/placeholder.svg'}

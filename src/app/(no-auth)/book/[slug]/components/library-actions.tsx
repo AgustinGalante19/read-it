@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/button-group';
 import { useSession } from '@/lib/auth/auth-client';
 import { BookHighlightPreview } from '@/types/BookHighlight';
+import HighlightsModal from '@/components/book/highlights-modal';
 
 function renderBookIcon(statusId: number) {
   switch (statusId) {
@@ -42,6 +43,7 @@ function LibraryActions({
   const { push } = useRouter();
 
   const [isOpen, setIsOpen] = useState(false);
+  const [isHighlightsModalOpen, setIsHighlightsModalOpen] = useState(false);
 
   const handleAddBook = async () => {
     if (!sessionData) {
@@ -93,7 +95,13 @@ function LibraryActions({
         close={() => setIsOpen(false)}
         book={dbBook}
         googleBook={googleBook}
-        bookHighlights={bookhighlights}
+        handleOpenHighlightsModal={() => setIsHighlightsModalOpen(true)}
+      />
+      <HighlightsModal
+        book={dbBook}
+        isOpen={isHighlightsModalOpen}
+        onOpenChange={setIsHighlightsModalOpen}
+        highlights={bookhighlights}
       />
     </div>
   );
