@@ -1,8 +1,15 @@
 import { Book, ExtendedBookData, GoogleBookItem } from '@/types/Book';
 import datesHelper from '../helpers/DatesHelper';
 import bookHelper from '../helpers/BookHelper';
-import { BookHighlightPreview } from '@/types/BookHighlight';
-import { BookHighlightRow, BookRow } from '@/types/ReadItDatabase';
+import {
+  BookHighlightPreview,
+  BookHighlightWithBook,
+} from '@/types/BookHighlight';
+import {
+  BookHighlightRow,
+  BookHighlightWithBookRow,
+  BookRow,
+} from '@/types/ReadItDatabase';
 
 function mapBaseBookProperties(book: BookRow): Book {
   return {
@@ -77,5 +84,21 @@ export function highlightAdapter(
     page: Number(row.page),
     created_at: String(row.created_at),
     highlight_text: String(row.highlight_text),
+  }));
+}
+
+export function highlightWithBookAdapter(
+  dbResponse: BookHighlightWithBookRow[]
+): BookHighlightWithBook[] {
+  return dbResponse.map((row) => ({
+    highlight_id: Number(row.highlight_id),
+    book_id: Number(row.book_id),
+    title: String(row.title),
+    author: String(row.authors ?? ''),
+    page: Number(row.page),
+    created_at: String(row.created_at),
+    highlight_text: String(row.highlight_text),
+    google_id: String(row.google_id),
+    thumbnail_url: row.thumbnail_url ?? null,
   }));
 }

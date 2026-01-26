@@ -153,3 +153,15 @@ export type BookHighlightRow = Selectable<{
   book_id: number | null;
   highlight_id: number | null;
 }>;
+
+export type BookHighlightWithBookRow = Selectable<{
+  authors: string | null;
+  title: string | null;
+  created_at: string | null;
+  highlight_text: string | null;
+  page: string | null;
+  book_id: number | null;
+  highlight_id: number | null;
+  google_id: string | null;
+  thumbnail_url: string | null;
+}>;

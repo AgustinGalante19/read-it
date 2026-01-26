@@ -1,6 +1,9 @@
 'use server';
 
-import BookHighlight, { BookHighlightPreview } from '@/types/BookHighlight';
+import BookHighlight, {
+  BookHighlightPreview,
+  BookHighlightWithBook,
+} from '@/types/BookHighlight';
 import { Result } from '@/types/Result';
 import bookHighlightsRepository from './repositories/BookHighlightsRepository';
 import { revalidatePath } from 'next/cache';
@@ -24,6 +27,7 @@ export async function deleteBookHighlight(
   try {
     await bookHighlightsRepository.deleteHighlight(highlightId);
     revalidatePath('/book/[slug]');
+    revalidatePath('/highlights');
     return { success: true, data: 'Book highlight deleted successfully' };
   } catch (error) {
     console.error(error);
@@ -46,5 +50,21 @@ export async function getBookHighlights(
   } catch (error) {
     console.error('Error getting book highlights:', error);
     return { success: false, error: 'Failed to get book highlights' };
+  }
+}
+
+export async function getAllHighlights(): Promise<
+  Result<BookHighlightWithBook[]>
+> {
+  try {
+    const userEmail = await getUserEmail();
+    await isAuthenticated(userEmail);
+
+    const highlights =
+      await bookHighlightsRepository.getAllUserHighlights(userEmail);
+    return { success: true, data: highlights };
+  } catch (error) {
+    console.error('Error getting all highlights:', error);
+    return { success: false, error: 'Failed to get highlights' };
   }
 }

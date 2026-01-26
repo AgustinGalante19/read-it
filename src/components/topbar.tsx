@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Github, LogOut, ScreenShare } from 'lucide-react';
+import { Github, Highlighter, LogOut, ScreenShare } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -39,6 +39,10 @@ function Topbar() {
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuItem onClick={() => router.push('/highlights')}>
+            <Highlighter />
+            My Highlights
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={() => router.push('/devices')}>
             <ScreenShare />
             Devices

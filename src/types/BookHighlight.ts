@@ -16,3 +16,8 @@ export interface BookHighlightPreview {
   page: number;
   created_at: string;
 }
+
+export interface BookHighlightWithBook extends BookHighlightPreview {
+  google_id: string;
+  thumbnail_url: string | null;
+}
