@@ -1,5 +1,3 @@
-export const dynamic = 'force-dynamic';
-
 import { ChartBar } from 'lucide-react';
 import StatsWrapper from './components/stats-wrapper';
 

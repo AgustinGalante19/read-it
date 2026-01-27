@@ -1,5 +1,3 @@
-export const dynamic = 'force-dynamic';
-
 import Topbar from '@/components/topbar';
 import BooksList from '@/components/book/books-list';
 import ShowAll from '@/components/book/show-all';

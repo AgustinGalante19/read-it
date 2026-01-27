@@ -1,6 +1,3 @@
-export const dynamic = 'force-dynamic';
-
-
 import { ScreenShare } from 'lucide-react';
 import Link from 'next/link';
 import DevicesList from './components/devices-list';

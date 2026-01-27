@@ -1,5 +1,3 @@
-export const dynamic = 'force-dynamic';
-
 import { Highlighter } from 'lucide-react';
 import { getAllHighlights } from '@/services/BookHighlightService';
 import HighlightsList from './components/highlights-list';
