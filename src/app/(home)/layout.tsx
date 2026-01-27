@@ -1,6 +1,5 @@
 import Container from '@/components/ui/container';
 import BottomBar from '@/components/bottombar';
-import AuthProvider from '@/components/auth-provider';
 
 export default function RootLayout({
   children,
@@ -8,7 +7,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <AuthProvider>
+    <div>
       <div
         className='min-h-screen'
         style={{
@@ -18,6 +17,6 @@ export default function RootLayout({
         <Container>{children}</Container>
       </div>
       <BottomBar />
-    </AuthProvider>
+    </div>
   );
 }
