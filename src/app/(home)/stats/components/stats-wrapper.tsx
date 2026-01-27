@@ -1,11 +1,13 @@
 import GeneralStats from './general-stats';
-import DailyActivityChart from './daily-activity-chart';
-import HourlyActivityChart from './hourly-activity-chart';
-import LastBooksGraph from './last-books-graph';
-import TagsRadarChart from './tags-radar-chart';
 import BooksGrid from './books-grid';
 import LastbooksList from './last-books-list';
 import { getMyStats } from '@/services/ReadingStatisticsService';
+import {
+  DailyActivityChart,
+  HourlyActivityChart,
+  LastBooksGraph,
+  TagsRadarChart,
+} from './charts';
 
 export default async function StatsWrapper() {
   const { data: stats } = await getMyStats();

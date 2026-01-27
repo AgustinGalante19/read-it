@@ -13,7 +13,6 @@ import {
 import Stats from '@/types/Stats';
 import { Book, BookOpen, Tag } from 'lucide-react';
 import Link from 'next/link';
-import React from 'react';
 import { EreaderWarning } from './ereader-warning';
 
 function GeneralStats({
@@ -21,17 +20,14 @@ function GeneralStats({
   page,
   tag,
   activity,
-}: Omit<
-  Stats,
-  'last6MonthsReadedBooks' | 'dailyActivity' | 'hourlyActivity'
->) {
+}: Omit<Stats, 'last6MonthsReadedBooks' | 'dailyActivity' | 'hourlyActivity'>) {
   return (
     <section className='px-4'>
       <Carousel className='w-full'>
         <CarouselContent className='-ml-1'>
           <div className='pr-1'>
             <CarouselItem className='pl-1'>
-              <Card className='w-[250px] h-[150px]'>
+              <Card className='w-62.5 h-37.5'>
                 <CardHeader className='p-4'>
                   <div className='flex items-center justify-between'>
                     <CardTitle className='text-secondary-foreground'>
@@ -61,7 +57,7 @@ function GeneralStats({
           </div>
           <div className='pr-1'>
             <CarouselItem className='pl-1'>
-              <Card className='w-[250px] h-[150px]'>
+              <Card className='w-62.5 h-37.5'>
                 <CardHeader className='p-4'>
                   <div className='flex items-center justify-between'>
                     <CardTitle className='text-secondary-foreground'>
@@ -86,7 +82,7 @@ function GeneralStats({
           </div>
           <div className='pr-1'>
             <CarouselItem className='pl-1'>
-              <Card className='w-[250px] h-[150px]'>
+              <Card className='w-62.5 h-37.5'>
                 <CardHeader className='p-4'>
                   <div className='flex items-center justify-between'>
                     <CardTitle className='text-secondary-foreground'>
@@ -112,7 +108,7 @@ function GeneralStats({
           </div>
           <div className='pr-1'>
             <CarouselItem className='pl-1'>
-              <Card className='w-[250px] h-[150px]'>
+              <Card className='w-62.5 h-37.5'>
                 <CardHeader className='p-4'>
                   <div className='flex items-center justify-between'>
                     <CardTitle className='text-secondary-foreground'>
@@ -136,7 +132,7 @@ function GeneralStats({
           </div>
           <div className='pr-1'>
             <CarouselItem className='pl-1'>
-              <Card className='w-[250px] h-[150px]'>
+              <Card className='w-62.5 h-37.5'>
                 <CardHeader className='p-4'>
                   <div className='flex items-center justify-between'>
                     <CardTitle className='text-secondary-foreground'>
