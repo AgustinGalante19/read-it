@@ -8,7 +8,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useState, useMemo, useCallback } from 'react';
 
 interface YearMonthPickerProps {
@@ -26,7 +27,6 @@ function YearMonthPicker({
 }: YearMonthPickerProps) {
   const [pickMode, setPickMode] = useState<'year' | 'month'>('month');
 
-  // Generar nombres de meses según la configuración regional del usuario
   const monthNames = useMemo(() => {
     return Array.from({ length: 12 }, (_, i) => {
       const date = new Date(2024, i, 1);
@@ -34,7 +34,6 @@ function YearMonthPicker({
     });
   }, []);
 
-  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -56,8 +55,6 @@ function YearMonthPicker({
             Select Date
           </DialogTitle>
         </DialogHeader>
-
-        {/* Month-Year picker */}
         <div className='flex items-center'>
           <Button
             variant={pickMode === 'month' ? 'secondary' : 'ghost'}
@@ -76,48 +73,49 @@ function YearMonthPicker({
           </Button>
         </div>
 
-        {/* CONTENT */}
         <div>
           <span className='capitalize'>{pickMode}</span>
           <div className='grid grid-cols-3 gap-2 mt-4'>
             {pickMode === 'month'
               ? monthNames.map((monthName, index) => (
                   <Button
+                    asChild
                     key={monthName}
                     variant={
                       currentMonthValue === monthName ? 'default' : 'ghost'
                     }
                     className='capitalize'
-                    onClick={() => {
-                      router.push(
-                        pathname +
-                          '?' +
-                          createQueryString('month', (index + 1).toString()),
-                      );
-                    }}
                   >
-                    {monthName}
+                    <Link
+                      href={
+                        pathname +
+                        '?' +
+                        createQueryString('month', (index + 1).toString())
+                      }
+                    >
+                      {monthName}
+                    </Link>
                   </Button>
                 ))
               : generateYears(11).map((year) => (
                   <Button
                     key={year}
                     variant={year === currentYearValue ? 'default' : 'ghost'}
-                    onClick={() => {
-                      router.push(
-                        pathname +
-                          '?' +
-                          createQueryString('year', year.toString()),
-                      );
-                    }}
+                    asChild
                   >
-                    {year}
+                    <Link
+                      href={
+                        pathname +
+                        '?' +
+                        createQueryString('year', year.toString())
+                      }
+                    >
+                      {year}
+                    </Link>
                   </Button>
                 ))}
           </div>
         </div>
-
-        {/* Footer */}
         <div className='flex justify-end gap-2 mt-4'>
           <Button
             variant={'ghost'}
