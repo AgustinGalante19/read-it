@@ -50,11 +50,11 @@ export default function LibraryContent() {
         let booksResult = allBooksResponse;
         booksResult = bookHelper.filterBooksByStatus(
           allBooksResponse,
-          currentReadStatus
+          currentReadStatus,
         );
         setBooksList(booksResult);
         setBookStatus(
-          options.find((el) => el.value === currentReadStatus) ?? options[0]
+          options.find((el) => el.value === currentReadStatus) ?? options[0],
         );
       });
     };
@@ -70,7 +70,7 @@ export default function LibraryContent() {
       return;
     }
     const newBooksList = booksList.filter((book) =>
-      book.title.toLowerCase().includes(value.toLowerCase())
+      book.title.toLowerCase().includes(value.toLowerCase()),
     );
     setBooksList(newBooksList);
   };
@@ -88,8 +88,10 @@ export default function LibraryContent() {
         <span className='text-2xl font-bold text-white flex items-center gap-2 underline decoration-primary'>
           My Library
         </span>
-        <Button onClick={() => router.push('/calendar')}>
-          <Calendar />
+        <Button
+          onClick={() => router.push('/calendar')}
+          startIcon={<Calendar />}
+        >
           Calendar
         </Button>
       </header>

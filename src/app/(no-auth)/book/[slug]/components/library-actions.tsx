@@ -71,8 +71,10 @@ function LibraryActions({
     <div className='flex items-center gap-1'>
       {dbBook ? (
         <ButtonGroup>
-          <Button onClick={handleAddBook}>
-            {renderBookIcon(dbBook.id_book_status)}
+          <Button
+            onClick={handleAddBook}
+            startIcon={renderBookIcon(dbBook.id_book_status)}
+          >
             {
               BookStatusDictionary[
                 dbBook.id_book_status as keyof typeof BookStatusDictionary
@@ -85,8 +87,7 @@ function LibraryActions({
           </Button>
         </ButtonGroup>
       ) : (
-        <Button onClick={handleAddBook}>
-          <Bookmark />
+        <Button onClick={handleAddBook} startIcon={<Bookmark />}>
           Want to Read
         </Button>
       )}

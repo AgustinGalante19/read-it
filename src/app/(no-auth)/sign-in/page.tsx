@@ -36,8 +36,8 @@ function SignInPage() {
               push('/');
             }}
             isLoading={isLoading}
+            startIcon={<GoogleIcon />}
           >
-            <GoogleIcon />
             Login with Google
           </Button>
           <span className='text-sm text-secondary-foreground mt-2'>

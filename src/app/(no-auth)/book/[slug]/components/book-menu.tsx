@@ -140,10 +140,12 @@ function BookMenu({
                 handleAction('wantToRead', BookStatus.WANT_TO_READ)
               }
               variant={book?.id_book_status === 1 ? 'secondary' : 'ghost'}
+              startIcon={
+                <Bookmark
+                  className={book?.id_book_status === 1 ? 'fill-accent' : ''}
+                />
+              }
             >
-              <Bookmark
-                className={book?.id_book_status === 1 ? 'fill-accent' : ''}
-              />
               Want to Read
             </Button>
             <Button
@@ -153,10 +155,12 @@ function BookMenu({
                 handleAction('currentlyReading', BookStatus.READING)
               }
               variant={book?.id_book_status === 2 ? 'secondary' : 'ghost'}
+              startIcon={
+                <BookOpen
+                  className={book?.id_book_status === 2 ? 'fill-accent' : ''}
+                />
+              }
             >
-              <BookOpen
-                className={book?.id_book_status === 2 ? 'fill-accent' : ''}
-              />
               Currently Reading
             </Button>
             <Button
@@ -164,10 +168,12 @@ function BookMenu({
               isLoading={isLoading.read}
               onClick={() => handleAction('read', BookStatus.READ)}
               variant={book?.id_book_status === 3 ? 'secondary' : 'ghost'}
+              startIcon={
+                <BadgeCheck
+                  className={book?.id_book_status === 3 ? 'fill-accent' : ''}
+                />
+              }
             >
-              <BadgeCheck
-                className={book?.id_book_status === 3 ? 'fill-accent' : ''}
-              />
               Read
             </Button>
             {book && (
@@ -176,8 +182,8 @@ function BookMenu({
                 variant={'destructive'}
                 isLoading={isLoading.remove}
                 onClick={handleRemove}
+                startIcon={<Trash />}
               >
-                <Trash />
                 Remove
               </Button>
             )}
@@ -186,16 +192,16 @@ function BookMenu({
               variant={'ghost'}
               className='w-full justify-start rounded-lg'
               onClick={() => setIsBookDateModalOpen(true)}
+              startIcon={<Calendar />}
             >
-              <Calendar />
               Dates read
             </Button>
             <Button
               variant={'ghost'}
               className='w-full justify-start rounded-lg'
               onClick={handleOpenHighlightsModal}
+              startIcon={<NotebookText />}
             >
-              <NotebookText />
               Highlights
             </Button>
             <Separator />

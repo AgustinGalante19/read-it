@@ -61,26 +61,21 @@ const BookDescription = ({ description }: { description: string }) => {
           variant='link'
           className='p-0 mt-2 transition-all duration-200 hover:scale-105 hover:-translate-y-px group'
           onClick={handleToggle}
-        >
-          <span className='flex items-center gap-1'>
-            {isExpanded ? (
-              <>
-                Show less
-                <ChevronUp
-                  size={16}
-                  className='transition-transform duration-200 group-hover:scale-110'
-                />
-              </>
+          endIcon={
+            isExpanded ? (
+              <ChevronUp
+                size={16}
+                className='transition-transform duration-200 group-hover:scale-110'
+              />
             ) : (
-              <>
-                Show more
-                <ChevronDown
-                  size={16}
-                  className='transition-transform duration-200 group-hover:scale-110'
-                />
-              </>
-            )}
-          </span>
+              <ChevronDown
+                size={16}
+                className='transition-transform duration-200 group-hover:scale-110'
+              />
+            )
+          }
+        >
+          {isExpanded ? 'Show less' : 'Show more'}
         </Button>
       </div>
     </section>

@@ -47,11 +47,11 @@ function StatusSelection({
                       'rounded-full',
                       opt.value === bookStatus.value
                         ? 'bg-primary text-primary-foreground'
-                        : 'border bg-transparent border-gray-500'
+                        : 'border bg-transparent border-gray-500',
                     )}
                     onClick={() => handleChangeStatus(opt)}
+                    startIcon={opt.icon}
                   >
-                    {opt.icon}
                     {opt.label}
                     {opt.value === bookStatus.value && (
                       <span className='text-xs p-1 rounded-full bg-background text-foreground text-center w-6 h-6'>

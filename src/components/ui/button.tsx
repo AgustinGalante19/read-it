@@ -40,6 +40,9 @@ function Button({
   size,
   asChild = false,
   isLoading = false,
+  startIcon,
+  endIcon,
+  loadingPosition = 'start',
   disabled = false,
   children,
   ...props
@@ -47,8 +50,25 @@ function Button({
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
     isLoading?: boolean;
+    startIcon?: React.ReactNode;
+    endIcon?: React.ReactNode;
+    loadingPosition?: 'start' | 'end';
   }) {
   const Comp = asChild ? Slot : 'button';
+
+  const startSlot =
+    isLoading && loadingPosition === 'start' ? (
+      <Spinner data-icon='inline-start' />
+    ) : (
+      startIcon
+    );
+
+  const endSlot =
+    isLoading && loadingPosition === 'end' ? (
+      <Spinner data-icon='inline-end' />
+    ) : (
+      endIcon
+    );
 
   return (
     <Comp
@@ -61,8 +81,9 @@ function Button({
         children
       ) : (
         <>
+          {startSlot}
           {children}
-          {isLoading && <Spinner />}
+          {endSlot}
         </>
       )}
     </Comp>

@@ -43,8 +43,10 @@ function DevicesList({ devices }: { devices: UserDevices[] }) {
 
   return (
     <div className='space-y-4'>
-      <Button onClick={() => setIsUserDeviceModalOpen(true)}>
-        <Plus />
+      <Button
+        onClick={() => setIsUserDeviceModalOpen(true)}
+        startIcon={<Plus />}
+      >
         Add Device
       </Button>
       {devices.length === 0 ? (
