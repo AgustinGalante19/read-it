@@ -1,5 +1,6 @@
 import Container from '@/components/ui/container';
 import BottomBar from '@/components/bottombar';
+import Topbar from '@/components/topbar';
 
 export default function RootLayout({
   children,
@@ -14,7 +15,10 @@ export default function RootLayout({
           paddingBottom: 'var(--bottom-bar-height, 6rem)',
         }}
       >
-        <Container>{children}</Container>
+        <Container>
+          <Topbar />
+          {children}
+        </Container>
       </div>
       <BottomBar />
     </div>

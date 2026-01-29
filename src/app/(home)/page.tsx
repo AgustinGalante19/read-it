@@ -27,7 +27,6 @@ export default async function Home() {
 
   return (
     <main className='min-h-full'>
-      <Topbar />
       <div className='container mx-auto p-4 space-y-8'>
         <section>
           {currentlyReading.data && currentlyReading.data.length > 0 ? (
