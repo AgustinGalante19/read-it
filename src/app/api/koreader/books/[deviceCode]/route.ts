@@ -19,7 +19,7 @@ export async function GET(
     .fullJoin('readit_user_devices as rud', 'rb.user_email', 'rud.user_email')
     .select(({ fn, val }) => [
       'rb.id',
-      'rb.google_id',
+      'rb.google_id as googleId',
       fn<string>('concat', ['rb.title', val(' - '), 'rb.authors']).as(
         'bookInfo',
       ),
