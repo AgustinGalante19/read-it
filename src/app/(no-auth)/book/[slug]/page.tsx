@@ -101,7 +101,9 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
           <div>
             <span className='text-center text-sm flex items-center justify-center gap-2 text-secondary-foreground'>
               <BookText size={20} />
-              {book.page_count}
+              {dbBook.data?.page_count
+                ? dbBook.data.page_count
+                : book.page_count}
             </span>
           </div>
         </div>
