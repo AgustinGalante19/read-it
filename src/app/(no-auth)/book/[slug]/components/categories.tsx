@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 const Category = ({ cat, index }: { cat: string; index: number }) => (
   <span
@@ -24,7 +24,7 @@ function Categories({ categories = [] }: { categories: string[] | undefined }) {
 
   const categoriesToShow = useMemo(
     () => (showAll ? categories : categories.slice(0, 3)),
-    [showAll, categories]
+    [showAll, categories],
   );
 
   if (categories.length === 0) return null;

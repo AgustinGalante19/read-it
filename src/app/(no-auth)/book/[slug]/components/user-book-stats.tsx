@@ -21,7 +21,6 @@ function UserBookStats({
     const date = parseISO(userBookData.metadata?.lastSyncDate);
     return format(date, 'dd/MM/yyyy HH:mm');
   }, [userBookData.metadata?.lastSyncDate]);
-
   return (
     <div className='flex justify-between'>
       <div>
@@ -35,15 +34,15 @@ function UserBookStats({
               </span>
             )}
             {userBookData.data.book_total_read_time &&
-              userBookData.data.book_total_read_time > 0 && (
-                <span className='text-xs text-surface-foreground flex items-center gap-1'>
-                  <Clock size={14} />
-                  Reading time:{' '}
-                  {datesHelper.formatSecondsToDuration(
-                    userBookData.data.book_total_read_time,
-                  )}
-                </span>
-              )}
+            userBookData.data.book_total_read_time > 0 ? (
+              <span className='text-xs text-surface-foreground flex items-center gap-1'>
+                <Clock size={14} />
+                Reading time:{' '}
+                {datesHelper.formatSecondsToDuration(
+                  userBookData.data.book_total_read_time,
+                )}
+              </span>
+            ) : null}
             {userBookData.data.id_book_status === 2 &&
               userBookData.data.book_total_read_pages && (
                 <span className='text-xs text-surface-foreground flex items-center gap-1'>
@@ -54,7 +53,6 @@ function UserBookStats({
                       userBookData.data.page_count) *
                       100,
                   )}
-                  %
                 </span>
               )}
           </div>

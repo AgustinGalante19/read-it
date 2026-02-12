@@ -6,9 +6,7 @@ class GoogleBooksService {
   async getBooksByQuery(query: string): Promise<GoogleBooksResponse> {
     const request = await fetch(
       `${BASE_GOOGLE_API_URL}/volumes?q=${query}&printType=books`,
-      {
-        cache: 'force-cache',
-      }
+      { cache: 'force-cache' },
     );
     const booksResponse = await request.json();
     return booksResponse;
@@ -16,7 +14,7 @@ class GoogleBooksService {
 
   async getBookById(id: string): Promise<GoogleBookItem> {
     const request = await fetch(`${BASE_GOOGLE_API_URL}/volumes/${id}`, {
-      cache: 'force-cache',
+      next: { revalidate: 60 * 60 * 48 },
     });
     const booksResponse = await request.json();
     return booksResponse;
@@ -24,7 +22,7 @@ class GoogleBooksService {
 
   async getBooksBySubject(subject: string): Promise<GoogleBooksResponse> {
     const bookResponse = await this.getBooksByQuery(
-      `subject:${subject}&orderBy=relevance`
+      `subject:${subject}&orderBy=relevance`,
     );
     return bookResponse;
   }
