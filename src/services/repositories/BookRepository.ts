@@ -1,9 +1,9 @@
 import { Book, BookStatus } from '@/types/Book';
-import BookAdapter, { highlightAdapter } from '../adapters/BookAdapter';
+import BookAdapter from '../adapters/BookAdapter';
 import datesHelper from '../helpers/DatesHelper';
-import { BookHighlightPreview } from '@/types/BookHighlight';
 import { db } from '../database/kysely';
 import { sql } from 'kysely';
+import { uploadBookThumbnail } from '../StorageService';
 
 class BookRepository {
   async findBooksByStatus(
@@ -71,12 +71,25 @@ class BookRepository {
   }
 
   async createBook(bookData: Book): Promise<void> {
+    let thumbnailUrl = bookData.thumbnail_url;
+
+    if (thumbnailUrl?.trim()) {
+      try {
+        thumbnailUrl = await uploadBookThumbnail(
+          bookData.google_id,
+          thumbnailUrl,
+        );
+      } catch {
+        thumbnailUrl = bookData.thumbnail_url;
+      }
+    }
+
     await db
       .insertInto('readit_books')
       .values({
         google_id: bookData.google_id,
         title: bookData.title,
-        thumbnail_url: bookData.thumbnail_url,
+        thumbnail_url: thumbnailUrl,
         authors: bookData.authors,
         publish_date: bookData.publish_date,
         page_count: bookData.page_count,
