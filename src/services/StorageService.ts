@@ -1,5 +1,9 @@
 'use server';
-import { PutObjectCommand } from '@aws-sdk/client-s3';
+import {
+  DeleteObjectCommand,
+  GetObjectCommand,
+  PutObjectCommand,
+} from '@aws-sdk/client-s3';
 import s3 from './storage/s3-client';
 
 const BUCKET_PUBLIC_URL = process.env.NEXT_BUCKET_PUBLIC_URL || 'Invalid URL';
@@ -59,4 +63,34 @@ export async function uploadBookThumbnail(
   );
 
   return buildPublicUrl(BUCKET_PUBLIC_URL, objectKey);
+}
+
+export async function removeBookThumbnail(googleId: string): Promise<void> {
+  await s3.send(
+    new DeleteObjectCommand({
+      Bucket: process.env.BUCKET_NAME!,
+      Key: `books/${googleId}.jpg`,
+    }),
+  );
+}
+
+export async function checkIfThumbnailExists(
+  googleId: string,
+): Promise<string | null> {
+  const possibleExtensions = ['jpg', 'jpeg'];
+  for (const ext of possibleExtensions) {
+    const objectKey = getObjectKey(googleId, ext);
+    try {
+      await s3.send(
+        new GetObjectCommand({
+          Bucket: process.env.BUCKET_NAME!,
+          Key: objectKey,
+        }),
+      );
+      return buildPublicUrl(BUCKET_PUBLIC_URL, objectKey);
+    } catch {
+      return null;
+    }
+  }
+  return null;
 }

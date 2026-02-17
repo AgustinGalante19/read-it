@@ -3,7 +3,7 @@ import BookAdapter from '../adapters/BookAdapter';
 import datesHelper from '../helpers/DatesHelper';
 import { db } from '../database/kysely';
 import { sql } from 'kysely';
-import { uploadBookThumbnail } from '../StorageService';
+import { removeBookThumbnail, uploadBookThumbnail } from '../StorageService';
 
 class BookRepository {
   async findBooksByStatus(
@@ -168,6 +168,7 @@ class BookRepository {
       .where('google_id', '=', googleId)
       .where('user_email', '=', userEmail)
       .execute();
+    removeBookThumbnail(googleId);
   }
 
   async updateHash(
