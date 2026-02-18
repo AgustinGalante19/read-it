@@ -5,13 +5,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { hostname: 'books.google.com' },
       { hostname: 'read-it.site' },
-      {
-        hostname: 'agustin-self-host.tail8cb9eb.ts.net',
-        port: '8888',
-        protocol: 'http',
-      },
     ],
-    dangerouslyAllowLocalIP: true,
   },
   experimental: {
     mcpServer: true,

@@ -57,14 +57,20 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
         <div
           style={{
             backgroundImage: `url(${
-              book.thumbnail_url || '/small-thumbnail-fallback.jpg'
+              dbBook.data
+                ? dbBook.data.thumbnail_url
+                : book.thumbnail_url || '/small-thumbnail-fallback.jpg'
             })`,
           }}
           className={`absolute w-full h-full bg-center bg-cover bg-no-repeat filter blur-[10px] brightness-75 z-[-1] top-0 left-0 mask-image-[linear-gradient(#393b3b_90%,_transparent)]`}
         />
         <Image
           alt={`${book.title} cover`}
-          src={book.thumbnail_url || '/small-thumbnail-fallback.jpg'}
+          src={
+            dbBook.data
+              ? dbBook.data.thumbnail_url
+              : book.thumbnail_url || '/small-thumbnail-fallback.jpg'
+          }
           width={128}
           height={205}
           className='blur-bottom-image'
