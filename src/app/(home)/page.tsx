@@ -1,8 +1,7 @@
-import Topbar from '@/components/topbar';
 import BooksList from '@/components/book/books-list';
 import ShowAll from '@/components/book/show-all';
 import Link from 'next/link';
-import { getMyBooks } from '@/services/BookService';
+import { getMyBooks, getCurrentlyReadingStats } from '@/services/BookService';
 import { BookStatus } from '@/types/Book';
 import {
   Empty,
@@ -14,11 +13,12 @@ import {
 } from '@/components/ui/empty';
 import { Button } from '@/components/ui/button';
 import { Book, BookCheck, BookMarked, BookOpen } from 'lucide-react';
+import CurrentlyReadingCard from '@/components/book/currently-reading-card';
 
 export default async function Home() {
   const [currentlyReading, readList, readedBooks, allBooks] = await Promise.all(
     [
-      getMyBooks(BookStatus.READING),
+      getCurrentlyReadingStats(),
       getMyBooks(BookStatus.WANT_TO_READ),
       getMyBooks(BookStatus.READ),
       getMyBooks(BookStatus.ALL),
@@ -35,12 +35,9 @@ export default async function Home() {
                 label='Currently Reading'
                 readStatus={BookStatus.READING}
               />
-              <BooksList
-                books={currentlyReading.data}
-                cardMode='vertical'
-                opts={{ dragFree: true }}
-                itemClassName='basis-1/3'
-              />
+              {currentlyReading.data!.map((book) => (
+                <CurrentlyReadingCard key={book.google_id} book={book} />
+              ))}
             </>
           ) : (
             <Empty>
@@ -94,7 +91,11 @@ export default async function Home() {
         <section>
           <ShowAll label='Read' readStatus={BookStatus.READ} />
           {readedBooks.data && readedBooks.data.length > 0 ? (
-            <BooksList books={readedBooks.data} opts={{ dragFree: true }} />
+            <BooksList
+              books={readedBooks.data}
+              cardMode='vertical'
+              opts={{ dragFree: true }}
+            />
           ) : (
             <Empty>
               <EmptyHeader>
@@ -114,35 +115,6 @@ export default async function Home() {
             </Empty>
           )}
         </section>
-        <section>
-          <ShowAll label='All my Books' readStatus={BookStatus.ALL} />
-          {allBooks.data && allBooks.data.length > 0 ? (
-            <BooksList
-              books={allBooks.data}
-              cardMode='vertical'
-              opts={{ dragFree: true }}
-              itemClassName='basis-1/3'
-            />
-          ) : (
-            <Empty>
-              <EmptyHeader>
-                <EmptyMedia variant='icon'>
-                  <Book />
-                </EmptyMedia>
-                <EmptyTitle>Mhm... No books in your library?</EmptyTitle>
-                <EmptyDescription>
-                  You can&apos;t read if you don&apos;t have books. Go get some!
-                </EmptyDescription>
-              </EmptyHeader>
-              <EmptyContent>
-                <Button asChild>
-                  <Link href='/search'>Search books</Link>
-                </Button>
-              </EmptyContent>
-            </Empty>
-          )}
-        </section>
-        <div className='h-4'></div>
       </div>
     </main>
   );

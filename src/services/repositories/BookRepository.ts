@@ -235,6 +235,19 @@ class BookRepository {
       .where('user_email', '=', userEmail)
       .execute();
   }
+
+  async getCurrentlyReadingWithStats(userEmail: string): Promise<Book[]> {
+    const result = await db
+      .selectFrom('readit_books')
+      .selectAll()
+      .where('user_email', '=', userEmail)
+      .where('id_book_status', '=', 2)
+      .where('book_type_id', '=', 1)
+      .orderBy('start_date', 'desc')
+      .execute();
+
+    return BookAdapter(result);
+  }
 }
 
 const bookRepository = new BookRepository();

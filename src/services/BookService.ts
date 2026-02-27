@@ -193,3 +193,27 @@ export async function recordLastReadingInfo(data: {
     return { success: false, error: 'Failed to update book last open' };
   }
 }
+
+export async function getCurrentlyReadingStats(): Promise<Result<Book[]>> {
+  try {
+    const userEmail = await getUserEmail();
+    await isAuthenticated(userEmail);
+
+    const books = await bookRepository.getCurrentlyReadingWithStats(userEmail);
+
+    for (const book of books) {
+      if (book.book_hash) {
+        book.book_total_read_time =
+          await readingStatisticsRepository.getTotalReadTimeByHash(
+            book.book_hash,
+            userEmail,
+          );
+      }
+    }
+
+    return { success: true, data: books };
+  } catch (error) {
+    console.error('Error fetching currently reading stats:', error);
+    return { success: false, error: 'Failed to fetch currently reading stats' };
+  }
+}

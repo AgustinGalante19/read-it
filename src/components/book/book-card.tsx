@@ -38,8 +38,8 @@ function BookCard({
           src={book?.thumbnail_url || '/thumbnail-fallback.jpg'}
           loading='lazy'
           className={cn(
-            'max-h-51.25 min-h-19.25',
-            mode === 'horizontal' ? 'h-19.25' : 'h-51.25',
+            'max-h-51.25 min-h-19.25 rounded-xl',
+            mode === 'horizontal' ? 'h-19.25 rounded-md' : 'h-51.25',
           )}
         />
         <div
