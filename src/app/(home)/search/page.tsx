@@ -53,7 +53,7 @@ function Search() {
           value={searchTerm}
           onChange={handleChange}
         />
-        <InputGroupAddon align='inline-end'>
+        <InputGroupAddon align='inline-start'>
           {isSearching ? <Spinner /> : <SearchIcon />}
         </InputGroupAddon>
       </InputGroup>

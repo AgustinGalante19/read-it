@@ -6,13 +6,17 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Book, BookStatus } from '@/types/Book';
 import Option from '../types/Option';
 import BookCard from '@/components/book/book-card';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import VerticalSkeleton from '@/components/book/vertical-skeleton';
 import { getMyBooks } from '@/services/BookService';
 import bookHelper from '@/services/helpers/BookHelper';
 import StatusSelection from './status-selection';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from '@/components/ui/input-group';
 
 const options: Option[] = [
   { id: 1, value: 3, label: 'Read', icon: <BookCheck size={18} /> },
@@ -103,24 +107,29 @@ export default function LibraryContent() {
         options={options}
       />
       <section className='px-4 mt-2'>
-        <Label>
+        <Label className='flex flex-col items-start gap-1'>
           Title
-          <Input
-            placeholder='Search by title'
-            value={searchTerm}
-            onChange={onSearchTermChange}
-          />
+          <InputGroup className='mb-2'>
+            <InputGroupInput
+              placeholder='Search by Title'
+              value={searchTerm}
+              onChange={onSearchTermChange}
+            />
+            <InputGroupAddon align='inline-start'>
+              <BookIcon />
+            </InputGroupAddon>
+          </InputGroup>
         </Label>
       </section>
       <section>
         {isPending ? (
-          <div className='128x172 grid grid-cols-2 gap-2 py-4'>
+          <div className='grid grid-cols-2 gap-2 py-2'>
             {Array.from({ length: 6 }).map((_, i) => (
               <VerticalSkeleton key={i} />
             ))}
           </div>
         ) : (
-          <ul className='grid grid-cols-2 gap-2 py-4'>
+          <ul className='grid grid-cols-2 gap-2 py-2'>
             {booksList.map((book) => (
               <li key={book.id} className='mx-auto w-fit'>
                 <BookCard book={book} mode='vertical' />
