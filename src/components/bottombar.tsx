@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
-import { ChartBar, Home, LibraryBig, Search } from 'lucide-react';
+import { ChartBar, Highlighter, Home, LibraryBig, Search } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useMemo } from 'react';
@@ -24,8 +24,8 @@ const LinkItem = ({
     <Link
       href={url}
       className={cn(
-        'flex flex-col items-center gap-2 px-4 py-2 transition-colors',
-        isActive ? 'text-primary' : 'text-muted-foreground'
+        'flex flex-col items-center gap-2 transition-colors py-2 px-0.5',
+        isActive ? 'text-primary' : 'text-muted-foreground',
       )}
     >
       <div className='relative px-5 py-1.5'>
@@ -60,7 +60,7 @@ const LinkItem = ({
                   'transition-colors duration-300 w-6 h-6',
                   isActive
                     ? 'text-secondary-container-foreground'
-                    : 'text-muted-foreground'
+                    : 'text-muted-foreground',
                 ),
               })
             : icon}
@@ -69,7 +69,7 @@ const LinkItem = ({
       <span
         className={cn(
           'text-xs font-medium transition-colors',
-          isActive ? 'text-secondary-foreground' : 'text-muted-foreground/80'
+          isActive ? 'text-secondary-foreground' : 'text-muted-foreground/80',
         )}
       >
         {label}
@@ -83,13 +83,13 @@ function BottomBar() {
     // Establecer la altura de la barra de navegación como CSS custom property
     const updateBottomBarHeight = () => {
       const bottomBar = document.querySelector(
-        '[data-bottom-bar]'
+        '[data-bottom-bar]',
       ) as HTMLElement;
       if (bottomBar) {
         const height = bottomBar.offsetHeight;
         document.documentElement.style.setProperty(
           '--bottom-bar-height',
-          `${height}px`
+          `${height}px`,
         );
       }
     };
@@ -112,6 +112,7 @@ function BottomBar() {
         <LinkItem label='Home' icon={<Home />} url='/' />
         <LinkItem label='Search' icon={<Search />} url='/search' />
         <LinkItem label='Library' icon={<LibraryBig />} url='/library' />
+        <LinkItem label='Highlights' icon={<Highlighter />} url='/highlights' />
         <LinkItem label='Stats' icon={<ChartBar />} url='/stats' />
       </nav>
     </footer>

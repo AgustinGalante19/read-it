@@ -6,13 +6,11 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Github, Highlighter, LogOut, ScreenShare } from 'lucide-react';
+import { Highlighter, LogOut, ScreenShare } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { authClient, useSession } from '@/lib/auth/auth-client';
 
 function Topbar() {
@@ -39,10 +37,6 @@ function Topbar() {
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => router.push('/highlights')}>
-            <Highlighter />
-            My Highlights
-          </DropdownMenuItem>
           <DropdownMenuItem onClick={() => router.push('/devices')}>
             <ScreenShare />
             Devices
@@ -55,16 +49,6 @@ function Topbar() {
           >
             <LogOut />
             Sign Out
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <Link
-              href={'https://github.com/AgustinGalante19/read-it'}
-              target='_blank'
-            >
-              <Github />
-              Contribute
-            </Link>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
