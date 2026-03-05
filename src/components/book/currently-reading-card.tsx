@@ -23,8 +23,8 @@ function CurrentylReadingCard({ book }: CurrentylReadingCardProps) {
   return (
     <Card className='mt-2'>
       <CardContent className='pt-6'>
-        <div className='flex gap-4'>
-          <div className='shrink-0'>
+        <div className='flex flex-col min-[360px]:flex-row gap-4'>
+          <div className='shrink-0 self-center min-[360px]:self-start'>
             <Link href={`/book/${book.google_id}`}>
               <Image
                 src={book.thumbnail_url}
