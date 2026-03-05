@@ -5,10 +5,10 @@ export async function POST(request: Request) {
   const body = await request.json();
   const { book_hash, created_at, device_code, highlight_text, page } = body;
 
-  const isValid = validateDeviceCode(device_code);
-  if (!isValid) {
+  const validation = await validateDeviceCode(device_code);
+  if (!validation.valid) {
     return Response.json(
-      { success: false, error: 'Invalid device code' },
+      { success: false, error: validation.error || 'Invalid device code' },
       { status: 400 },
     );
   }
