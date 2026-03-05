@@ -56,15 +56,15 @@ export default async function CalendarPage(props: CalendarPageProps) {
   }
 
   return (
-    <div className='container py-10'>
+    <div className='container'>
       <div className='mb-2 flex flex-col gap-4 items-center justify-between'>
         <div className='flex items-center gap-2'>
           <h1 className='text-3xl font-bold'>Reading Calendar</h1>
           <Calendar />
         </div>
         <p className='px-2 text-sm text-muted-foreground max-w-2xl'>
-          Navigate between months to see your daily reading progress, track
-          completed books, and explore your reading patterns.
+          Navigate between months to see your daily reading progress and track
+          completed books.
         </p>
         <DateSelector year={year} month={month} />
       </div>
