@@ -12,7 +12,7 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty';
 import { Button } from '@/components/ui/button';
-import { Book, BookCheck, BookMarked, BookOpen } from 'lucide-react';
+import { BookCheck, BookMarked, BookOpen } from 'lucide-react';
 import CurrentlyReadingCard from '@/components/book/currently-reading-card';
 
 export default async function Home() {
