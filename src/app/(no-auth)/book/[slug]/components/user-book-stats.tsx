@@ -53,6 +53,7 @@ function UserBookStats({
                       userBookData.data.page_count) *
                       100,
                   )}
+                  %
                 </span>
               )}
           </div>

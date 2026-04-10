@@ -25,8 +25,8 @@ const imageSize = { width: 53, height: 77 };
 function BooksGrid({ books }: { books: Book[] }) {
   const [showAll, setShowAll] = useState(false);
 
-  const displayedBooks = showAll ? books : books.slice(0, 10);
-  const shouldShowButton = books.length > 10;
+  const displayedBooks = showAll ? books : books.slice(0, 12);
+  const shouldShowButton = books.length > 12;
 
   return (
     <section>

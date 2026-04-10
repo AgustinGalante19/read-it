@@ -93,7 +93,7 @@ function GeneralStats({
                 </CardHeader>
                 <CardContent className='px-4 pb-2'>
                   <span className='text-2xl font-bold text-primary'>
-                    {activity.month.pages} pages
+                    {activity.month.pages.toLocaleString()} pages
                   </span>
                 </CardContent>
                 <CardFooter className='pb-0'>
@@ -119,7 +119,7 @@ function GeneralStats({
                 </CardHeader>
                 <CardContent className='px-4 pb-2'>
                   <span className='text-2xl font-bold text-primary'>
-                    +{page.totalPageCount}
+                    +{page.totalPageCount.toLocaleString()}
                   </span>
                 </CardContent>
                 <CardFooter className='pb-0'>
