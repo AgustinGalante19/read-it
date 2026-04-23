@@ -1,6 +1,12 @@
 'use client';
 
-import { eachDayOfInterval, endOfMonth, format, isSameMonth } from 'date-fns';
+import {
+  eachDayOfInterval,
+  endOfMonth,
+  format,
+  isSameMonth,
+  isToday,
+} from 'date-fns';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
 import {
@@ -78,11 +84,15 @@ export function ReadingTimeline({ data, year, month }: ReadingTimelineProps) {
               >
                 <div className='flex justify-between items-start z-10'>
                   <span
-                    className={`text-xs font-medium ${
-                      dayData && dayData.totalDuration >= 500
-                        ? 'text-primary'
-                        : 'text-muted-foreground'
-                    }`}
+                    className={
+                      isToday(day)
+                        ? 'text-xs font-semibold w-5 h-5 flex items-center justify-center rounded-full bg-primary text-primary-foreground'
+                        : `text-xs font-medium ${
+                            dayData && dayData.totalDuration >= 500
+                              ? 'text-primary'
+                              : 'text-muted-foreground'
+                          }`
+                    }
                   >
                     {format(day, 'd')}
                   </span>
@@ -116,8 +126,8 @@ export function ReadingTimeline({ data, year, month }: ReadingTimelineProps) {
                                 book.isFinishedEvent
                                   ? 'ring-2 ring-emerald-500'
                                   : isStartDate
-                                  ? 'ring-2 ring-blue-500'
-                                  : ''
+                                    ? 'ring-2 ring-blue-500'
+                                    : ''
                               }`}
                             >
                               <Image

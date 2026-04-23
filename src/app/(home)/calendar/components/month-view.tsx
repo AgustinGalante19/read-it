@@ -4,6 +4,7 @@ import {
   endOfMonth,
   format,
   isSameDay,
+  isToday,
   startOfMonth,
 } from 'date-fns';
 import { BookItem } from './book-item';
@@ -38,7 +39,7 @@ export default function MonthView({
         ))}
         {days.map((day) => {
           const booksForDay = books.filter(
-            (book) => book.finish_date && isSameDay(book.finish_date, day)
+            (book) => book.finish_date && isSameDay(book.finish_date, day),
           );
           const book = booksForDay[0];
 
@@ -47,7 +48,15 @@ export default function MonthView({
               key={day.toString()}
               className='bg-background p-2 min-h-[100px] border-t relative group'
             >
-              <div className='text-sm mb-1'>{format(day, 'd')}</div>
+              <div
+                className={
+                  isToday(day)
+                    ? 'text-sm mb-1 w-6 h-6 flex items-center justify-center rounded-full bg-primary text-primary-foreground font-semibold'
+                    : 'text-sm mb-1'
+                }
+              >
+                {format(day, 'd')}
+              </div>
               {book && <BookItem book={book} booksForDay={booksForDay} />}
             </div>
           );
