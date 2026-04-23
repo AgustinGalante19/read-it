@@ -15,8 +15,8 @@ async function PreviewPage() {
       <div className='flex flex-col items-center justify-center gap-2'>
         <div className='flex items-center gap-4'>
           <Image
-            src='/book-nexus-logo.svg'
-            width={25}
+            src='/readit-logo.png'
+            width={75}
             height={50}
             alt='read-it logo'
           />
