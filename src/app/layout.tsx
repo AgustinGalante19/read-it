@@ -1,18 +1,18 @@
-import type { Metadata } from 'next';
-import { ABeeZee } from 'next/font/google';
-import Providers from '@/components/providers';
-import '@/app/globals.css';
+import type { Metadata } from "next"
+import { ABeeZee } from "next/font/google"
+import Providers from "@/components/providers"
+import "@/app/globals.css"
 
 export const metadata: Metadata = {
-  title: 'Read It',
-  description: 'My personal to use as readlist',
-};
+  title: "Read It",
+  description: "My personal to use as readlist",
+}
 
-const ABeeZeeFont = ABeeZee({ subsets: ['latin'], weight: ['400'] });
+const ABeeZeeFont = ABeeZee({ subsets: ["latin"], weight: ["400"] })
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html lang='en'>
@@ -29,5 +29,5 @@ export default function RootLayout({
         <Providers>{children}</Providers>
       </body>
     </html>
-  );
+  )
 }
