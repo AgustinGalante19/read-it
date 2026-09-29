@@ -24,7 +24,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Field, FieldGroup, FieldSet } from "@/components/ui/field"
+import { Field, FieldGroup } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
@@ -48,11 +48,13 @@ function AddHighlight() {
   const [isOpen, setIsOpen] = useState(false)
   const [isPickerOpen, setIsPickerOpen] = useState(false)
   const [isSaving, startSaving] = useTransition()
+  const [isRecognizing, startRecognizing] = useTransition()
   const [isBooksLoading, startLoadingBooks] = useTransition()
 
   const [books, setBooks] = useState<Book[]>([])
   const [selectedBookGoogleId, setSelectedBookGoogleId] = useState("")
   const [bookQuery, setBookQuery] = useState("")
+  const [ocrImage, setOcrImage] = useState<File | null>(null)
   const [highlight, setHighlight] = useState("")
   const [page, setPage] = useState("0")
 
@@ -84,9 +86,42 @@ function AddHighlight() {
   const resetForm = () => {
     setSelectedBookGoogleId("")
     setBookQuery("")
+    setOcrImage(null)
     setHighlight("")
     setPage("0")
     setIsPickerOpen(false)
+  }
+
+  const handleExtractText = () => {
+    if (!ocrImage) {
+      toast.error("Select an image first")
+      return
+    }
+
+    startRecognizing(async () => {
+      const formData = new FormData()
+      formData.set("image", ocrImage)
+
+      const response = await fetch("/api/highlights/ocr", {
+        method: "POST",
+        body: formData,
+      })
+
+      const result = await response.json()
+
+      if (!response.ok || !result.success) {
+        toast.error(result.error || "Failed to extract text from image")
+        return
+      }
+
+      setHighlight((prev) => {
+        const extractedText = String(result.data || "").trim()
+        if (!prev.trim()) return extractedText
+        return `${prev.trim()}\n\n${extractedText}`
+      })
+
+      toast.success("Text extracted from image")
+    })
   }
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -224,6 +259,28 @@ function AddHighlight() {
                   />
                 </Field>
               </div>
+              <Field>
+                <Label htmlFor='ocr-image'>Photo OCR</Label>
+                <div className='flex items-center gap-2'>
+                  <Input
+                    id='ocr-image'
+                    type='file'
+                    accept='image/*'
+                    onChange={(event) =>
+                      setOcrImage(event.target.files?.[0] ?? null)
+                    }
+                  />
+                  <Button
+                    type='button'
+                    variant='outline'
+                    isLoading={isRecognizing}
+                    onClick={handleExtractText}
+                    disabled={!ocrImage}
+                  >
+                    Extract text
+                  </Button>
+                </div>
+              </Field>
               <Field>
                 <Label htmlFor='highlight-1'>Highlight</Label>
                 <Textarea
