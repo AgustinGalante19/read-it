@@ -48,7 +48,7 @@ describe('POST /api/koreader/highlights', () => {
         method: 'POST',
         body: JSON.stringify({
           book_hash: 'hash',
-          created_at: '2024-01-01',
+          created_at: '2026-10-19T11:50:06Z',
           device_code: 'dev',
           highlight_text: 'Text',
           page: 10,
@@ -59,5 +59,40 @@ describe('POST /api/koreader/highlights', () => {
     expect(response.status).toBe(200);
     const body = await response.json();
     expect(body.success).toBe(true);
+    expect(mockedAddHighlight).toHaveBeenCalledWith({
+      book_hash: 'hash',
+      created_at: new Date('2026-10-19T11:50:06Z'),
+      device_code: 'dev',
+      highlight_text: 'Text',
+      id: 0,
+      page: 10,
+    });
   });
+
+  it.each(['not-a-date', '', null, undefined, 0, true, {}, []])(
+    'returns 400 for invalid created_at %j',
+    async (created_at) => {
+      mockedValidate.mockResolvedValue({ valid: true });
+
+      const response = await POST(
+        new Request('http://localhost', {
+          method: 'POST',
+          body: JSON.stringify({
+            book_hash: 'hash',
+            created_at,
+            device_code: 'dev',
+            highlight_text: 'Text',
+            page: 10,
+          }),
+        }),
+      );
+
+      expect(response.status).toBe(400);
+      expect(await response.json()).toEqual({
+        success: false,
+        error: 'Invalid created_at date',
+      });
+      expect(mockedAddHighlight).not.toHaveBeenCalled();
+    },
+  );
 });
