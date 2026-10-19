@@ -1,4 +1,4 @@
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from "@/components/ui/skeleton"
 
 function HighlightCardSkeleton() {
   return (
@@ -25,7 +25,7 @@ function HighlightCardSkeleton() {
         <Skeleton className='h-4 w-24' />
       </div>
     </div>
-  );
+  )
 }
 
 function Loading() {
@@ -36,14 +36,14 @@ function Loading() {
         <Skeleton className='w-5 h-5' />
       </header>
       <div className='px-4 pb-4'>
-        <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+        <div className='grid gap-4 grid-cols-1'>
           {Array.from({ length: 6 }).map((_, i) => (
             <HighlightCardSkeleton key={i} />
           ))}
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default Loading;
+export default Loading
