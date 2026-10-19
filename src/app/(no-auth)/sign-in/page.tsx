@@ -8,16 +8,17 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 function SignInPage() {
-  const { push } = useRouter();
+  const { replace } = useRouter();
   const { data } = useSession();
 
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (data?.user) {
-      push('/');
+      replace('/');
     }
-  }, [data?.user, push]);
+  }, [data?.user, replace]);
 
   return (
     <div className='min-h-screen flex justify-center items-center login-bg'>
@@ -31,15 +32,31 @@ function SignInPage() {
             className='w-full'
             onClick={async () => {
               setIsLoading(true);
-              await signIn.social({ provider: 'google' });
-              setIsLoading(false);
-              push('/');
+              setError(null);
+              try {
+                const result = await signIn.social({
+                  provider: 'google',
+                  callbackURL: '/',
+                });
+                if (result.error) {
+                  setError('Unable to sign in with Google. Please try again.');
+                }
+              } catch {
+                setError('Unable to sign in with Google. Please try again.');
+              } finally {
+                setIsLoading(false);
+              }
             }}
             isLoading={isLoading}
             startIcon={<GoogleIcon />}
           >
             Login with Google
           </Button>
+          {error && (
+            <p role='alert' className='text-sm text-destructive mt-2'>
+              {error}
+            </p>
+          )}
           <span className='text-sm text-secondary-foreground mt-2'>
             You can acceed to an app preview to see the features.{' '}
             <Link

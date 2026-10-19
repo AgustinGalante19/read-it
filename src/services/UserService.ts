@@ -7,6 +7,8 @@ import userRepository from './repositories/UserRepository';
 export async function getUserEmail() {
   const session = await auth.api.getSession({
     headers: await headers(),
+    // This helper also runs during server rendering, which cannot write cookies.
+    query: { disableRefresh: true },
   });
   return session?.user?.email as string;
 }

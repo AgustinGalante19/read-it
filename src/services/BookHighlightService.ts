@@ -1,6 +1,7 @@
 "use server"
 
-import BookHighlight, {
+import {
+  BookHighlightInput,
   BookHighlightPreview,
   BookHighlightWithBook,
 } from "@/types/BookHighlight"
@@ -11,7 +12,7 @@ import { revalidatePath } from "next/cache"
 import { getUserEmail, isAuthenticated } from "./UserService"
 
 export async function addBookHighlight(
-  highlightData: BookHighlight,
+  highlightData: BookHighlightInput,
 ): Promise<Result<string>> {
   try {
     await bookHighlightsRepository.createHighlight(highlightData)

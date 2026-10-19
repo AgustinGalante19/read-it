@@ -5,8 +5,6 @@ export async function POST(request: Request) {
   const body = await request.json()
   const { book_hash, created_at, device_code, highlight_text, page } = body
 
-  console.log({ book_hash, created_at, device_code, highlight_text, page })
-
   const validation = await validateDeviceCode(device_code)
   if (!validation.valid) {
     return Response.json(
@@ -33,5 +31,5 @@ export async function POST(request: Request) {
     page,
   })
 
-  return Response.json(result)
+  return Response.json(result, { status: result.success ? 200 : 500 })
 }

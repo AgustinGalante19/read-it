@@ -7,6 +7,10 @@ export default interface BookHighlight {
   created_at: Date
 }
 
+export type BookHighlightInput = Omit<BookHighlight, "created_at"> & {
+  created_at: Date | string
+}
+
 export interface BookHighlightPreview {
   highlight_id: number
   book_id: number

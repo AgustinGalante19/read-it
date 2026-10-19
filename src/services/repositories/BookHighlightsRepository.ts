@@ -1,4 +1,5 @@
-import BookHighlight, {
+import {
+  BookHighlightInput,
   BookHighlightPreview,
   BookHighlightWithBook,
 } from '@/types/BookHighlight';
@@ -9,9 +10,19 @@ import {
 } from '../adapters/BookAdapter';
 
 class BookHighlightsRepository {
-  async createHighlight(bookHighlight: BookHighlight): Promise<void> {
+  async createHighlight(bookHighlight: BookHighlightInput): Promise<void> {
     const { book_hash, created_at, device_code, highlight_text, page } =
       bookHighlight;
+
+    const createdAt =
+      created_at instanceof Date
+        ? created_at
+        : typeof created_at === 'string'
+          ? new Date(created_at)
+          : new Date(NaN);
+    if (Number.isNaN(createdAt.getTime())) {
+      throw new Error('Invalid created_at date');
+    }
 
     await db
       .insertInto('readit_books_highlights')
@@ -20,7 +31,7 @@ class BookHighlightsRepository {
         highlight_text,
         book_hash,
         page: page.toString(),
-        created_at: created_at.toISOString(),
+        created_at: createdAt.toISOString(),
       })
       .execute();
   }

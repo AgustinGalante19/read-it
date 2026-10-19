@@ -69,6 +69,33 @@ describe('POST /api/koreader/highlights', () => {
     });
   });
 
+  it('returns 500 when saving the highlight fails', async () => {
+    mockedValidate.mockResolvedValue({ valid: true });
+    mockedAddHighlight.mockResolvedValue({
+      success: false,
+      error: 'Failed to add book highlight',
+    });
+
+    const response = await POST(
+      new Request('http://localhost', {
+        method: 'POST',
+        body: JSON.stringify({
+          book_hash: 'hash',
+          created_at: '2026-10-19T11:50:06Z',
+          device_code: 'dev',
+          highlight_text: 'Text',
+          page: 10,
+        }),
+      }),
+    );
+
+    expect(response.status).toBe(500);
+    expect(await response.json()).toEqual({
+      success: false,
+      error: 'Failed to add book highlight',
+    });
+  });
+
   it.each(['not-a-date', '', null, undefined, 0, true, {}, []])(
     'returns 400 for invalid created_at %j',
     async (created_at) => {
