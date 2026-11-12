@@ -118,11 +118,12 @@ export async function existsOnLibrary(
     let lastSyncDate: string | null = null;
 
     if (book && book.book_hash) {
-      book.book_total_read_time =
+      const sessionReadTime =
         await readingStatisticsRepository.getTotalReadTimeByHash(
           book.book_hash,
           userEmail,
         );
+      book.book_total_read_time = sessionReadTime || book.book_total_read_time;
 
       lastSyncDate = await readingStatisticsRepository.getLastSyncDate(
         userEmail,

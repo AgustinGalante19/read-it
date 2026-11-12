@@ -79,18 +79,26 @@ describe('BookService', () => {
     expect(mockedBookRepo.updateBookStatus).toHaveBeenCalled();
   });
 
-  it('returns last sync metadata when book has hash', async () => {
+  it.each([
+    { sessionTime: 300, expectedTime: 300 },
+    { sessionTime: 0, expectedTime: 120 },
+  ])('returns last sync metadata and reading time when session time is $sessionTime', async ({
+    sessionTime,
+    expectedTime,
+  }) => {
     mockedGetUserEmail.mockResolvedValue('user@test.com');
     mockedIsAuthenticated.mockResolvedValue({ success: true } as any);
     mockedBookRepo.findBookByGoogleId.mockResolvedValue({
       google_id: 'g1',
       book_hash: 'hash',
+      book_total_read_time: 120,
     } as any);
-    mockedReadingRepo.getTotalReadTimeByHash.mockResolvedValue(300 as any);
+    mockedReadingRepo.getTotalReadTimeByHash.mockResolvedValue(sessionTime);
     mockedReadingRepo.getLastSyncDate.mockResolvedValue('2024-01-01' as any);
 
     const result = await existsOnLibrary('g1');
     expect(result.success).toBe(true);
+    expect(result.data?.book_total_read_time).toBe(expectedTime);
     expect(result.metadata?.lastSyncDate).toBe('2024-01-01');
   });
 
