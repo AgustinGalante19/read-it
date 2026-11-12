@@ -11,7 +11,6 @@ async function PreviewPage() {
 
   return (
     <div className='space-y-4 p-4'>
-      <div className='blur-background blur-background-green -mt-32' />
       <div className='flex flex-col items-center justify-center gap-2'>
         <div className='flex items-center gap-4'>
           <Image
@@ -19,6 +18,7 @@ async function PreviewPage() {
             width={75}
             height={50}
             alt='read-it logo'
+            className='hue-rotate-[75deg]'
           />
           <h1 className='text-white font-bold text-3xl text-center'>
             Welcome to Read-It

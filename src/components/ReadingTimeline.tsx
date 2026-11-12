@@ -122,11 +122,11 @@ export function ReadingTimeline({ data, year, month }: ReadingTimelineProps) {
                           <TooltipTrigger asChild>
                             <Link
                               href={`/book/${book.bookId}`}
-                              className={`relative w-10 h-14 bg-muted rounded-sm overflow-hidden hover:ring-2 ring-primary transition-all hover:scale-110 shadow-sm ${
+                              className={`relative w-10 h-14 bg-muted rounded-sm overflow-hidden hover:ring-2 hover:ring-primary transition-all hover:scale-110 shadow-sm ${
                                 book.isFinishedEvent
-                                  ? 'ring-2 ring-emerald-500'
+                                  ? 'ring-2 ring-primary'
                                   : isStartDate
-                                    ? 'ring-2 ring-blue-500'
+                                    ? 'ring-2 ring-outline'
                                     : ''
                               }`}
                             >
@@ -138,18 +138,14 @@ export function ReadingTimeline({ data, year, month }: ReadingTimelineProps) {
                                 sizes='40px'
                               />
                               {book.isFinishedEvent && (
-                                <div className='absolute inset-x-0 bottom-0 top-1/2 bg-gradient-to-t from-emerald-500/80 to-transparent flex items-end justify-center pb-1'>
-                                  <span className='text-[8px] font-bold text-white uppercase tracking-tighter'>
-                                    Done
-                                  </span>
-                                </div>
+                                <span className='absolute inset-x-0 bottom-0 bg-primary text-center text-[8px] font-bold uppercase text-primary-foreground'>
+                                  Done
+                                </span>
                               )}
                               {isStartDate && !book.isFinishedEvent && (
-                                <div className='absolute inset-x-0 top-0 bottom-1/2 bg-gradient-to-b from-accent/80 to-transparent flex items-start justify-center pt-1'>
-                                  <span className='text-[8px] font-bold text-white uppercase tracking-tighter'>
-                                    Start
-                                  </span>
-                                </div>
+                                <span className='absolute inset-x-0 top-0 bg-primary-container text-center text-[8px] font-bold uppercase text-primary-container-foreground'>
+                                  Start
+                                </span>
                               )}
                             </Link>
                           </TooltipTrigger>
@@ -164,7 +160,7 @@ export function ReadingTimeline({ data, year, month }: ReadingTimelineProps) {
                                 </span>
                               )}
                               {book.isFinishedEvent && (
-                                <span className='text-xs font-bold text-emerald-500'>
+                                <span className='text-xs font-bold text-primary'>
                                   Finished this day!
                                 </span>
                               )}

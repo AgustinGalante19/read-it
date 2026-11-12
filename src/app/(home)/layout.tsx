@@ -1,26 +1,12 @@
-import Container from '@/components/ui/container';
-import BottomBar from '@/components/bottombar';
-import Topbar from '@/components/topbar';
+import type { Viewport } from 'next';
+import AppShell from '@/components/app-shell';
 
-export default function RootLayout({
+export const viewport: Viewport = { viewportFit: 'cover' };
+
+export default function HomeLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <div>
-      <div
-        className='min-h-screen'
-        style={{
-          paddingBottom: 'var(--bottom-bar-height, 6rem)',
-        }}
-      >
-        <Container>
-          <Topbar />
-          {children}
-        </Container>
-      </div>
-      <BottomBar />
-    </div>
-  );
+  return <AppShell>{children}</AppShell>;
 }
