@@ -26,24 +26,26 @@ Read It es una aplicación de seguimiento personal de lectura. Permite descubrir
 
 Centralizar estos valores en el sistema de temas existente. Consumir roles semánticos en los componentes; no distribuir colores literales por las pantallas.
 
-El tema oscuro actual define los colores en OKLCH en [`src/app/globals.css`](src/app/globals.css) y los expone a Tailwind. Adaptar las variables y sus alias semánticos, incluidos `primary-foreground` para `on-primary` y `ring` para el foco.
+La paleta oscura proviene de Material Theme Builder y usa la semilla `#1791F5`. Los colores se definen en OKLCH en [`src/app/globals.css`](src/app/globals.css) y se exponen a Tailwind. El fondo exterior usa el tono `surfaceContainerLow` del export para distinguir la navegación del panel principal.
 
-| Token | Valor inicial | Uso |
+| Token | Valor | Uso |
 | --- | --- | --- |
-| `background` | `#1B1B1B` | Fondo exterior y navegación |
-| `surface` | `#131314` | Panel principal de escritorio |
-| `surface-container` | `#202124` | Grupos, tarjetas y navegación móvil |
-| `surface-container-high` | `#2B2C2F` | Búsqueda, menús y diálogos |
-| `on-surface` | `#E3E3E3` | Texto principal |
-| `on-surface-variant` | `#C4C7C5` | Texto secundario e iconos |
-| `outline` | `#8E918F` | Límites de controles que necesiten contraste |
-| `outline-variant` | `#444746` | Separadores discretos, no indicadores esenciales |
-| `primary` | `#A8C7FA` | Enlaces, foco, progreso y botón principal |
-| `on-primary` | `#062E6F` | Texto e iconos sobre primary |
-| `primary-container` | `#0842A0` | Selección y acciones tonales |
-| `on-primary-container` | `#D3E3FD` | Contenido de selección y acciones tonales |
-| `error` | `#F2B8B5` | Errores y acciones destructivas |
-| `on-error` | `#601410` | Contenido de botones de error |
+| `background` | `#191C20` | Fondo exterior y navegación |
+| `surface` | `#111418` | Panel principal de escritorio |
+| `surface-container` | `#1D2024` | Grupos, tarjetas y navegación móvil |
+| `surface-container-high` | `#272A2F` | Búsqueda, menús y diálogos |
+| `on-surface` | `#E1E2E8` | Texto principal |
+| `on-surface-variant` | `#C3C6CF` | Texto secundario e iconos |
+| `outline` | `#8D9199` | Límites de controles que necesiten contraste |
+| `outline-variant` | `#43474E` | Separadores discretos |
+| `primary` | `#A2C9FE` | Enlaces, foco, progreso y botón principal |
+| `on-primary` | `#00325B` | Texto e iconos sobre primary |
+| `primary-container` | `#1D4875` | Selección y acciones tonales |
+| `on-primary-container` | `#D3E4FF` | Contenido de selección y acciones tonales |
+| `secondary-container` | `#3C4858` | Controles y etiquetas secundarios |
+| `on-secondary-container` | `#D7E3F8` | Texto e iconos de controles secundarios |
+| `error` | `#FFB4AB` | Errores y acciones destructivas |
+| `on-error` | `#690005` | Contenido de botones de error |
 
 Usar cada pareja de fondo y contenido de forma conjunta. No colocar texto oscuro sobre superficies oscuras ni texto blanco sobre azul claro. Verificar contraste en los componentes finales: 4.5:1 para texto normal y 3:1 para texto grande y elementos gráficos esenciales. El estado de lectura debe incluir una etiqueta o icono, además del color.
 

@@ -71,20 +71,23 @@
   :root {
     color-scheme: dark;
 
-    --background: 0.2221287 0 0; /* #1B1B1B */
-    --surface: 0.1871722 0.0020039 286.2045; /* #131314 */
-    --surface-container: 0.2479363 0.0058460 271.1764; /* #202124 */
-    --surface-container-high: 0.2932863 0.0055991 271.2234; /* #2B2C2F */
-    --foreground: 0.9158315 0 0; /* #E3E3E3 */
-    --muted-foreground: 0.8267337 0.0042941 157.1590; /* #C4C7C5 */
-    --outline: 0.6535392 0.0045524 157.1228; /* #8E918F */
-    --outline-variant: 0.3947638 0.0042951 174.2674; /* #444746 */
-    --primary: 0.8248311 0.0796593 260.2631; /* #A8C7FA */
-    --primary-foreground: 0.3205921 0.1208352 260.2267; /* #062E6F */
-    --primary-container: 0.4093315 0.1625844 260.6015; /* #0842A0 */
-    --primary-container-foreground: 0.9119338 0.0395616 260.1467; /* #D3E3FD */
-    --destructive: 0.8344880 0.0677125 22.0118; /* #F2B8B5 */
-    --destructive-foreground: 0.3245366 0.1092031 28.0114; /* #601410 */
+    /* Material Theme Builder dark scheme, seeded with #1791F5. */
+    --background: 0.2250257 0.0090175 255.6053; /* #191C20 */
+    --surface: 0.1898294 0.0094142 255.6333; /* #111418 */
+    --surface-container: 0.2421142 0.0088518 255.5942; /* #1D2024 */
+    --surface-container-high: 0.2840392 0.0101253 260.7060; /* #272A2F */
+    --foreground: 0.9137538 0.0081760 278.6280; /* #E1E2E8 */
+    --muted-foreground: 0.8269054 0.0129506 271.2585; /* #C3C6CF */
+    --outline: 0.6559066 0.0127218 264.4805; /* #8D9199 */
+    --outline-variant: 0.3968236 0.0129200 261.7470; /* #43474E */
+    --primary: 0.8267449 0.0858940 256.1887; /* #A2C9FE */
+    --primary-foreground: 0.3121069 0.0879990 249.8510; /* #00325B */
+    --primary-container: 0.3953548 0.0900068 252.0082; /* #1D4875 */
+    --primary-container-foreground: 0.9145926 0.0412425 259.6458; /* #D3E4FF */
+    --secondary-container: 0.3975946 0.0313110 255.7058; /* #3C4858 */
+    --secondary-container-foreground: 0.9131814 0.0314798 261.7419; /* #D7E3F8 */
+    --destructive: 0.8383036 0.0890850 26.7575; /* #FFB4AB */
+    --destructive-foreground: 0.3275026 0.1335917 27.3196; /* #690005 */
 
     --background-low: var(--surface);
     --surface-foreground: var(--foreground);
@@ -94,10 +97,8 @@
     --card-foreground: var(--foreground);
     --popover: var(--surface-container-high);
     --popover-foreground: var(--foreground);
-    --secondary-container: var(--primary-container);
-    --secondary-container-foreground: var(--primary-container-foreground);
-    --secondary: var(--surface-container-high);
-    --secondary-foreground: var(--foreground);
+    --secondary: var(--secondary-container);
+    --secondary-foreground: var(--secondary-container-foreground);
     --muted: var(--surface-container-high);
     --accent: var(--primary-container);
     --accent-foreground: var(--primary-container-foreground);
@@ -105,9 +106,9 @@
     --input: var(--outline-variant);
     --ring: var(--primary);
 
-    --chart-1: 0.8653050 0.0655701 307.1442; /* #DEC8F5 */
-    --chart-2: 0.8407161 0.0639607 179.7441; /* #9DD9CC */
-    --chart-3: 0.7287243 0.0950388 258.1277; /* #82A9E3 */
+    --chart-1: 0.8191407 0.0815357 213.8167; /* #83D2E4 */
+    --chart-2: 0.8267206 0.0310166 260.7026; /* #BBC7DB */
+    --chart-3: 0.7417189 0.1365275 252.9411; /* #69AFFF */
     --chart-4: var(--primary);
     --chart-5: var(--destructive);
 
