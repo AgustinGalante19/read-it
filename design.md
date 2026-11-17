@@ -72,7 +72,7 @@ Los puntos de corte siguientes son decisiones del proyecto, expresados en píxel
 | --- | --- | --- |
 | Menos de 600 px | Barra inferior con los cinco destinos actuales | Una columna, márgenes de 16 px; biblioteca en dos columnas cuando las portadas y títulos lo permitan |
 | 600–1023 px | Rail lateral de 80 px con iconos y etiquetas | Panel flexible, padding de 24 px, cuadrículas adaptables |
-| Desde 1024 px | Sidebar de 240 px | Cabecera de 72 px, panel con radio de 24 px y padding de 24–32 px |
+| Desde 1024 px | Sidebar de 240 px con destinos de 36 px de alto | Cabecera de 72 px, panel con radio de 24 px y padding de 24–32 px |
 
 - Destinos: Inicio, Buscar, Biblioteca, Destacados y Estadísticas. Mantener las rutas y etiquetas actuales de `Home` (`/`), `Search` (`/search`), `Library` (`/library`), `Highlights` (`/highlights`) y `Stats` (`/stats`). No cambiar el idioma de la aplicación como efecto del rediseño.
 - Cabecera de escritorio: identidad de la app, búsqueda y cuenta. El saludo personal puede aparecer en Inicio; no debe dominar todas las pantallas. Conservar `Devices` (`/devices`) y `Sign Out` en el menú de cuenta. Desde `Devices` se gestionan los lectores y sus códigos de vinculación con KOReader.
@@ -92,7 +92,7 @@ Campo de búsqueda de 48–56 px de alto con superficie elevada, icono inicial y
 
 ### Botones y acciones
 
-Una acción visualmente dominante por región. Botón principal con `primary/on-primary`; secundarios tonales, delineados o de texto según importancia. Altura visual de 40 px en escritorio y 48 px en móvil; objetivo táctil mínimo de 48 × 48 px. Menús de tres puntos para operaciones secundarias, con etiquetas accesibles específicas del elemento.
+Una acción visualmente dominante por región. Botón principal con `primary/on-primary`. Botones secundarios tonales, delineados o de texto según su importancia. Altura visual de 36 px en escritorio. En móvil, usar 48 px para las acciones principales y mantener objetivos táctiles de al menos 48 × 48 px. Menús de tres puntos para operaciones secundarias, con etiquetas accesibles específicas del elemento.
 
 No añadir un botón flotante si la misma acción ya está presentada de forma prominente. Usarlo en móvil solo cuando haya una acción de creación existente y habitual.
 

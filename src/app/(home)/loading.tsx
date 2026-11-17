@@ -12,7 +12,7 @@ export default function Loading() {
       <p role='status' className='sr-only'>Loading your books…</p>
       <div aria-hidden='true' className='space-y-8'>
         <div className='space-y-2'>
-          <div className='flex h-12 items-center justify-between min-[600px]:h-10'>
+          <div className='flex h-12 items-center justify-between min-[600px]:h-9'>
             <Skeleton className='h-6 w-40' />
             <Skeleton className='h-5 w-16' />
           </div>
@@ -25,13 +25,13 @@ export default function Loading() {
                 <Skeleton className='h-2 w-full max-w-xl rounded-full' />
                 <Skeleton className='h-5 w-2/3 max-w-48' />
               </div>
-              <Skeleton className='col-start-2 h-12 w-36 max-w-full rounded-full min-[600px]:h-10' />
+              <Skeleton className='col-start-2 h-12 w-36 max-w-full rounded-full min-[600px]:h-9' />
             </div>
           </div>
         </div>
         {['readlist', 'read'].map((section) => (
           <div key={section} className='space-y-2'>
-            <div className='flex h-12 items-center justify-between min-[600px]:h-10'>
+            <div className='flex h-12 items-center justify-between min-[600px]:h-9'>
               <Skeleton className='h-6 w-28' />
               <Skeleton className='h-5 w-16' />
             </div>

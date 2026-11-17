@@ -76,7 +76,7 @@ async function BookPerId({ params }: { params: Promise<{ slug: string }> }) {
       </div>
       <div className='mb-3 space-y-2 p-4 text-white lg:mb-0 lg:flex lg:min-w-0 lg:flex-col lg:gap-5 lg:space-y-0 lg:p-0 lg:text-foreground'>
         <div className='mt-2 flex items-center gap-4 lg:mt-0'>
-          <BackButton className='lg:absolute lg:-top-14 lg:left-0 lg:h-10 lg:rounded-full lg:px-4 lg:text-sm lg:font-medium lg:hover:bg-white/8'>
+          <BackButton className='lg:absolute lg:-top-14 lg:left-0 lg:h-9 lg:rounded-full lg:px-4 lg:text-sm lg:font-medium lg:hover:bg-white/8'>
             <span className='hidden lg:inline'>Back</span>
           </BackButton>
           <h1 className='text-2xl font-bold lg:text-[40px]/[48px] lg:font-normal lg:wrap-anywhere'>

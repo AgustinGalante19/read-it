@@ -250,7 +250,7 @@ function BookMenu({ book, highlights }: { book: Book; highlights: BookHighlightP
       {isDesktop ? (
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
-            <Button ref={trigger} aria-label='Reading options' className='h-10'>
+            <Button ref={trigger} aria-label='Reading options'>
               <ChevronDown aria-hidden='true' />
             </Button>
           </DropdownMenuTrigger>

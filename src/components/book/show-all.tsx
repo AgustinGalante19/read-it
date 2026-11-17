@@ -18,7 +18,7 @@ function ShowAll({ readStatus, label, heading: Heading = 'h3' }: Props) {
       <Link
         href={{ pathname: '/library', query: { status: readStatus } }}
         aria-label={`Show All in ${label}`}
-        className='flex min-h-12 items-center gap-1 rounded-full px-2 text-sm font-medium text-primary transition-colors duration-150 hover:bg-white/8 active:bg-white/12 min-[600px]:min-h-10'
+        className='flex min-h-12 items-center gap-1 rounded-full px-2 text-sm font-medium text-primary transition-colors duration-150 hover:bg-white/8 active:bg-white/12 min-[600px]:min-h-9'
       >
         Show All
         <ChevronRight aria-hidden='true' size={18} />

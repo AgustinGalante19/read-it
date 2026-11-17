@@ -71,7 +71,7 @@ function BookSection({
               <Button
                 asChild
                 variant='outline'
-                className='h-12 border-outline bg-transparent text-primary shadow-none transition-colors duration-150 hover:bg-white/8 hover:text-primary active:scale-100 active:bg-white/12 min-[600px]:h-10'
+                className='border-outline bg-transparent text-primary shadow-none transition-colors duration-150 hover:bg-white/8 hover:text-primary active:scale-100 active:bg-white/12 max-[600px]:h-12'
               >
                 <Link href={isCurrentlyReading ? '/library' : '/search'}>
                   {isCurrentlyReading ? 'Go to Library' : 'Search books'}

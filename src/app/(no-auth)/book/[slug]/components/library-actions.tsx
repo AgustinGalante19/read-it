@@ -68,7 +68,6 @@ function LibraryActions({
       {dbBook ? (
         <ButtonGroup>
           <Button
-            className='lg:h-10'
             onClick={handleAddBook}
             startIcon={renderBookIcon(dbBook.id_book_status)}
           >
@@ -82,7 +81,7 @@ function LibraryActions({
           <BookMenu book={dbBook} highlights={bookhighlights} />
         </ButtonGroup>
       ) : (
-        <Button className='lg:h-10' onClick={handleAddBook} startIcon={<Bookmark />}>
+        <Button onClick={handleAddBook} startIcon={<Bookmark />}>
           Want to Read
         </Button>
       )}

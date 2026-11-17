@@ -76,7 +76,7 @@ export default function CurrentlyReadingCard({ book }: { book: Book }) {
       <Button
         type='button'
         startIcon={<BadgeCheck />}
-        className='relative z-10 col-start-2 h-12 justify-self-start shadow-none transition-colors duration-150 active:scale-100 min-[600px]:h-10'
+        className='relative z-10 col-start-2 justify-self-start shadow-none transition-colors duration-150 active:scale-100 max-[600px]:h-12'
         isLoading={isFinishing}
         aria-busy={isFinishing}
         onClick={markAsFinished}

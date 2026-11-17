@@ -33,7 +33,7 @@ export default function AppNavigation({ pathname }: { pathname: string }) {
                 className={cn(
                   'group mx-0.5 flex min-h-13 flex-col items-center justify-center gap-0.5 rounded-full text-xs font-medium transition-colors duration-150',
                   'min-[600px]:min-h-14 min-[600px]:gap-1',
-                  'min-[1024px]:mx-0 min-[1024px]:min-h-12 min-[1024px]:flex-row min-[1024px]:justify-start min-[1024px]:gap-4 min-[1024px]:px-4 min-[1024px]:text-sm',
+                  'min-[1024px]:mx-0 min-[1024px]:min-h-9 min-[1024px]:flex-row min-[1024px]:justify-start min-[1024px]:gap-3 min-[1024px]:px-4 min-[1024px]:text-sm',
                   isActive
                     ? 'text-primary min-[1024px]:bg-primary-container min-[1024px]:text-primary-container-foreground'
                     : 'text-muted-foreground min-[1024px]:hover:bg-foreground/8 min-[1024px]:active:bg-foreground/12',
@@ -47,7 +47,7 @@ export default function AppNavigation({ pathname }: { pathname: string }) {
                       : 'group-hover:bg-foreground/8 group-active:bg-foreground/12 min-[1024px]:group-hover:bg-transparent min-[1024px]:group-active:bg-transparent',
                   )}
                 >
-                  <Icon aria-hidden='true' className='size-5' />
+                  <Icon aria-hidden='true' className='size-5 min-[1024px]:size-4.5' />
                 </span>
                 <span>{label}</span>
               </Link>

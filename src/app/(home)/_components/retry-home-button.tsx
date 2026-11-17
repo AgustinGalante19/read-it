@@ -12,7 +12,7 @@ export default function RetryHomeButton() {
     <Button
       type='button'
       variant='outline'
-      className='h-12 min-[600px]:h-10'
+      className='max-[600px]:h-12'
       isLoading={isPending}
       onClick={() => startTransition(() => router.refresh())}
     >
