@@ -1,13 +1,17 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { useMemo, useState } from 'react';
+import { cn } from '@/lib/utils';
+import { useState } from 'react';
 
-const Category = ({ cat, index }: { cat: string; index: number }) => (
+const Category = ({ cat, index, collapsed }: { cat: string; index: number; collapsed: boolean }) => (
   <span
-    className='bg-accent text-accent-foreground text-xs py-2 px-4 rounded-full
-               animate-in fade-in-0 slide-in-from-bottom-2 zoom-in-95
-               transition-all duration-300 hover:scale-105 hover:shadow-md'
+    className={cn(
+      'rounded-full bg-accent px-4 py-2 text-xs text-accent-foreground',
+      'animate-in fade-in-0 slide-in-from-bottom-2 zoom-in-95 transition-all duration-300 hover:scale-105 hover:shadow-md',
+      'lg:animate-none lg:bg-surface-container lg:text-muted-foreground lg:wrap-anywhere lg:hover:scale-100 lg:hover:shadow-none',
+      collapsed && 'hidden lg:inline-flex',
+    )}
     style={{
       animationDelay: `${index * 100}ms`,
       animationFillMode: 'both',
@@ -20,34 +24,28 @@ const Category = ({ cat, index }: { cat: string; index: number }) => (
 function Categories({ categories = [] }: { categories: string[] | undefined }) {
   const [showAll, setShowAll] = useState(false);
 
-  const handleToggleShow = () => setShowAll(!showAll);
-
-  const categoriesToShow = useMemo(
-    () => (showAll ? categories : categories.slice(0, 3)),
-    [showAll, categories],
-  );
-
   if (categories.length === 0) return null;
 
   return (
-    <section className='animate-in fade-in-0 slide-in-from-bottom-4 duration-500'>
-      <div className='flex flex-wrap gap-2 mt-3 mb-2'>
-        {categoriesToShow.map((cat: string, i) => (
-          <Category key={`${cat}-${i}`} cat={cat} index={i} />
+    <section className='animate-in fade-in-0 slide-in-from-bottom-4 duration-500 lg:order-2 lg:animate-none'>
+      <div className='mt-3 mb-2 flex flex-wrap gap-2 lg:m-0'>
+        {categories.map((cat, index) => (
+          <Category key={`${cat}-${index}`} cat={cat} index={index} collapsed={!showAll && index >= 3} />
         ))}
       </div>
       {categories.length > 3 && (
         <div
-          className='animate-in fade-in-0 slide-in-from-bottom-2 duration-300'
+          className='animate-in fade-in-0 slide-in-from-bottom-2 duration-300 lg:hidden'
           style={{
-            animationDelay: `${categoriesToShow.length * 100 + 50}ms`,
+            animationDelay: `${(showAll ? categories.length : 3) * 100 + 50}ms`,
             animationFillMode: 'both',
           }}
         >
           <Button
             variant='link'
-            onClick={handleToggleShow}
-            className='transition-all px-0 duration-75 hover:scale-105'
+            onClick={() => setShowAll((expanded) => !expanded)}
+            className='px-0 transition-all duration-75 hover:scale-105'
+            aria-expanded={showAll}
           >
             {!showAll ? 'Show more' : 'Show less'}
           </Button>

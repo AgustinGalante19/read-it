@@ -63,10 +63,12 @@ function HighlightsModal({
   highlights,
   isOpen: open,
   onOpenChange,
+  onCloseAutoFocus,
   book,
 }: {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  onCloseAutoFocus?: (event: Event) => void;
   highlights: BookHighlightPreview[];
   book: Book | null | undefined;
 }) {
@@ -74,7 +76,7 @@ function HighlightsModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='sm:max-w-2xl'>
+      <DialogContent className='sm:max-w-2xl' onCloseAutoFocus={onCloseAutoFocus}>
         <DialogHeader className='text-start space-y-1'>
           <DialogTitle className='text-xl'>{book?.title}</DialogTitle>
           <DialogDescription className='text-base'>

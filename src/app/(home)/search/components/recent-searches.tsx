@@ -1,10 +1,9 @@
 'use client';
 
-import BookCard from '@/components/book/book-card';
+import { useEffect, useState } from 'react';
+import { History } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { bookSearchService } from '@/services/SearchsService';
-import { RecentSearch } from '@/types/RecentSearch';
-import { memo, useCallback, useEffect, useState } from 'react';
 import {
   Empty,
   EmptyDescription,
@@ -12,71 +11,69 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty';
-import { Search } from 'lucide-react';
-function RecentSearches() {
-  const [recentSearches, setRecentSearches] = useState<RecentSearch[]>([]);
+import { bookSearchService } from '@/services/SearchsService';
+import type { RecentSearch } from '@/types/RecentSearch';
+import SearchResults from './search-results';
+import SearchSkeleton from './search-skeleton';
+
+export default function RecentSearches() {
+  const [books, setBooks] = useState<RecentSearch[] | null>(null);
+  const [isClearing, setIsClearing] = useState(false);
 
   useEffect(() => {
-    const getRecentSearches = async () => {
-      const results = await bookSearchService.getIDBBooks();
-      setRecentSearches(results);
-    };
-    getRecentSearches();
+    let active = true;
+    bookSearchService.getIDBBooks().then(
+      (recentBooks) => { if (active) setBooks(recentBooks); },
+      () => {
+        if (!active) return;
+        setBooks([]);
+        toast.error('Could not load your recent history.');
+      },
+    );
+    return () => { active = false; };
   }, []);
 
-  const handleRemoveRecenSearches = useCallback(async () => {
-    await bookSearchService.removeIDBBooks();
-    setRecentSearches([]);
-  }, []);
+  async function clearHistory() {
+    setIsClearing(true);
+    try {
+      await bookSearchService.removeIDBBooks();
+      setBooks([]);
+    } catch {
+      toast.error('Could not clear your recent history.');
+    } finally {
+      setIsClearing(false);
+    }
+  }
 
   return (
-    <div>
-      <div className='flex justify-between items-center animate-in fade-in-0 slide-in-from-top-2 duration-300'>
-        <span className='text-lg text-white font-semibold px-2'>
-          Recent Searches
-        </span>
-        <Button
-          className='underline transition-all duration-200 hover:scale-105 hover:text-destructive'
-          onClick={handleRemoveRecenSearches}
-          variant='link'
-          type='button'
-        >
-          Clear all
-        </Button>
+    <section aria-labelledby='recent-searches-title' aria-busy={books === null} className='flex flex-col gap-4'>
+      <div className='flex flex-wrap items-center justify-between gap-x-3 gap-y-1'>
+        <h2 id='recent-searches-title' className='text-xl/7 font-medium'>Recently opened</h2>
+        {books && books.length > 0 && (
+          <Button
+            type='button'
+            variant='link'
+            size='sm'
+            onClick={clearHistory}
+            disabled={isClearing}
+          >
+            Clear history
+          </Button>
+        )}
       </div>
-      {recentSearches.length > 0 ? (
-        <ul className='p-2 rounded-b text-white w-full'>
-          {recentSearches.map((book, index) => (
-            <li
-              key={book.google_id}
-              className='my-4 animate-in fade-in-0 slide-in-from-bottom-3 duration-300 transition-all hover:scale-[1.02] hover:-translate-y-0.5 cursor-pointer rounded-lg'
-              style={{
-                animationDelay: `${index * 100}ms`,
-                animationFillMode: 'both',
-              }}
-              onClick={() => null}
-            >
-              <div className=' rounded-lg transition-all duration-200'>
-                <BookCard book={book} />
-              </div>
-            </li>
-          ))}
-        </ul>
+      {books === null ? (
+        <SearchSkeleton />
+      ) : books.length > 0 ? (
+        <SearchResults books={books} />
       ) : (
         <Empty>
           <EmptyHeader>
-            <EmptyMedia variant='icon'>
-              <Search />
-            </EmptyMedia>
-            <EmptyTitle>No recent searchs</EmptyTitle>
-            <EmptyDescription>
-              Start searching for books to see them here.
-            </EmptyDescription>
+            <EmptyMedia variant='icon'><History aria-hidden='true' /></EmptyMedia>
+            <EmptyTitle>No recently opened books</EmptyTitle>
+            <EmptyDescription>Books you open from search results will appear here.</EmptyDescription>
           </EmptyHeader>
         </Empty>
       )}
-    </div>
+    </section>
   );
 }
-
-export default memo(RecentSearches);

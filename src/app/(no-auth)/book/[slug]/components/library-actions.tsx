@@ -2,11 +2,10 @@
 
 import { Button } from '@/components/ui/button';
 import { Book, BookStatusDictionary } from '@/types/Book';
-import { BadgeCheck, Bookmark, BookOpen, ChevronDown } from 'lucide-react';
+import { BadgeCheck, Bookmark, BookOpen } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import BookMenu from './book-menu';
-import { useState } from 'react';
 import { addBook, removeFromLibrary } from '@/services/BookService';
 import {
   ButtonGroup,
@@ -14,7 +13,6 @@ import {
 } from '@/components/ui/button-group';
 import { useSession } from '@/lib/auth/auth-client';
 import { BookHighlightPreview } from '@/types/BookHighlight';
-import HighlightsModal from '@/components/book/highlights-modal';
 
 function renderBookIcon(statusId: number) {
   switch (statusId) {
@@ -42,8 +40,6 @@ function LibraryActions({
 
   const { push } = useRouter();
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [isHighlightsModalOpen, setIsHighlightsModalOpen] = useState(false);
 
   const handleAddBook = async () => {
     if (!sessionData) {
@@ -72,6 +68,7 @@ function LibraryActions({
       {dbBook ? (
         <ButtonGroup>
           <Button
+            className='lg:h-10'
             onClick={handleAddBook}
             startIcon={renderBookIcon(dbBook.id_book_status)}
           >
@@ -82,28 +79,13 @@ function LibraryActions({
             }
           </Button>
           <ButtonGroupSeparator />
-          <Button onClick={() => setIsOpen(true)}>
-            <ChevronDown />
-          </Button>
+          <BookMenu book={dbBook} highlights={bookhighlights} />
         </ButtonGroup>
       ) : (
-        <Button onClick={handleAddBook} startIcon={<Bookmark />}>
+        <Button className='lg:h-10' onClick={handleAddBook} startIcon={<Bookmark />}>
           Want to Read
         </Button>
       )}
-      <BookMenu
-        isOpen={isOpen}
-        close={() => setIsOpen(false)}
-        book={dbBook}
-        googleBook={googleBook}
-        handleOpenHighlightsModal={() => setIsHighlightsModalOpen(true)}
-      />
-      <HighlightsModal
-        book={dbBook}
-        isOpen={isHighlightsModalOpen}
-        onOpenChange={setIsHighlightsModalOpen}
-        highlights={bookhighlights}
-      />
     </div>
   );
 }

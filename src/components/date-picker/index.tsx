@@ -35,9 +35,11 @@ function DatePicker({
   defaultValue,
   book,
   isWorking = false,
+  onCloseAutoFocus,
 }: DatePickerProps & {
   book: Book | null | undefined;
   isWorking?: boolean;
+  onCloseAutoFocus?: (event: Event) => void;
 }) {
   const [dateRange, setDateRange] = useState<DateRange>(
     () =>
@@ -120,6 +122,7 @@ function DatePicker({
       <DialogContent
         className='w-[328px] h-[512px] flex flex-col'
         showCloseButton={false}
+        onCloseAutoFocus={onCloseAutoFocus}
       >
         <DialogHeader>
           <DialogTitle className='text-sm text-start font-normal'>

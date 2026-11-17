@@ -9,26 +9,37 @@ import Link from 'next/link';
 import React from 'react';
 import BookCover from './book-cover';
 
-type CardMode = 'vertical' | 'horizontal' | 'cover';
+type CardMode = 'vertical' | 'horizontal' | 'cover' | 'responsive';
 
 function BookCard({
   book,
   mode = 'horizontal',
+  onNavigate,
 }: {
   book: Book;
   mode?: CardMode;
+  onNavigate?: React.ComponentProps<typeof Link>['onNavigate'];
 }) {
+  const href = `/book/${book.google_id}`;
+  const responsive = mode === 'responsive';
+
   if (mode !== 'horizontal') {
     return (
       <Link
-        href={`/book/${book.google_id}`}
+        href={href}
+        onNavigate={onNavigate}
         className={cn(
           'group flex flex-col gap-3 rounded-sm',
           mode === 'vertical' && 'w-36 max-w-full',
+          responsive && 'flex-row items-center gap-4 min-[1024px]:flex-col min-[1024px]:items-stretch min-[1024px]:gap-3',
         )}
       >
-        <BookCover src={book.thumbnail_url} sizes='(max-width: 599px) 50vw, 180px' />
-        <div>
+        <BookCover
+          src={book.thumbnail_url}
+          sizes={responsive ? '(min-width: 1024px) 200px, 56px' : '(max-width: 599px) 50vw, 180px'}
+          className={responsive ? 'w-14 shrink-0 min-[1024px]:w-full' : undefined}
+        />
+        <div className='min-w-0'>
           <h3 className='line-clamp-2 text-base/6 wrap-anywhere transition-colors duration-150 group-hover:text-primary'>
             {book.title}
           </h3>
@@ -43,7 +54,7 @@ function BookCard({
   }
 
   return (
-    <Link href={`/book/${book.google_id}`}>
+    <Link href={href} onNavigate={onNavigate}>
       <article className='my-2 flex max-h-20 w-61 text-white'>
         <Image
           alt={`${book.title} cover`}

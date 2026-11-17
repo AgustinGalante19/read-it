@@ -1,21 +1,16 @@
-import HorizontalSkeleton from '@/components/book/horizontal-skeleton';
 import { Skeleton } from '@/components/ui/skeleton';
+import { searchPageClassName } from './components/search-layout';
+import SearchSkeleton from './components/search-skeleton';
 
-function Loading() {
+export default function Loading() {
   return (
-    <div className='container mx-auto p-4'>
-      <Skeleton className='w-full h-14 my-4' />
-      <div className='flex  justify-between items-center'>
-        <Skeleton className='h-7 w-[163px]' />
-        <Skeleton className='h-6 w-[54px]' />
+    <main aria-busy='true' className={searchPageClassName}>
+      <h1 className='text-2xl/8 font-normal min-[600px]:text-[28px]/9'>Search</h1>
+      <Skeleton className='h-12 w-full max-w-[720px] rounded-full min-[1024px]:h-13' />
+      <div className='flex flex-col gap-4'>
+        <Skeleton className='h-7 w-40' />
+        <SearchSkeleton />
       </div>
-      <div className='p-2 mt-4 space-y-2'>
-        <HorizontalSkeleton />
-        <HorizontalSkeleton />
-        <HorizontalSkeleton />
-      </div>
-    </div>
+    </main>
   );
 }
-
-export default Loading;

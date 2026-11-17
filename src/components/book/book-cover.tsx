@@ -3,8 +3,17 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import { BookOpen } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-export default function BookCover({ src, sizes }: { src?: string; sizes: string }) {
+export default function BookCover({
+  src,
+  sizes,
+  className,
+}: {
+  src?: string;
+  sizes: string;
+  className?: string;
+}) {
   const [failedSrc, setFailedSrc] = useState<string>();
   const cover = src?.trim();
   const hasCover =
@@ -14,7 +23,7 @@ export default function BookCover({ src, sizes }: { src?: string; sizes: string 
     cover !== '/small-thumbnail-fallback.jpg';
 
   return (
-    <div className='relative aspect-[2/3]'>
+    <div className={cn('relative aspect-[2/3]', className)}>
       {hasCover ? (
         <Image
           src={cover}

@@ -8,6 +8,7 @@ import Container from './ui/container';
 
 export default function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const usesWidePanel = pathname === '/' || pathname === '/search';
 
   return (
     <div className='flex min-h-dvh flex-col pl-[env(safe-area-inset-left,0px)] pr-[env(safe-area-inset-right,0px)] pt-[env(safe-area-inset-top,0px)]'>
@@ -25,7 +26,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
           tabIndex={-1}
           className='min-w-0 grow bg-surface min-[600px]:me-4 min-[600px]:mb-4 min-[600px]:rounded-3xl'
         >
-          {pathname === '/' ? children : <Container>{children}</Container>}
+          {usesWidePanel ? children : <Container>{children}</Container>}
         </div>
       </div>
     </div>

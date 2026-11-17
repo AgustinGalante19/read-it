@@ -2,9 +2,10 @@ import { LogIn } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import BooksList from '@/components/book/books-list';
+import Container from '@/components/ui/container';
 import booksSearcher from '@/services/repositories/BooksSearcher';
 
-async function PreviewPage() {
+async function Preview() {
   const fiction = await booksSearcher.getBooksBySubject('fiction');
   const fantasy = await booksSearcher.getBooksBySubject('fantasy');
   const thriller = await booksSearcher.getBooksBySubject('thriller');
@@ -61,4 +62,10 @@ async function PreviewPage() {
   );
 }
 
-export default PreviewPage;
+export default function PreviewPage() {
+  return (
+    <Container>
+      <Preview />
+    </Container>
+  );
+}
