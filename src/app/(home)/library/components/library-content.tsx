@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useTransition } from 'react';
-import { BookCheck, BookIcon, BookMarked, BookX, Calendar, CircleAlert } from 'lucide-react';
+import { BookCheck, BookIcon, BookMarked, BookX, CircleAlert, Highlighter } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Book, BookStatus } from '@/types/Book';
@@ -74,7 +74,7 @@ export default function LibraryContent() {
       <header className='flex flex-wrap items-center justify-between gap-3'>
         <h1 className='text-2xl/8 font-normal min-[600px]:text-[28px]/9'>My Library</h1>
         <Button asChild>
-          <Link href='/calendar'><Calendar aria-hidden='true' />Calendar</Link>
+          <Link href='/highlights'><Highlighter aria-hidden='true' />Highlights</Link>
         </Button>
       </header>
       <div className='flex min-w-0 flex-col gap-4 min-[1024px]:flex-row min-[1024px]:items-end min-[1024px]:justify-between min-[1024px]:gap-6'>

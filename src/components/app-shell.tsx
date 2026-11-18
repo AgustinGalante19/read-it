@@ -24,7 +24,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
         <div
           id='app-content'
           tabIndex={-1}
-          className='min-w-0 grow bg-surface min-[600px]:me-4 min-[600px]:mb-4 min-[600px]:rounded-3xl'
+          className='min-w-0 grow bg-surface min-[600px]:me-4 min-[600px]:mb-4 min-[600px]:rounded-3xl min-[1024px]:scroll-mt-18'
         >
           {usesWidePanel ? children : <Container>{children}</Container>}
         </div>

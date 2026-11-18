@@ -70,12 +70,12 @@ Los puntos de corte siguientes son decisiones del proyecto, expresados en píxel
 
 | Ancho | Navegación | Contenido |
 | --- | --- | --- |
-| Menos de 600 px | Barra inferior con los cinco destinos actuales | Una columna, márgenes de 16 px; biblioteca en dos columnas cuando las portadas y títulos lo permitan |
+| Menos de 600 px | Barra inferior con Home, Search, Library, Calendar y Stats | Una columna, márgenes de 16 px; biblioteca en dos columnas cuando las portadas y títulos lo permitan |
 | 600–1023 px | Rail lateral de 80 px con iconos y etiquetas | Panel flexible, padding de 24 px, cuadrículas adaptables |
 | Desde 1024 px | Sidebar de 240 px con destinos de 36 px de alto | Cabecera de 72 px, panel con radio de 24 px y padding de 24–32 px |
 
-- Destinos: Inicio, Buscar, Biblioteca, Destacados y Estadísticas. Mantener las rutas y etiquetas actuales de `Home` (`/`), `Search` (`/search`), `Library` (`/library`), `Highlights` (`/highlights`) y `Stats` (`/stats`). No cambiar el idioma de la aplicación como efecto del rediseño.
-- Cabecera de escritorio: identidad de la app, búsqueda y cuenta. El saludo personal puede aparecer en Inicio; no debe dominar todas las pantallas. Conservar `Devices` (`/devices`) y `Sign Out` en el menú de cuenta. Desde `Devices` se gestionan los lectores y sus códigos de vinculación con KOReader.
+- Destinos de escritorio y rail: `Home` (`/`), `Search` (`/search`), `Library` (`/library`), `Calendar` (`/calendar`), `Highlights` (`/highlights`) y `Stats` (`/stats`). En móvil, Calendar ocupa el lugar de Highlights en la barra inferior; Highlights se abre desde el botón de Library y mantiene ese destino seleccionado. No cambiar el idioma de la aplicación como efecto del rediseño.
+- Cabecera de escritorio fija con identidad de la app y búsqueda. La cuenta se ubica al pie de la sidebar, mostrando avatar, nombre y correo; el menú se abre hacia el contenido. En móvil y tablet, la cuenta permanece en la cabecera. Conservar `Devices` (`/devices`) y `Sign Out` en el menú de cuenta. Desde `Devices` se gestionan los lectores y sus códigos de vinculación con KOReader.
 - En móvil, priorizar el título de pantalla y la cuenta; en Buscar, mostrar el campo de búsqueda como control principal. No duplicar dos campos de búsqueda en la misma vista.
 - El panel ocupa el espacio disponible; no conservar un contenedor de teléfono estrecho centrado en escritorio. Limitar el ancho de los textos largos dentro del panel, no el de toda la aplicación.
 - Mantener un único desplazamiento vertical principal por pantalla, salvo diálogos. Las regiones fijas deben reservar espacio para no cubrir contenido.
@@ -130,7 +130,7 @@ Búsqueda claramente enfocada, historial reciente y resultados con portada, tít
 
 ### Biblioteca
 
-Título, recuento del filtro activo, filtros de estado y búsqueda local por título, seguidos de la cuadrícula de libros. Conservar el orden automático de los resultados y las opciones `Read`, `Saved Books` (todos los libros guardados), `Reading` y `Want to Read`. Mantener los enlaces con `?status=` y el acceso `Calendar` (`/calendar`), que muestra la actividad diaria y los libros terminados por mes.
+Título, recuento del filtro activo, filtros de estado y búsqueda local por título, seguidos de la cuadrícula de libros. Conservar el orden automático de los resultados y las opciones `Read`, `Saved Books` (todos los libros guardados), `Reading` y `Want to Read`. Mantener los enlaces con `?status=`. El botón de cabecera abre Highlights; Calendar (`/calendar`), que muestra la actividad diaria y los libros terminados por mes, está disponible en la navegación principal.
 
 La alternancia lista/cuadrícula queda como mejora funcional opcional. Si se incorpora, presentarla como control segmentado accesible.
 
