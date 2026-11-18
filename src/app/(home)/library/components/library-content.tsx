@@ -1,17 +1,28 @@
 'use client';
 
-import { ChangeEvent, useEffect, useState, useTransition } from 'react';
-import { BookCheck, BookIcon, BookMarked, BookX, Calendar } from 'lucide-react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState, useTransition } from 'react';
+import { BookCheck, BookIcon, BookMarked, BookX, Calendar, CircleAlert } from 'lucide-react';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { Book, BookStatus } from '@/types/Book';
+import type { Result } from '@/types/Result';
 import Option from '../types/Option';
 import BookCard from '@/components/book/book-card';
-import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import VerticalSkeleton from '@/components/book/vertical-skeleton';
+import { Label } from '@/components/ui/label';
 import { getMyBooks } from '@/services/BookService';
 import bookHelper from '@/services/helpers/BookHelper';
 import StatusSelection from './status-selection';
+import { LibraryBooksSkeleton } from './page-fallback';
+import { libraryGridClassName } from './library-layout';
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
 import {
   InputGroup,
   InputGroupAddon,
@@ -19,125 +30,112 @@ import {
 } from '@/components/ui/input-group';
 
 const options: Option[] = [
-  { id: 1, value: 3, label: 'Read', icon: <BookCheck size={18} /> },
-  { id: 3, value: 0, label: 'Saved Books', icon: <BookMarked size={18} /> },
-  { id: 4, value: 2, label: 'Reading', icon: <BookIcon size={18} /> },
-  { id: 2, value: 1, label: 'Want to Read', icon: <BookX size={18} /> },
+  { id: 1, value: BookStatus.READ, label: 'Read', icon: <BookCheck /> },
+  { id: 3, value: BookStatus.ALL, label: 'Saved Books', icon: <BookMarked /> },
+  { id: 4, value: BookStatus.READING, label: 'Reading', icon: <BookIcon /> },
+  { id: 2, value: BookStatus.WANT_TO_READ, label: 'Want to Read', icon: <BookX /> },
 ];
 
 export default function LibraryContent() {
-  const [allBooks, setAllBooks] = useState<Book[]>([]);
-  const [booksList, setBooksList] = useState<Book[]>([]);
+  const [library, setLibrary] = useState<Result<Book[]> | null>(null);
   const [bookStatus, setBookStatus] = useState<Option>(options[0]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [retryCount, setRetryCount] = useState(0);
   const [isPending, startTransition] = useTransition();
-
-  const searchParams = useSearchParams();
-
-  const readStatus = searchParams.get('status');
-
-  const router = useRouter();
+  const readStatus = useSearchParams().get('status');
+  const isLoading = library === null || isPending;
 
   useEffect(() => {
-    const getBooks = async () => {
-      startTransition(async () => {
-        const { data: allBooksResponse } = await getMyBooks(BookStatus.ALL);
+    let active = true;
+    startTransition(async () => {
+      try {
+        const response = await getMyBooks(BookStatus.ALL);
+        if (!active) return;
+        setLibrary(response);
+        setBookStatus(options.find((option) => option.value === Number(readStatus || BookStatus.READ)) ?? options[0]);
+      } catch {
+        if (active) setLibrary({ success: false });
+      }
+    });
+    return () => { active = false; };
+  }, [readStatus, retryCount]);
 
-        if (!allBooksResponse) {
-          return;
-        }
-        setAllBooks(allBooksResponse);
-
-        const currentReadStatus: BookStatus = readStatus
-          ? Number(readStatus)
-          : BookStatus.READ;
-        let booksResult = allBooksResponse;
-        booksResult = bookHelper.filterBooksByStatus(
-          allBooksResponse,
-          currentReadStatus,
-        );
-        setBooksList(booksResult);
-        setBookStatus(
-          options.find((el) => el.value === currentReadStatus) ?? options[0],
-        );
-      });
-    };
-    getBooks();
-  }, [readStatus]);
-
-  const onSearchTermChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setSearchTerm(value);
-    if (!value) {
-      const books = bookHelper.filterBooksByStatus(allBooks, bookStatus.value);
-      setBooksList(books);
-      return;
-    }
-    const newBooksList = booksList.filter((book) =>
-      book.title.toLowerCase().includes(value.toLowerCase()),
-    );
-    setBooksList(newBooksList);
-  };
+  const booksList = bookHelper
+    .filterBooksByStatus(library?.data ?? [], bookStatus.value)
+    .filter((book) => book.title.toLowerCase().includes(searchTerm.trim().toLowerCase()));
 
   const handleChangeStatus = (newOption: Option) => {
     setBookStatus(newOption);
-    const newBooks = bookHelper.filterBooksByStatus(allBooks, newOption.value);
     setSearchTerm('');
-    setBooksList(newBooks);
   };
 
   return (
-    <div>
-      <header className='w-full flex p-4 justify-between items-center container mx-auto'>
-        <span className='text-2xl font-bold text-white flex items-center gap-2 underline decoration-primary'>
-          My Library
-        </span>
-        <Button
-          onClick={() => router.push('/calendar')}
-          startIcon={<Calendar />}
-        >
-          Calendar
+    <>
+      <header className='flex flex-wrap items-center justify-between gap-3'>
+        <h1 className='text-2xl/8 font-normal min-[600px]:text-[28px]/9'>My Library</h1>
+        <Button asChild>
+          <Link href='/calendar'><Calendar aria-hidden='true' />Calendar</Link>
         </Button>
       </header>
-      <StatusSelection
-        isLoading={isPending}
-        bookStatus={bookStatus}
-        booksList={booksList}
-        handleChangeStatus={handleChangeStatus}
-        options={options}
-      />
-      <section className='px-4 mt-2'>
-        <Label className='flex flex-col items-start gap-1'>
-          Title
-          <InputGroup className='mb-2'>
+      <div className='flex min-w-0 flex-col gap-4 min-[1024px]:flex-row min-[1024px]:items-end min-[1024px]:justify-between min-[1024px]:gap-6'>
+        <StatusSelection
+          isLoading={isLoading}
+          bookStatus={bookStatus}
+          count={booksList.length}
+          handleChangeStatus={handleChangeStatus}
+          options={options}
+        />
+        <div className='flex w-full flex-col gap-1 min-[1024px]:w-64 min-[1024px]:shrink-0 min-[1280px]:w-72'>
+          <Label htmlFor='library-title-search'>Title</Label>
+          <InputGroup className='h-11 min-[1024px]:h-9'>
             <InputGroupInput
+              id='library-title-search'
+              type='search'
               placeholder='Search by Title'
               value={searchTerm}
-              onChange={onSearchTermChange}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              disabled={isLoading}
             />
-            <InputGroupAddon align='inline-start'>
-              <BookIcon />
-            </InputGroupAddon>
+            <InputGroupAddon align='inline-start'><BookIcon aria-hidden='true' /></InputGroupAddon>
           </InputGroup>
-        </Label>
-      </section>
-      <section>
-        {isPending ? (
-          <div className='grid grid-cols-2 gap-2 py-2'>
-            {Array.from({ length: 6 }).map((_, i) => (
-              <VerticalSkeleton key={i} />
-            ))}
-          </div>
+        </div>
+      </div>
+      <section aria-label='Library books' aria-busy={isLoading}>
+        {isLoading ? (
+          <LibraryBooksSkeleton />
+        ) : !library?.success ? (
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant='icon'><CircleAlert aria-hidden='true' /></EmptyMedia>
+              <EmptyTitle>Couldn’t load your library</EmptyTitle>
+              <EmptyDescription>Try loading your books again.</EmptyDescription>
+            </EmptyHeader>
+            <EmptyContent>
+              <Button type='button' variant='outline' onClick={() => setRetryCount((count) => count + 1)}>
+                Try again
+              </Button>
+            </EmptyContent>
+          </Empty>
+        ) : booksList.length === 0 ? (
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant='icon'><BookIcon aria-hidden='true' /></EmptyMedia>
+              <EmptyTitle>{searchTerm.trim() ? 'No matching titles' : 'No books in this view'}</EmptyTitle>
+              <EmptyDescription>
+                {searchTerm.trim() ? 'Try a different title.' : 'Choose another reading status to browse your books.'}
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
         ) : (
-          <ul className='grid grid-cols-2 gap-2 py-2'>
+          <ul className={libraryGridClassName}>
             {booksList.map((book) => (
-              <li key={book.id} className='mx-auto w-fit'>
-                <BookCard book={book} mode='vertical' />
+              <li key={book.id} className='min-w-0'>
+                <BookCard book={book} mode='cover' />
               </li>
             ))}
           </ul>
         )}
       </section>
-    </div>
+    </>
   );
 }

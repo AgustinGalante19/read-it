@@ -30,7 +30,7 @@ function YearMonthPicker({
   const monthNames = useMemo(() => {
     return Array.from({ length: 12 }, (_, i) => {
       const date = new Date(2024, i, 1);
-      return date.toLocaleString(undefined, { month: 'long' });
+      return date.toLocaleString('en-US', { month: 'long' });
     });
   }, []);
 
@@ -49,7 +49,7 @@ function YearMonthPicker({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className='w-82 h-100 flex flex-col'>
+      <DialogContent className='flex max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-82 flex-col overflow-y-auto sm:max-w-82' aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle className='text-sm text-start font-normal'>
             Select Date
@@ -75,7 +75,7 @@ function YearMonthPicker({
 
         <div>
           <span className='capitalize'>{pickMode}</span>
-          <div className='grid grid-cols-3 gap-2 mt-4'>
+          <div className='mt-4 grid grid-cols-3 gap-2'>
             {pickMode === 'month'
               ? monthNames.map((monthName, index) => (
                   <Button
@@ -84,7 +84,7 @@ function YearMonthPicker({
                     variant={
                       currentMonthValue === monthName ? 'default' : 'ghost'
                     }
-                    className='capitalize'
+                    className='min-w-0 px-2 capitalize'
                   >
                     <Link
                       href={
@@ -93,7 +93,7 @@ function YearMonthPicker({
                         createQueryString('month', (index + 1).toString())
                       }
                     >
-                      {monthName}
+                      <span className='truncate'>{monthName}</span>
                     </Link>
                   </Button>
                 ))

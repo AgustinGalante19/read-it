@@ -11,6 +11,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Highlighter } from 'lucide-react';
 import Link from 'next/link';
+import { highlightsColumnsClassName } from './highlights-layout';
 
 interface HighlightsListProps {
   highlights: BookHighlightWithBook[];
@@ -40,7 +41,7 @@ function HighlightsList({ highlights }: HighlightsListProps) {
   }
 
   return (
-    <div className='flex flex-col gap-2'>
+    <div className={highlightsColumnsClassName}>
       {highlights.map((highlight) => (
         <HighlightCard key={highlight.highlight_id} highlight={highlight} />
       ))}

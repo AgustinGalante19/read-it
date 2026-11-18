@@ -134,17 +134,23 @@ Título, recuento del filtro activo, filtros de estado y búsqueda local por tí
 
 La alternancia lista/cuadrícula queda como mejora funcional opcional. Si se incorpora, presentarla como control segmentado accesible.
 
+### Calendario
+
+`/calendar` utiliza un panel de hasta 88rem. En escritorio, el título y la descripción se alinean con el selector de mes; la grilla mantiene siete columnas, con celdas de al menos 184–192px de alto y portadas de hasta 80–88px de ancho. Cuando hay varios libros, las portadas se ajustan para mostrar dos por línea. En móvil, los controles se colocan sobre la grilla y las portadas se ajustan al ancho de cada día. Conservar la navegación entre meses y años, las duraciones, los indicadores de inicio y finalización y los enlaces a los libros.
+
 ### Destacados
 
-Cada cita debe identificar libro, autor, página y fecha cuando esos datos existan. Cita en texto normal, interlineado generoso y sin cursiva obligatoria. Ancho de lectura aproximado de 55–75 caracteres. Una columna en móvil; hasta dos en pantallas amplias si mantienen un orden de lectura y teclado predecible. No usar masonry que altere ese orden.
+Cada cita debe identificar libro, autor, página y fecha cuando esos datos existan. Cita en texto normal, interlineado generoso y sin cursiva obligatoria. Ancho de lectura aproximado de 55–75 caracteres. Una columna en móvil. En escritorio, dos columnas independientes con 20 px entre citas y entre columnas, con cada tarjeta completa dentro de su columna. La lectura y el foco recorren una columna de arriba abajo antes de pasar a la siguiente.
 
 `My Highlights` reúne las citas sincronizadas desde KOReader y las agregadas manualmente. Mantener `Add Highlight` para guardar una cita y su página en un libro en lectura, así como el enlace desde cada cita a la ficha y la acción de eliminarla.
 
 ### Estadísticas
 
-Indicadores principales al inicio. Rejilla de dos columnas en escritorio para gráficos; una en móvil. Mantener métricas y cálculos existentes. Usar azul como serie principal, etiquetas legibles y líneas de referencia discretas. Para múltiples series, complementar el color con etiquetas, patrones o marcadores.
+Indicadores principales al inicio: cinco tarjetas visibles en escritorio amplio, repartidas en varias filas cuando el ancho se reduce, y resumen desplazable en móvil. Panel de hasta 88rem. Agrupar actividad diaria y por hora en una sección, y evolución de lecturas y géneros en otra; cada grupo utiliza dos columnas desde 1024px y una en móvil. Los gráficos mantienen una altura estable, independiente del ancho del panel. Mantener métricas y cálculos existentes. Usar azul como serie principal, etiquetas legibles y líneas de referencia discretas. Para múltiples series, complementar el color con etiquetas, patrones o marcadores.
 
 `Stats` reúne recuentos de libros, páginas y etiquetas, actividad de 7 y 30 días, gráficos de actividad diaria y por hora, lecturas de los últimos seis meses y un radar por etiquetas. Mantener los gráficos en Recharts e indicar cuándo la actividad depende de datos sincronizados desde KOReader.
+
+Debajo de los gráficos, conservar el mosaico compacto de todas las lecturas completadas y la lista de lecturas recientes con autor y fecha de finalización. Mantener el acceso a Biblioteca y los enlaces a las fichas de los libros. Los datos de cada gráfico también están disponibles en tablas para lectores de pantalla.
 
 Los gráficos deben adaptarse al contenedor y ofrecer resumen textual o datos accesibles. Diferenciar cero real, falta de datos y fallo de carga. No interpretar los gráficos vacíos de las capturas como ausencia confirmada de datos.
 

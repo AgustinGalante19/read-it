@@ -35,7 +35,7 @@ function HighlightCard({ highlight }: HighlightCardProps) {
   );
 
   return (
-    <article className='group relative rounded-xl bg-surface-container border border-border/50 p-4 transition-all duration-300 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5'>
+    <article className='group relative min-w-0 rounded-xl bg-surface-container border border-border/50 p-4 transition-all duration-300 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5'>
       {/* Book info header */}
       <Link
         href={`/book/${highlight.google_id}`}
@@ -57,9 +57,9 @@ function HighlightCard({ highlight }: HighlightCardProps) {
           )}
         </div>
         <div className='flex-1 min-w-0'>
-          <h3 className='font-medium text-sm text-foreground truncate group-hover:text-primary transition-colors'>
+          <h2 className='text-sm font-medium text-foreground truncate group-hover:text-primary transition-colors min-[1024px]:line-clamp-2 min-[1024px]:whitespace-normal'>
             {highlight.title}
-          </h3>
+          </h2>
           <p className='text-xs text-muted-foreground truncate'>
             {highlight.author}
           </p>
@@ -68,24 +68,25 @@ function HighlightCard({ highlight }: HighlightCardProps) {
 
       {/* Highlight text */}
       <div className='relative pl-4 border-l-2 border-primary/40 mb-4'>
-        <blockquote className='text-base leading-relaxed text-foreground/90 italic'>
+        <blockquote className='text-base leading-relaxed text-foreground/90 italic wrap-anywhere min-[1024px]:not-italic'>
           &ldquo;{highlight.highlight_text}&rdquo;
         </blockquote>
       </div>
 
       {/* Footer with metadata and actions */}
-      <div className='flex items-center justify-between gap-2'>
-        <div className='flex items-center gap-2'>
-          <Badge variant='secondary' className='text-xs font-normal'>
+      <div className='flex flex-wrap items-center justify-between gap-2'>
+        <div className='flex flex-wrap items-center gap-2'>
+          <Badge variant='secondary' className='shrink-0 text-xs font-normal'>
             Page {highlight.page}
           </Badge>
           <time className='text-xs text-muted-foreground'>{formattedDate}</time>
         </div>
         <Button
+          aria-label={`Delete highlight from ${highlight.title}`}
           onClick={handleDelete}
           variant='ghost'
           size='icon'
-          className='h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-opacity'
+          className='size-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 min-[1024px]:opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 transition-opacity'
         >
           <Trash className='w-4 h-4' />
         </Button>

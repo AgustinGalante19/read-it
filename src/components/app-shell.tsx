@@ -8,7 +8,7 @@ import Container from './ui/container';
 
 export default function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const usesWidePanel = pathname === '/' || pathname === '/search';
+  const usesWidePanel = ['/', '/search', '/library', '/highlights', '/stats', '/calendar'].includes(pathname);
 
   return (
     <div className='flex min-h-dvh flex-col pl-[env(safe-area-inset-left,0px)] pr-[env(safe-area-inset-right,0px)] pt-[env(safe-area-inset-top,0px)]'>

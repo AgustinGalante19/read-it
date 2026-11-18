@@ -1,4 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton"
+import { highlightsColumnsClassName, highlightsPageClassName } from "./components/highlights-layout"
 
 function HighlightCardSkeleton() {
   return (
@@ -30,19 +31,20 @@ function HighlightCardSkeleton() {
 
 function Loading() {
   return (
-    <div>
-      <header className='flex justify-between items-center gap-2 p-4'>
-        <Skeleton className='w-35 h-7' />
-        <Skeleton className='w-5 h-5' />
+    <main className={highlightsPageClassName} aria-busy='true'>
+      <header aria-hidden='true' className='flex flex-wrap items-center justify-between gap-3'>
+        <Skeleton className='h-8 w-44' />
+        <Skeleton className='h-9 w-36 rounded-full' />
       </header>
-      <div className='px-4 pb-4'>
-        <div className='grid gap-4 grid-cols-1'>
+      <div aria-hidden='true'>
+        <div className={highlightsColumnsClassName}>
           {Array.from({ length: 6 }).map((_, i) => (
             <HighlightCardSkeleton key={i} />
           ))}
         </div>
       </div>
-    </div>
+      <span role='status' className='sr-only'>Loading highlights…</span>
+    </main>
   )
 }
 

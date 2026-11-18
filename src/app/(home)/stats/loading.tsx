@@ -1,34 +1,28 @@
-import HorizontalSkeleton from '@/components/book/horizontal-skeleton';
 import { Skeleton } from '@/components/ui/skeleton';
+import StatsChartSkeleton from './components/chart-skeleton';
+import { statsChartsClassName, statsPageClassName, statsSummaryClassName } from './components/stats-layout';
 
-function Loading() {
+export default function Loading() {
   return (
-    <div>
-      <header className='flex justify-between items-center gap-2 p-4'>
-        <Skeleton className='w-[167px] h-7' />
-        <Skeleton className='w-7 h-7' />
-      </header>
-      <div className='px-4 overflow-hidden'>
-        <div className='flex overflow-x-hidden gap-2'>
-          <Skeleton className='w-[250px] h-[130px]' />
-          <Skeleton className='w-[250px] h-[130px]' />
+    <div className={statsPageClassName}>
+      <div aria-hidden='true' className='flex flex-col gap-8'>
+        <Skeleton className='h-9 w-56 max-w-full' />
+        <div className={statsSummaryClassName}>
+          {Array.from({ length: 5 }, (_, index) => <Skeleton key={index} className='h-40 rounded-xl' />)}
         </div>
-        <Skeleton className='w-[416x] h-[343px] mx-auto mt-4' />
-        <Skeleton className='w-[416x] h-[343px] mx-auto mt-4' />
-        <Skeleton className='w-[416x] h-[343px] mx-auto mt-4' />
-        <div className='mt-4'>
-          <div className='flex items-center justify-between'>
-            <Skeleton className='w-[145px] h-[32px]' />
-            <Skeleton className='w-[94px] h-[24px]' />
+        {Array.from({ length: 2 }, (_, index) => (
+          <div key={index} className='flex flex-col gap-4'>
+            <Skeleton className='h-7 w-44' />
+            <div className={statsChartsClassName}><StatsChartSkeleton /><StatsChartSkeleton /></div>
           </div>
-          <div className='flex gap-8 mt-2'>
-            <HorizontalSkeleton />
-            <HorizontalSkeleton />
-          </div>
+        ))}
+        <Skeleton className='h-48 w-full rounded-xl' />
+        <Skeleton className='h-7 w-40' />
+        <div className='grid gap-5 min-[600px]:grid-cols-2 min-[1280px]:grid-cols-3'>
+          {Array.from({ length: 3 }, (_, index) => <Skeleton key={index} className='h-20 w-full' />)}
         </div>
       </div>
+      <span role='status' className='sr-only'>Loading your reading statistics…</span>
     </div>
   );
 }
-
-export default Loading;

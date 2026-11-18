@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Tooltip,
   TooltipContent,
@@ -11,12 +13,13 @@ export function EreaderWarning() {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <CircleAlert size={16} />
+          <button type='button' aria-label='About e-reader activity' className='flex size-6 items-center justify-center rounded-full'>
+            <CircleAlert aria-hidden='true' className='size-4' />
+          </button>
         </TooltipTrigger>
         <TooltipContent>
-          <p className='flex items-center gap-1'>
-            <CircleAlert size={12} /> This statistic only works <br /> if you
-            have an e-reader and the read-it plugin on it.
+          <p className='max-w-60'>
+            Activity is recorded by an e-reader with the Read It plugin for KOReader.
           </p>
         </TooltipContent>
       </Tooltip>

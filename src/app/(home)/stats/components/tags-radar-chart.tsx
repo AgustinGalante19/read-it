@@ -1,145 +1,49 @@
 'use client';
 
-import {
-  PolarAngleAxis,
-  PolarGrid,
-  PolarRadiusAxis,
-  Radar,
-  RadarChart,
-} from 'recharts';
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-} from '@/components/ui/chart';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart } from 'recharts';
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { TagRadarData } from '@/types/Stats';
+import ChartDataTable from './chart-data-table';
+import ChartEmptyState from './chart-empty-state';
+import { cn } from '@/lib/utils';
+import { statsChartClassName } from './stats-layout';
 
 const chartConfig = {
-  count: {
-    label: 'Books',
-    color: 'oklch(var(--chart-1))',
-  },
+  count: { label: 'Books', color: 'oklch(var(--chart-4))' },
 } satisfies ChartConfig;
 
-const truncateLabel = (text: string, maxLength: number = 10): string => {
-  if (text.length <= maxLength) {
-    return text;
-  }
-  return text.substring(0, maxLength) + '...';
-};
-
-const CustomTooltip = ({
-  active,
-  payload,
-}: {
-  active?: boolean;
-  payload?: unknown[];
-}) => {
-  if (active && payload && payload.length) {
-    const data = (
-      payload[0] as { payload: TagRadarData & { originalTag: string } }
-    ).payload;
-    return (
-      <div className='rounded border bg-background p-2 shadow-md'>
-        <p className='font-medium'>{data.originalTag}</p>
-        <p className='text-sm text-muted-foreground'>
-          {data.count} book{data.count !== 1 ? 's' : ''}
-        </p>
-      </div>
-    );
-  }
-  return null;
-};
-
-function TagsRadarChart({ radarData }: { radarData: TagRadarData[] }) {
-  if (!radarData || radarData.length === 0) {
-    return (
-      <section className='p-4'>
-        <Card>
-          <CardHeader>
-            <CardTitle className='text-secondary-foreground'>
-              Tags Distribution
-            </CardTitle>
-            <CardDescription>No data available</CardDescription>
-          </CardHeader>
-          <CardContent className='flex h-48 items-center justify-center'>
-            <p className='text-muted-foreground'>No tags found</p>
-          </CardContent>
-        </Card>
-      </section>
-    );
-  }
-
-  const maxCount = Math.max(...radarData.map((item) => item.count));
-  const processedData = radarData.map((item) => ({
-    ...item,
-    tag: truncateLabel(item.tag, 9),
-    originalTag: item.tag,
-  }));
+export default function TagsRadarChart({ radarData }: { radarData: TagRadarData[] }) {
+  const maxCount = Math.max(1, ...radarData.map((item) => item.count));
+  const topGenre = radarData[0];
 
   return (
-    <section>
-      <Card>
-        <CardHeader>
-          <CardTitle className='text-secondary-foreground'>
-            Reading Genres
-          </CardTitle>
-          <CardDescription>
-            Distribution of your most read genres
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ChartContainer
-            config={chartConfig}
-            className='mx-auto aspect-square max-h-[350px]'
-          >
-            <RadarChart
-              data={processedData}
-              margin={{ top: 20, right: 30, bottom: 20, left: 30 }}
-            >
-              <ChartTooltip cursor={false} content={<CustomTooltip />} />
-              <PolarAngleAxis dataKey='tag' tick={{ fontSize: 12 }} />
-              <PolarGrid />
-              <PolarRadiusAxis
-                angle={90}
-                domain={[0, maxCount]}
-                tick={false}
-                tickCount={5}
-              />
-              <Radar
-                dataKey='count'
-                fill='var(--color-count)'
-                fillOpacity={0.3}
-                stroke='var(--color-count)'
-                strokeWidth={2}
-              />
-            </RadarChart>
-          </ChartContainer>
-          <CardFooter className='p-0 text-sm'>
-            <span className='text-muted-foreground'>
-              Your most read genre is{' '}
-              <span className='text-primary font-semibold'>
-                {processedData[0]?.originalTag || 'Unknown'}
-              </span>{' '}
-              with{' '}
-              <span className='text-primary font-semibold'>
-                {processedData[0]?.count || 0}{' '}
-              </span>{' '}
-              book{processedData[0]?.count !== 1 ? 's' : ''} read.
-            </span>
-          </CardFooter>
-        </CardContent>
-      </Card>
-    </section>
+    <Card className='flex min-w-0 flex-col'>
+      <CardHeader className='p-5 pb-4'>
+        <CardTitle><h3>Reading Genres</h3></CardTitle>
+        <CardDescription>Distribution of your most read genres</CardDescription>
+      </CardHeader>
+      <CardContent className='px-5 pb-4'>
+        {radarData.length ? (
+          <>
+            <ChartContainer config={chartConfig} className={cn(statsChartClassName, 'mx-auto max-w-96')}>
+              <RadarChart accessibilityLayer data={radarData} outerRadius='64%' margin={{ top: 16, right: 24, bottom: 16, left: 24 }}>
+                <ChartTooltip cursor={false} content={<ChartTooltipContent labelFormatter={(_, payload) => payload[0]?.payload.tag} />} />
+                <PolarAngleAxis dataKey='tag' tick={{ fontSize: 12, fill: 'oklch(var(--muted-foreground))' }} tickFormatter={(tag: string) => tag.length > 10 ? `${tag.slice(0, 9)}…` : tag} />
+                <PolarGrid />
+                <PolarRadiusAxis angle={90} domain={[0, maxCount]} tick={false} axisLine={false} tickCount={5} />
+                <Radar dataKey='count' fill='var(--color-count)' fillOpacity={0.16} stroke='var(--color-count)' strokeWidth={2} dot={{ r: 3 }} isAnimationActive={false} />
+              </RadarChart>
+            </ChartContainer>
+            <ChartDataTable caption='Most read genres' columns={['Genre', 'Books']} rows={radarData.map((item) => [item.tag, item.count])} />
+          </>
+        ) : <ChartEmptyState title='No reading genres yet' description='Genres from completed books will appear here.' />}
+      </CardContent>
+      <CardFooter className='mt-auto px-5 pb-5'>
+        <p className='text-sm/5 text-muted-foreground wrap-anywhere'>
+          {topGenre ? <>Most read: <span className='font-medium text-foreground'>{topGenre.tag}</span> · {topGenre.count} book{topGenre.count !== 1 ? 's' : ''}</> : 'Based on the tags of your completed books'}
+        </p>
+      </CardFooter>
+    </Card>
   );
 }
-
-export default TagsRadarChart;

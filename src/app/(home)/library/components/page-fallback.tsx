@@ -1,40 +1,39 @@
 import { Skeleton } from '@/components/ui/skeleton';
+import { libraryGridClassName } from './library-layout';
 
-function PageFallback() {
+export function LibraryBooksSkeleton() {
   return (
-    <div>
-      <header className='w-full flex p-4 justify-between items-center container mx-auto'>
-        <span className='text-2xl font-bold text-white flex items-center gap-2 underline decoration-primary'>
-          <Skeleton className='w-[124px] h-[32px]' />
-        </span>
-        <Skeleton className='w-[24px] h-[24px]' />
-      </header>
-      <div className='flex items-center gap-4 px-4'>
-        <Skeleton className='w-[130px] h-[36px] rounded-full' />
-        <Skeleton className='w-[110px] h-[36px] rounded-full' />
-        <Skeleton className='w-[120px] h-[36px] rounded-full' />
-      </div>
-      <section className='px-4 mt-2'>
-        <Skeleton className='w-[29px] h-[18px] mb-2' />
-        <Skeleton className='w-[416px] h-[38px]' />
-      </section>
-      <section>
-        <div className='128x172 grid grid-cols-2 gap-2 py-4'>
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className='h-[272px] w-[128px] space-y-1 mx-auto'>
-              <Skeleton className='w-full h-[190px]' />
-              <Skeleton className='w-[128px] h-[22px]' />
-              <Skeleton className='w-[128px] h-[22px]' />
-              <div className='flex items-center gap-2'>
-                <Skeleton className='w-[128px] h-[16px]' />
-                <Skeleton className='w-[50px] h-[16px]' />
-              </div>
-            </div>
-          ))}
+    <div aria-hidden='true' className={libraryGridClassName}>
+      {Array.from({ length: 6 }, (_, index) => (
+        <div key={index} className='flex flex-col gap-3'>
+          <Skeleton className='aspect-[2/3] w-full rounded-sm' />
+          <div className='flex flex-col gap-1'>
+            <Skeleton className='h-5 w-3/4' />
+            <Skeleton className='h-4 w-1/2' />
+          </div>
         </div>
-      </section>
+      ))}
     </div>
   );
 }
 
-export default PageFallback;
+export default function PageFallback() {
+  return (
+    <>
+      <div aria-hidden='true' className='flex items-center justify-between gap-4'>
+        <Skeleton className='h-8 w-36' />
+        <Skeleton className='h-9 w-28 rounded-full' />
+      </div>
+      <div aria-hidden='true' className='flex flex-wrap items-end justify-between gap-4'>
+        <div className='flex flex-wrap gap-2'>
+          <Skeleton className='h-9 w-20 rounded-full' />
+          <Skeleton className='h-9 w-28 rounded-full' />
+          <Skeleton className='h-9 w-24 rounded-full' />
+        </div>
+        <Skeleton className='h-11 w-full rounded-full min-[1024px]:w-72' />
+      </div>
+      <LibraryBooksSkeleton />
+      <span role='status' className='sr-only'>Loading your library…</span>
+    </>
+  );
+}

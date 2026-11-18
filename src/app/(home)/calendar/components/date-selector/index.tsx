@@ -29,36 +29,39 @@ function DateSelector({ year, month }: { year: number; month: number }) {
     return `/calendar?year=${nextYear}&month=${nextMonth}`;
   };
 
-  const monthName = new Date(year, month - 1).toLocaleString('default', {
+  const monthName = new Date(year, month - 1).toLocaleString('en-US', {
     month: 'long',
   });
 
   return (
-    <div className='flex justify-between w-full items-center gap-4 px-4'>
+    <nav aria-label='Calendar month' className='flex w-full shrink-0 items-center justify-between gap-1 min-[600px]:w-auto min-[600px]:justify-start'>
       <Button variant='ghost' size='icon' asChild>
-        <Link href={getPreviousMonthLink()}>
-          <ChevronLeft size={4} />
+        <Link href={getPreviousMonthLink()} aria-label='Previous month'>
+          <ChevronLeft aria-hidden='true' />
         </Link>
       </Button>
       <Button
         variant='ghost'
-        className='text-center text-lg font-medium capitalize'
+        aria-label={`Choose month and year, ${monthName} ${year}`}
+        aria-haspopup='dialog'
+        aria-expanded={isOpen}
+        className='min-w-40'
         onClick={() => setIsOpen(true)}
       >
         {monthName} {year}
       </Button>
       <Button variant='ghost' size='icon' asChild>
-        <Link href={getNextMonthLink()}>
-          <ChevronRight size={4} />
+        <Link href={getNextMonthLink()} aria-label='Next month'>
+          <ChevronRight aria-hidden='true' />
         </Link>
       </Button>
       <YearMonthPicker
         isOpen={isOpen}
-        onOpenChange={() => setIsOpen(false)}
+        onOpenChange={setIsOpen}
         currentYearValue={year}
         currentMonthValue={monthName}
       />
-    </div>
+    </nav>
   );
 }
 
