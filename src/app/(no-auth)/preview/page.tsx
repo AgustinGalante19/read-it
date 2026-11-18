@@ -1,6 +1,7 @@
 import { LogIn } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import readitLogo from '../../../../public/readit-logo.png';
 import BooksList from '@/components/book/books-list';
 import Container from '@/components/ui/container';
 import booksSearcher from '@/services/repositories/BooksSearcher';
@@ -15,11 +16,11 @@ async function Preview() {
       <div className='flex flex-col items-center justify-center gap-2'>
         <div className='flex items-center gap-4'>
           <Image
-            src='/readit-logo.png'
+            src={readitLogo}
             width={75}
-            height={50}
+            height={75}
             alt='read-it logo'
-            className='hue-rotate-[75deg]'
+            className='shrink-0 rounded-xl'
           />
           <h1 className='text-white font-bold text-3xl text-center'>
             Welcome to Read-It

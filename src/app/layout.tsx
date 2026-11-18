@@ -6,6 +6,9 @@ import "@/app/globals.css"
 export const metadata: Metadata = {
   title: "Read It",
   description: "My personal to use as readlist",
+  appleWebApp: {
+    title: "Read-It",
+  },
 }
 
 const roboto = Roboto({
@@ -22,15 +25,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en'>
-      <head>
-        <link rel='shortcut icon' href='/favicon.ico' />
-        <link
-          rel='apple-touch-icon'
-          sizes='180x180'
-          href='/apple-touch-icon.png'
-        />
-        <meta name='apple-mobile-web-app-title' content='Read-It' />
-      </head>
       <body className={`${roboto.className} antialiased`}>
         <Providers>{children}</Providers>
       </body>

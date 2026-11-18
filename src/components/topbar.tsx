@@ -3,6 +3,7 @@
 import { Search } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import readitLogo from '../../public/readit-logo.png';
 import AccountMenu from './account-menu';
 
 function Topbar({ showSearch }: { showSearch: boolean }) {
@@ -14,11 +15,11 @@ function Topbar({ showSearch }: { showSearch: boolean }) {
         className='-ms-2 flex min-h-12 w-fit items-center gap-1 rounded-full pe-2 text-xl font-medium whitespace-nowrap'
       >
         <Image
-          src='/readit-logo.png'
+          src={readitLogo}
           width={48}
           height={48}
           alt=''
-          className='shrink-0 hue-rotate-[75deg]'
+          className='shrink-0 rounded-lg'
         />
         <span>Read It</span>
       </Link>

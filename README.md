@@ -95,7 +95,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ### Prerequisites
 
-- Node.js 18+ installed
+- Node.js 20.19+ installed
 - pnpm package manager
 - Turso database account
 
@@ -131,6 +131,24 @@ pnpm dev
 ```
 
 6. Open [http://localhost:3000](http://localhost:3000) in your browser
+
+### Regenerating the app logo and PWA icons
+
+The original artwork is stored in `assets/branding/readit-logo.png`. Run:
+
+```bash
+npm run generate:pwa-assets
+```
+
+The script uses `@vite-pwa/assets-generator` and Sharp to crop the book symbol
+above the wordmark and regenerate the in-app logo, favicon, Apple touch icon,
+Windows tile, and 192/512 px PWA icons. Separate maskable icons include extra
+padding to keep the book visible when launchers crop the icon into a circle or
+rounded square. Crop coordinates in `scripts/generate-pwa-assets.mjs` match the
+supplied artwork; adjust them if the composition of the source image changes.
+
+Next.js registers `src/app/favicon.ico`, `icon1.png`, `apple-icon.png`, and
+`manifest.ts` automatically. The PWA colors follow the app theme (`#191C20`).
 
 ## 📄 License
 
