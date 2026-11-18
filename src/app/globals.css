@@ -24,6 +24,8 @@
 
   --color-primary: oklch(var(--primary));
   --color-primary-foreground: oklch(var(--primary-foreground));
+  --color-primary-container: oklch(var(--primary-container));
+  --color-primary-container-foreground: oklch(var(--primary-container-foreground));
 
   --color-secondary: oklch(var(--secondary));
   --color-secondary-foreground: oklch(var(--secondary-foreground));
@@ -37,6 +39,8 @@
   --color-destructive: oklch(var(--destructive));
   --color-destructive-foreground: oklch(var(--destructive-foreground));
 
+  --color-outline: oklch(var(--outline));
+  --color-outline-variant: oklch(var(--outline-variant));
   --color-border: oklch(var(--border));
   --color-input: oklch(var(--input));
   --color-ring: oklch(var(--ring));
@@ -65,71 +69,48 @@
 
 @layer base {
   :root {
-    /* Dark scheme (from Material Theme Builder export) */
-    --background-low: 0.1849 0.0118 139.43;
-    --background: 0.1617 0.0101 158.69;
-    --foreground: 0.86 0.016 123;
-    --surface: 0.1878 0.0122 155.86;
-    --surface-container-high: 0.2826 0.0101 151.46;
-    --surface-container: 0.2402 0.0116 156.25;
-    --surface-foreground: 0.9131 0.0108 136.56;
-    --inverse-surface: 0.9131 0.0108 136.56;
-    --secondary-container: 0.3917 0.0333 156.05;
-    --secondary-container-foreground: 0.9083 0.0351 153.2;
+    color-scheme: dark;
+
+    /* Material Theme Builder dark scheme, seeded with #1791F5. */
+    --background: 0.2250257 0.0090175 255.6053; /* #191C20 */
+    --surface: 0.1898294 0.0094142 255.6333; /* #111418 */
+    --surface-container: 0.2421142 0.0088518 255.5942; /* #1D2024 */
+    --surface-container-high: 0.2840392 0.0101253 260.7060; /* #272A2F */
+    --foreground: 0.9137538 0.0081760 278.6280; /* #E1E2E8 */
+    --muted-foreground: 0.8269054 0.0129506 271.2585; /* #C3C6CF */
+    --outline: 0.6559066 0.0127218 264.4805; /* #8D9199 */
+    --outline-variant: 0.3968236 0.0129200 261.7470; /* #43474E */
+    --primary: 0.8267449 0.0858940 256.1887; /* #A2C9FE */
+    --primary-foreground: 0.3121069 0.0879990 249.8510; /* #00325B */
+    --primary-container: 0.3953548 0.0900068 252.0082; /* #1D4875 */
+    --primary-container-foreground: 0.9145926 0.0412425 259.6458; /* #D3E4FF */
+    --secondary-container: 0.3975946 0.0313110 255.7058; /* #3C4858 */
+    --secondary-container-foreground: 0.9131814 0.0314798 261.7419; /* #D7E3F8 */
+    --destructive: 0.8383036 0.0890850 26.7575; /* #FFB4AB */
+    --destructive-foreground: 0.3275026 0.1335917 27.3196; /* #690005 */
+
+    --background-low: var(--surface);
+    --surface-foreground: var(--foreground);
+    --inverse-surface: var(--foreground);
     --white: 1 0 0;
-    /* #FFFFFF (was HSL 0 0% 100%) */
+    --card: var(--surface-container);
+    --card-foreground: var(--foreground);
+    --popover: var(--surface-container-high);
+    --popover-foreground: var(--foreground);
+    --secondary: var(--secondary-container);
+    --secondary-foreground: var(--secondary-container-foreground);
+    --muted: var(--surface-container-high);
+    --accent: var(--primary-container);
+    --accent-foreground: var(--primary-container-foreground);
+    --border: var(--outline-variant);
+    --input: var(--outline-variant);
+    --ring: var(--primary);
 
-    --card: 0.1617 0.0101 158.69;
-    /* surface: #0F1511 (was HSL 129 13% 6%) */
-    --card-foreground: 0.86 0.016 123;
-    /* onSurface: #DFE4DD (was HSL 120 7% 86%) */
-
-    --popover: 0.3 0.02 140;
-    /* surfaceVariant: #404942 (was HSL 132 6% 30%) */
-    --popover-foreground: 0.77 0.021 120;
-    /* onSurfaceVariant: #C0C9C0 (was HSL 118 8% 77%) */
-
-    --primary: 0.79 0.13 149;
-    /* primary: #91D5AC (was HSL 141 57% 78%) */
-    --primary-foreground: 0.09 0.07 150;
-    /* onPrimary: #003921 (was HSL 150 79% 7%) */
-
-    --secondary: 0.3917 0.0333 156.05;
-    /* secondary: #B5CCBB (was HSL 118 17% 81%) */
-    --secondary-foreground: 0.9083 0.0351 153.2;
-    /* onSecondary: #213528 (was HSL 140 22% 13%) */
-    --muted: 0.3 0.02 140;
-    /* surfaceVariant: #404942 (was HSL 132 6% 30%) */
-    --muted-foreground: 0.77 0.021 120;
-    /* onSurfaceVariant: #C0C9C0 (was HSL 118 8% 77%) */
-
-    --accent: 0.3923 0.0514 220.77;
-    /* tertiary: #A4CDDC (was HSL 196 32% 82%) */
-    --accent-foreground: 0.9094 0.0487 222.99;
-    /* onTertiary: #043541 (was HSL 191 83% 6%) */
-
-    --destructive: 0.4171 0.170153 27.3788;
-    /* error: #FFB4AB (was HSL 0 100% 77%) */
-    --destructive-foreground: 0.9183 0.041771 25.2259;
-    /* onError: #690005 (was HSL 8 100% 20%) */
-
-    --border: 0.44 0.013 119;
-    /* outline: #8A938B (was HSL 116 6% 44%) */
-    --input: 0.2402 0.0116 156.25;
-    /* surface: #0F1511 (was HSL 129 13% 6%) */
-    --ring: 0.3 0.02 140;
-    /* outlineVariant: #404942 (was HSL 132 6% 30%) */
-
-    --chart-1: 0.4 0.18 149;
-    /* inversePrimary: #276A49 (was HSL 150 57% 28%) */
-    --chart-2: 0.89 0.09 138;
-    /* secondaryFixed: #D0E8D6 (was HSL 140 16% 80%) */
-    --chart-3: 0.9 0.06 220;
-    /* tertiaryFixed: #BFE9F9 (was HSL 197 83% 86%) */
-    --chart-4: 0.79 0.13 149;
-    /* primaryFixedDim: #91D5AC (was HSL 141 47% 51%) */
-    --chart-5: 0.28 0.17 28;
-    /* errorContainer: #93000A (was HSL 0 100% 29%) */
+    --chart-1: 0.8191407 0.0815357 213.8167; /* #83D2E4 */
+    --chart-2: 0.8267206 0.0310166 260.7026; /* #BBC7DB */
+    --chart-3: 0.7417189 0.1365275 252.9411; /* #69AFFF */
+    --chart-4: var(--primary);
+    --chart-5: var(--destructive);
 
     --radius: 0.5rem;
   }
@@ -149,8 +130,7 @@
   }
 
   :root {
-    --bottom-bar-height: 6rem;
-    /* fallback */
+    --bottom-bar-height: calc(4rem + env(safe-area-inset-bottom, 0px));
   }
 
   /* Mejorar el scroll en mobile */
@@ -159,26 +139,31 @@
   }
 }
 
+:focus-visible {
+  outline: 2px solid oklch(var(--ring));
+  outline-offset: 2px;
+}
+
+@media (width < 600px) {
+  html:has(#app-content) {
+    scroll-padding-bottom: var(--bottom-bar-height);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 
 .login-bg {
   background-image: url('/login-bg.jpg');
   background-size: cover;
   background-position: center;
   filter: grayscale(30%);
-}
-
-.blur-background {
-  position: absolute;
-  width: 100%;
-  height: 100px;
-  filter: blur(150px);
-  z-index: -1;
-  inset: 0;
-  top: 100px;
-}
-
-
-.blur-background-green {
-  background: radial-gradient(circle at 20% 30%, rgba(17, 122, 9, 0.3), transparent),
-    radial-gradient(circle at 80% 70%, rgba(16, 154, 6, 0.4), transparent);
 }

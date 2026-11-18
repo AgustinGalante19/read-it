@@ -2,12 +2,13 @@
 
 import GoogleIcon from '@/components/icons/google';
 import { Button } from '@/components/ui/button';
+import Container from '@/components/ui/container';
 import { signIn, useSession } from '@/lib/auth/auth-client';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-function SignInPage() {
+function SignIn() {
   const { replace } = useRouter();
   const { data } = useSession();
 
@@ -72,4 +73,10 @@ function SignInPage() {
   );
 }
 
-export default SignInPage;
+export default function SignInPage() {
+  return (
+    <Container>
+      <SignIn />
+    </Container>
+  );
+}

@@ -3,7 +3,8 @@ export const revalidate = 3600;
 import { ReadingTimeline } from '@/components/ReadingTimeline';
 import { getCalendarData } from '@/services/ReadingStatisticsService';
 import DateSelector from './components/date-selector';
-import { Book, Calendar } from 'lucide-react';
+import { Book } from 'lucide-react';
+import { calendarPageClassName } from './components/calendar-layout';
 
 import {
   Empty,
@@ -36,38 +37,39 @@ export default async function CalendarPage(props: CalendarPageProps) {
 
   if (!success || !data) {
     return (
-      <Empty>
-        <EmptyHeader>
-          <EmptyMedia variant='icon'>
-            <Book />
-          </EmptyMedia>
-          <EmptyTitle>Calendar not found</EmptyTitle>
-          <EmptyDescription>
-            We can&apos;t find a calendar for the selected month and year.
-          </EmptyDescription>
-        </EmptyHeader>
-        <EmptyContent>
-          <Button asChild>
-            <Link href='/search'>Search Books</Link>
-          </Button>
-        </EmptyContent>
-      </Empty>
+      <div className={calendarPageClassName}>
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant='icon'>
+              <Book />
+            </EmptyMedia>
+            <EmptyTitle>Calendar not found</EmptyTitle>
+            <EmptyDescription>
+              We can&apos;t find a calendar for the selected month and year.
+            </EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <Button asChild>
+              <Link href='/search'>Search Books</Link>
+            </Button>
+          </EmptyContent>
+        </Empty>
+      </div>
     );
   }
 
   return (
-    <div className='container'>
-      <div className='mb-2 flex flex-col gap-4 items-center justify-between'>
-        <div className='flex items-center gap-2'>
-          <h1 className='text-3xl font-bold'>Reading Calendar</h1>
-          <Calendar />
+    <div className={calendarPageClassName}>
+      <header className='flex min-w-0 flex-col gap-5 min-[1024px]:flex-row min-[1024px]:items-center min-[1024px]:justify-between min-[1024px]:gap-8'>
+        <div className='flex min-w-0 flex-col gap-2'>
+          <h1 className='text-2xl/8 font-normal min-[600px]:text-[28px]/9'>Reading Calendar</h1>
+          <p className='max-w-xl text-sm/5 text-muted-foreground'>
+            Navigate between months to see your daily reading progress and track
+            completed books.
+          </p>
         </div>
-        <p className='px-2 text-sm text-muted-foreground max-w-2xl'>
-          Navigate between months to see your daily reading progress and track
-          completed books.
-        </p>
         <DateSelector year={year} month={month} />
-      </div>
+      </header>
       <ReadingTimeline data={data} year={year} month={month} />
     </div>
   );

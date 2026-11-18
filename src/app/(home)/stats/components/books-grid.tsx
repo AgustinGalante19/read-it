@@ -1,80 +1,57 @@
 'use client';
 
-import React, { useState } from 'react';
-import Image from 'next/image';
+import { useState } from 'react';
 import Link from 'next/link';
-import { cn } from '@/lib/utils';
-import { Book } from '@/types/Book';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Book, BookStatus } from '@/types/Book';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import BookCover from '@/components/book/book-cover';
 
-const imageSize = { width: 53, height: 77 };
-
-function BooksGrid({ books }: { books: Book[] }) {
+export default function BooksGrid({ books }: { books: Book[] }) {
   const [showAll, setShowAll] = useState(false);
-
   const displayedBooks = showAll ? books : books.slice(0, 12);
-  const shouldShowButton = books.length > 12;
 
   return (
-    <section>
+    <section aria-labelledby='completed-books-title'>
       <Card>
-        <CardHeader>
-          <CardTitle>Books read</CardTitle>
-          <CardDescription>
-            You read <span className='text-primary'>{books.length}</span> books
-          </CardDescription>
+        <CardHeader className='p-5 pb-4'>
+          <CardTitle><h2 id='completed-books-title'>Books read</h2></CardTitle>
+          <CardDescription>{books.length.toLocaleString('en-US')} completed books in your library</CardDescription>
         </CardHeader>
-        <CardContent className='flex  gap-2 items-center justify-start flex-wrap'>
-          {displayedBooks.map((book) => (
-            <TooltipProvider key={book.id}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Link href={`/book/${book.id}`}>
-                    <Image
-                      alt={`${book.title} cover`}
-                      height={imageSize.height}
-                      width={imageSize.width}
-                      src={book?.thumbnail_url || '/thumbnail-fallback.jpg'}
-                      loading='lazy'
-                      className={cn('max-h-[77px] h-[77px]')}
-                    />
-                  </Link>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <span className='font-semibold'>{book.title}</span>
-                </TooltipContent>
-              </Tooltip>
+        <CardContent className='px-5 pb-5'>
+          {books.length ? (
+            <TooltipProvider>
+              <ul id='completed-books' className='flex flex-wrap gap-3'>
+                {displayedBooks.map((book) => (
+                  <li key={book.id} className='w-14 min-[600px]:w-16'>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Link href={`/book/${book.google_id}`} aria-label={`${book.title} by ${book.authors}`} className='block rounded-sm'>
+                          <BookCover src={book.thumbnail_url} sizes='64px' />
+                        </Link>
+                      </TooltipTrigger>
+                      <TooltipContent><p className='max-w-64'>{book.title}</p></TooltipContent>
+                    </Tooltip>
+                  </li>
+                ))}
+              </ul>
             </TooltipProvider>
-          ))}
-          {shouldShowButton && (
-            <div className='w-full flex mt-4'>
-              <Button
-                variant='ghost'
-                size='sm'
-                onClick={() => setShowAll(!showAll)}
-                className='text-sm text-primary'
-              >
-                {showAll ? 'Show less' : 'Show more'}
-              </Button>
-            </div>
-          )}
+          ) : <p className='text-sm/6 text-muted-foreground'>Your completed books will appear here.</p>}
         </CardContent>
+        {books.length > 12 && (
+          <CardFooter className='px-5 pb-5'>
+            <Button variant='ghost' size='sm' aria-controls='completed-books' aria-expanded={showAll} onClick={() => setShowAll(!showAll)}>
+              {showAll ? 'Show less' : 'Show more'}
+            </Button>
+          </CardFooter>
+        )}
+        {!books.length && (
+          <CardFooter className='px-5 pb-5'>
+            <Button variant='outline' asChild><Link href={`/library?status=${BookStatus.READ}`}>Go to Library</Link></Button>
+          </CardFooter>
+        )}
       </Card>
     </section>
   );
 }
-
-export default BooksGrid;

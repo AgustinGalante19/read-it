@@ -2,16 +2,16 @@ import { LogIn } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import BooksList from '@/components/book/books-list';
+import Container from '@/components/ui/container';
 import booksSearcher from '@/services/repositories/BooksSearcher';
 
-async function PreviewPage() {
+async function Preview() {
   const fiction = await booksSearcher.getBooksBySubject('fiction');
   const fantasy = await booksSearcher.getBooksBySubject('fantasy');
   const thriller = await booksSearcher.getBooksBySubject('thriller');
 
   return (
     <div className='space-y-4 p-4'>
-      <div className='blur-background blur-background-green -mt-32' />
       <div className='flex flex-col items-center justify-center gap-2'>
         <div className='flex items-center gap-4'>
           <Image
@@ -19,6 +19,7 @@ async function PreviewPage() {
             width={75}
             height={50}
             alt='read-it logo'
+            className='hue-rotate-[75deg]'
           />
           <h1 className='text-white font-bold text-3xl text-center'>
             Welcome to Read-It
@@ -61,4 +62,10 @@ async function PreviewPage() {
   );
 }
 
-export default PreviewPage;
+export default function PreviewPage() {
+  return (
+    <Container>
+      <Preview />
+    </Container>
+  );
+}

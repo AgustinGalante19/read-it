@@ -1,72 +1,61 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-} from '@/components/ui/carousel';
-import { cn } from '@/lib/utils';
-import { Book } from '@/types/Book';
-import React from 'react';
-import Option from '../types/Option';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import type Option from '../types/Option';
 
 interface Props {
   options: Option[];
   bookStatus: Option;
-  booksList: Book[];
-  handleChangeStatus: (opt: Option) => void;
+  count: number;
+  handleChangeStatus: (option: Option) => void;
   isLoading: boolean;
 }
 
-function StatusSelection({
+export default function StatusSelection({
   options,
   bookStatus,
-  booksList,
+  count,
   handleChangeStatus,
   isLoading,
 }: Props) {
+  if (isLoading) {
+    return (
+      <div aria-hidden='true' className='flex min-w-0 flex-wrap gap-2'>
+        <Skeleton className='h-9 w-20 rounded-full' />
+        <Skeleton className='h-9 w-28 rounded-full' />
+        <Skeleton className='h-9 w-24 rounded-full' />
+      </div>
+    );
+  }
+
   return (
-    <section className='px-4'>
-      {isLoading ? (
-        <div className='flex items-center gap-4'>
-          <Skeleton className='w-[130px] h-[36px] rounded-full' />
-          <Skeleton className='w-[110px] h-[36px] rounded-full' />
-          <Skeleton className='w-[120px] h-[36px] rounded-full' />
-        </div>
-      ) : (
-        <Carousel className='w-full'>
-          <CarouselContent className='-ml-1'>
-            {options.map((opt) => (
-              <div key={opt.label} className='pr-1'>
-                <CarouselItem className='pl-1'>
-                  <Button
-                    variant='link'
-                    className={cn(
-                      'rounded-full',
-                      opt.value === bookStatus.value
-                        ? 'bg-primary text-primary-foreground'
-                        : 'border bg-transparent border-gray-500',
-                    )}
-                    onClick={() => handleChangeStatus(opt)}
-                    startIcon={opt.icon}
-                  >
-                    {opt.label}
-                    {opt.value === bookStatus.value && (
-                      <span className='text-xs p-1 rounded-full bg-background text-foreground text-center w-6 h-6'>
-                        {booksList.length}
-                      </span>
-                    )}
-                  </Button>
-                </CarouselItem>
-              </div>
-            ))}
-          </CarouselContent>
-        </Carousel>
-      )}
-    </section>
+    <Carousel
+      aria-label='Reading status'
+      className='min-w-0 flex-1'
+      opts={{ align: 'start', breakpoints: { '(min-width: 1024px)': { active: false } } }}
+    >
+      <CarouselContent className='-ml-2 min-[1024px]:flex-wrap min-[1024px]:gap-y-2'>
+        {options.map((option) => {
+          const selected = option.value === bookStatus.value;
+          return (
+            <CarouselItem key={option.value} className='basis-auto pl-2'>
+              <Button
+                type='button'
+                variant={selected ? 'default' : 'outline'}
+                aria-pressed={selected}
+                onClick={() => handleChangeStatus(option)}
+                startIcon={option.icon}
+              >
+                {option.label}
+                {selected && <Badge variant='secondary' className='min-w-6 justify-center rounded-full px-1.5'>{count}</Badge>}
+              </Button>
+            </CarouselItem>
+          );
+        })}
+      </CarouselContent>
+    </Carousel>
   );
 }
-
-export default StatusSelection;

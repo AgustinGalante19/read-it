@@ -57,12 +57,12 @@ function UserBookStats({
   );
 
   return (
-    <section aria-labelledby='reading-summary-title' className='my-4'>
-      <Card>
-        <CardHeader className='p-4'>
-          <h3 id='reading-summary-title' className='text-base font-semibold'>
+    <section aria-labelledby='reading-summary-title' className='my-4 lg:order-1 lg:my-0'>
+      <Card className='lg:border-0 lg:shadow-none'>
+        <CardHeader className='p-4 lg:px-5'>
+          <h2 id='reading-summary-title' className='text-base font-semibold lg:font-medium'>
             Reading summary
-          </h3>
+          </h2>
           {lastSyncDate && (
             <p className='flex items-center gap-1.5 text-xs text-muted-foreground'>
               <ChartBar size={14} aria-hidden='true' />
@@ -70,7 +70,7 @@ function UserBookStats({
             </p>
           )}
         </CardHeader>
-        <CardContent className='space-y-4 px-4 pb-4'>
+        <CardContent className='space-y-4 px-4 pb-4 lg:px-5 lg:pb-5'>
           <div className='space-y-2'>
             <div className='flex items-baseline justify-between gap-2 text-sm'>
               <span>

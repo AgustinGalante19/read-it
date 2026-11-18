@@ -1,52 +1,37 @@
 'use client';
 
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Highlighter, LogOut, ScreenShare } from 'lucide-react';
+import { Search } from 'lucide-react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { authClient, useSession } from '@/lib/auth/auth-client';
+import Link from 'next/link';
+import AccountMenu from './account-menu';
 
-function Topbar() {
-  const { data } = useSession();
-  const router = useRouter();
-
+function Topbar({ showSearch }: { showSearch: boolean }) {
   return (
-    <header className='w-full flex justify-between items-center container mx-auto'>
-      <Image src='/readit-logo.png' width={75} height={50} alt='read-it logo' />
-      <span className='text-2xl font-bold text-white flex items-center gap-2'>
-        Hi, {data?.user?.name}!
-      </span>
-      <DropdownMenu>
-        <DropdownMenuTrigger>
-          <Avatar>
-            <AvatarImage src={data?.user?.image || undefined} />
-            <AvatarFallback>{data?.user?.name?.substring(0, 1)}</AvatarFallback>
-          </Avatar>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => router.push('/devices')}>
-            <ScreenShare />
-            Devices
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={async () => {
-              await authClient.signOut();
-              router.push('/sign-in');
-            }}
-          >
-            <LogOut />
-            Sign Out
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+    <header className='grid min-h-14 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 min-[600px]:min-h-18 min-[600px]:gap-4 min-[1024px]:sticky min-[1024px]:top-[env(safe-area-inset-top,0px)] min-[1024px]:z-40 min-[1024px]:grid-cols-[208px_minmax(0,1fr)] min-[1024px]:bg-background'>
+      <Link
+        href='/'
+        aria-label='Read It home'
+        className='-ms-2 flex min-h-12 w-fit items-center gap-1 rounded-full pe-2 text-xl font-medium whitespace-nowrap'
+      >
+        <Image
+          src='/readit-logo.png'
+          width={48}
+          height={48}
+          alt=''
+          className='shrink-0 hue-rotate-[75deg]'
+        />
+        <span>Read It</span>
+      </Link>
+      {showSearch && (
+        <Link
+          href='/search'
+          className='hidden h-12 w-full max-w-[720px] items-center gap-3 rounded-full bg-surface-container-high px-4 text-sm text-muted-foreground transition-colors duration-150 hover:bg-foreground/12 hover:text-foreground min-[600px]:flex'
+        >
+          <Search aria-hidden='true' className='size-5 shrink-0' />
+          Search books
+        </Link>
+      )}
+      <div className='col-start-3 min-[1024px]:hidden'><AccountMenu /></div>
     </header>
   );
 }

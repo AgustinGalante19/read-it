@@ -8,7 +8,7 @@ import {
   isToday,
 } from 'date-fns';
 import { Card, CardContent } from '@/components/ui/card';
-import Image from 'next/image';
+import BookCover from '@/components/book/book-cover';
 import {
   Tooltip,
   TooltipContent,
@@ -16,6 +16,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import Link from 'next/link';
+import { cn } from '@/lib/utils';
 
 interface TimelineData {
   date: string;
@@ -53,13 +54,13 @@ export function ReadingTimeline({ data, year, month }: ReadingTimelineProps) {
   };
 
   return (
-    <Card className='col-span-4 border-none shadow-none mx-2'>
+    <Card className='min-w-0 border-none shadow-none'>
       <CardContent className='p-0'>
-        <div className='grid grid-cols-7 gap-px bg-border rounded-lg overflow-hidden border'>
+        <div aria-label='Monthly reading activity' className='grid grid-cols-7 gap-px overflow-hidden rounded-xl border bg-border'>
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
             <div
               key={day}
-              className='bg-muted/50 p-2 text-sm font-medium text-muted-foreground text-center'
+              className='bg-surface-container py-2 text-center text-xs font-medium text-muted-foreground min-[600px]:py-3 min-[600px]:text-sm'
             >
               {day}
             </div>
@@ -67,27 +68,38 @@ export function ReadingTimeline({ data, year, month }: ReadingTimelineProps) {
           {Array.from({ length: start.getDay() }).map((_, i) => (
             <div
               key={`empty-${i}`}
-              className='bg-background p-1.5 min-h-[90px]'
+              aria-hidden='true'
+              className='min-h-[90px] bg-background min-[600px]:min-h-30 min-[1024px]:min-h-46 min-[1440px]:min-h-48'
             />
           ))}
           {days.map((day) => {
             const dateStr = format(day, 'yyyy-MM-dd');
             const dayData = data.find((d) => d.date === dateStr);
             const isCurrentMonth = isSameMonth(day, start);
+            const visibleBooks = (dayData?.details ?? [])
+              .map((book) => ({
+                book,
+                isStartDate: Boolean(
+                  book.start_date &&
+                  format(new Date(book.start_date), 'yyyy-MM-dd') === dateStr,
+                ),
+              }))
+              .filter(({ book, isStartDate }) =>
+                book.duration > 500 || book.isFinishedEvent || isStartDate,
+              );
 
             return (
               <div
                 key={day.toISOString()}
-                className={`bg-background p-1.5 min-h-[90px] flex flex-col gap-1 relative group transition-colors hover:bg-muted/30 ${
-                  !isCurrentMonth ? 'text-muted-foreground/30' : ''
-                }`}
+                aria-label={format(day, 'EEEE, MMMM d, yyyy')}
+                className={cn('relative flex min-h-[90px] min-w-0 flex-col gap-1 bg-background p-1 transition-colors hover:bg-muted/30 min-[600px]:min-h-30 min-[600px]:gap-2 min-[600px]:p-2 min-[1024px]:min-h-46 min-[1024px]:p-3 min-[1440px]:min-h-48', !isCurrentMonth && 'text-muted-foreground/30')}
               >
-                <div className='flex justify-between items-start z-10'>
+                <div className='flex min-w-0 flex-wrap items-start justify-between gap-1'>
                   <span
                     className={
                       isToday(day)
-                        ? 'text-xs font-semibold w-5 h-5 flex items-center justify-center rounded-full bg-primary text-primary-foreground'
-                        : `text-xs font-medium ${
+                        ? 'flex size-5 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground min-[600px]:size-6 min-[600px]:text-sm'
+                        : `text-xs font-medium min-[600px]:text-sm ${
                             dayData && dayData.totalDuration >= 500
                               ? 'text-primary'
                               : 'text-muted-foreground'
@@ -97,59 +109,41 @@ export function ReadingTimeline({ data, year, month }: ReadingTimelineProps) {
                     {format(day, 'd')}
                   </span>
                   {dayData && dayData.totalDuration >= 600 && (
-                    <span className='text-[10px] font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded-full'>
+                    <span className='max-w-full rounded-full bg-primary/10 px-1 py-0.5 text-[10px] font-medium text-primary min-[600px]:px-1.5 min-[600px]:text-xs'>
                       {formatDuration(dayData.totalDuration, true)}
                     </span>
                   )}
                 </div>
 
-                <div className='flex flex-wrap gap-1 mt-auto items-center justify-center'>
-                  {dayData?.details.map((book) => {
-                    const isStartDate =
-                      book.start_date &&
-                      format(new Date(book.start_date), 'yyyy-MM-dd') ===
-                        dateStr;
-
-                    if (
-                      book.duration <= 500 &&
-                      !book.isFinishedEvent &&
-                      !isStartDate
-                    )
-                      return null;
+                <div className='mt-auto flex min-w-0 flex-wrap items-center justify-center gap-1 min-[600px]:gap-2'>
+                  {visibleBooks.map(({ book, isStartDate }) => {
                     return (
                       <TooltipProvider key={book.bookId}>
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Link
                               href={`/book/${book.bookId}`}
-                              className={`relative w-10 h-14 bg-muted rounded-sm overflow-hidden hover:ring-2 ring-primary transition-all hover:scale-110 shadow-sm ${
-                                book.isFinishedEvent
-                                  ? 'ring-2 ring-emerald-500'
-                                  : isStartDate
-                                    ? 'ring-2 ring-blue-500'
-                                    : ''
-                              }`}
+                              aria-label={`${book.title}${book.isFinishedEvent ? ', finished this day' : isStartDate ? ', started this day' : ''}`}
+                              className={cn(
+                                'relative aspect-[2/3] w-10 max-w-full shrink-0 overflow-hidden rounded-sm bg-muted shadow-sm transition-shadow hover:ring-2 hover:ring-primary min-[1024px]:w-20 min-[1440px]:w-22',
+                                visibleBooks.length > 1 && 'min-[1024px]:w-[min(5rem,calc((100%-0.5rem)/2))] min-[1440px]:w-[min(5.5rem,calc((100%-0.5rem)/2))]',
+                                book.isFinishedEvent ? 'ring-2 ring-primary' : isStartDate && 'ring-2 ring-outline',
+                              )}
                             >
-                              <Image
-                                src={book.thumbnail_url || '/placeholder.svg'}
-                                alt={book.title}
-                                fill
-                                className='object-cover'
-                                sizes='40px'
+                              <BookCover
+                                src={book.thumbnail_url}
+                                className='absolute inset-0'
+                                sizes='(min-width: 1440px) 88px, (min-width: 1024px) 80px, 40px'
                               />
                               {book.isFinishedEvent && (
-                                <div className='absolute inset-x-0 bottom-0 top-1/2 bg-gradient-to-t from-emerald-500/80 to-transparent flex items-end justify-center pb-1'>
-                                  <span className='text-[8px] font-bold text-white uppercase tracking-tighter'>
-                                    Done
-                                  </span>
-                                </div>
+                                <span className='absolute inset-x-0 bottom-0 bg-primary text-center text-[8px] font-bold uppercase text-primary-foreground min-[1024px]:text-[10px]'>
+                                  Done
+                                </span>
                               )}
                               {isStartDate && !book.isFinishedEvent && (
-                                <div className='absolute inset-x-0 top-0 bottom-1/2 bg-gradient-to-b from-accent/80 to-transparent flex items-start justify-center pt-1'>
-                                  <span className='text-[8px] font-bold text-white uppercase tracking-tighter'>
-                                    Start
-                                  </span>
-                                </div>
+                                <span className='absolute inset-x-0 top-0 bg-primary-container text-center text-[8px] font-bold uppercase text-primary-container-foreground min-[1024px]:text-[10px]'>
+                                  Start
+                                </span>
                               )}
                             </Link>
                           </TooltipTrigger>
@@ -164,7 +158,7 @@ export function ReadingTimeline({ data, year, month }: ReadingTimelineProps) {
                                 </span>
                               )}
                               {book.isFinishedEvent && (
-                                <span className='text-xs font-bold text-emerald-500'>
+                                <span className='text-xs font-bold text-primary'>
                                   Finished this day!
                                 </span>
                               )}
@@ -183,6 +177,13 @@ export function ReadingTimeline({ data, year, month }: ReadingTimelineProps) {
               </div>
             );
           })}
+          {Array.from({ length: 6 - end.getDay() }, (_, index) => (
+            <div
+              key={`end-empty-${index}`}
+              aria-hidden='true'
+              className='min-h-[90px] bg-background min-[600px]:min-h-30 min-[1024px]:min-h-46 min-[1440px]:min-h-48'
+            />
+          ))}
         </div>
       </CardContent>
     </Card>

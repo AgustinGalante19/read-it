@@ -1,47 +1,46 @@
 'use client';
 
+import type { ComponentProps } from 'react';
 import { useRouter } from 'next/navigation';
-import React, { useCallback } from 'react';
+import { toast } from 'sonner';
 import BookCard from '@/components/book/book-card';
 import { bookSearchService } from '@/services/SearchsService';
-import { Book } from '@/types/Book';
-import { toast } from 'sonner';
+import type { Book } from '@/types/Book';
+import { searchBookListClassName } from './search-layout';
 
-function SearchResults({ books }: { books: Book[] }) {
+type NavigateEvent = Parameters<NonNullable<ComponentProps<typeof BookCard>['onNavigate']>>[0];
+
+export default function SearchResults({
+  books,
+  saveToHistory = false,
+}: {
+  books: Book[];
+  saveToHistory?: boolean;
+}) {
   const router = useRouter();
 
-  const handleClickSearch = useCallback(
-    async (book: Book) => {
-      try {
-        await bookSearchService.addIDBBook(book);
-      } catch {
-        toast.error('Error saving recent search');
-      } finally {
-        router.push(`/book/${book.google_id}`);
-      }
-    },
-    [router],
-  );
+  async function openResult(event: NavigateEvent, book: Book) {
+    event.preventDefault();
+    try {
+      await bookSearchService.addIDBBook(book);
+    } catch {
+      toast.error('Could not save this book to your recent history.');
+    } finally {
+      router.push('/book/' + book.google_id);
+    }
+  }
 
   return (
-    <ul className='p-2 rounded-b text-white w-full'>
-      {books.map((book, index) => (
-        <li
-          key={book.google_id}
-          className='my-2 cursor-pointer rounded-lg'
-          style={{
-            animationDelay: `${index * 150}ms`,
-            animationFillMode: 'both',
-          }}
-          onClick={() => handleClickSearch(book)}
-        >
-          <div className='rounded-lg transition-all duration-300 hover:bg-linear-to-r hover:from-primary/5 hover:to-accent/5'>
-            <BookCard book={book} />
-          </div>
+    <ul className={searchBookListClassName}>
+      {books.map((book) => (
+        <li key={book.google_id} className='min-w-0'>
+          <BookCard
+            book={book}
+            mode='responsive'
+            onNavigate={saveToHistory ? (event) => void openResult(event, book) : undefined}
+          />
         </li>
       ))}
     </ul>
   );
 }
-
-export default React.memo(SearchResults);
