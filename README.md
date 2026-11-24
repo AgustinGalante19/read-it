@@ -115,12 +115,10 @@ pnpm install
 ```
 
 3. Set up environment variables:
-
    - Copy `.env.example` to `.env.local`
    - Fill in the required environment variables (database credentials, authentication keys, etc.)
 
 4. Set up the database:
-
    - The SQL script to create the necessary tables is located in `scripts/tables.sql`
    - Run this script in your Turso database
 
@@ -132,23 +130,44 @@ pnpm dev
 
 6. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-### Regenerating the app logo and PWA icons
+### Migrating existing highlights
 
-The original artwork is stored in `assets/branding/readit-logo.png`. Run:
+Before deploying the highlight categories update to an existing database, back it
+up and pause writes from the app and KOReader. Apply
+[`scripts/migrations/20261124_highlight_categories.sql`](scripts/migrations/20261124_highlight_categories.sql)
+once, using a SQL client that stops on the first error. Run the complete file in
+one transaction; if an error occurs, issue `ROLLBACK` and resolve it before retrying.
+Fresh databases already use the new structure in `scripts/tables.sql` and must
+not run this migration.
 
-```bash
-npm run generate:pwa-assets
+Check for records that require attention before migrating:
+
+```sql
+-- Each book must occur once per library.
+SELECT user_email, google_id, COUNT(*) AS total
+FROM readit_books
+GROUP BY user_email, google_id
+HAVING COUNT(*) > 1;
+
+-- Every existing highlight must resolve to a book with an owner.
+SELECT h.id, h.book_hash
+FROM readit_books_highlights AS h
+LEFT JOIN readit_books AS b ON b.book_hash = h.book_hash
+WHERE b.id IS NULL OR b.user_email IS NULL;
 ```
 
-The script uses `@vite-pwa/assets-generator` and Sharp to crop the book symbol
-above the wordmark and regenerate the in-app logo, favicon, Apple touch icon,
-Windows tile, and 192/512 px PWA icons. Separate maskable icons include extra
-padding to keep the book visible when launchers crop the icon into a circle or
-rounded square. Crop coordinates in `scripts/generate-pwa-assets.mjs` match the
-supplied artwork; adjust them if the composition of the source image changes.
+The migration preserves highlight IDs, text, pages, dates and devices, fills in
+`google_id` and `user_email`, and classifies existing records as quotes
+(`is_note = 0`). Unresolved records or duplicate library books stop the migration;
+they are not silently removed. Synthetic `manual-*` hashes are cleared only after
+the new relationships have been populated. Verify with `PRAGMA foreign_key_check;`
+before resuming writes with the updated app.
 
-Next.js registers `src/app/favicon.ico`, `icon1.png`, `apple-icon.png`, and
-`manifest.ts` automatically. The PWA colors follow the app theme (`#191C20`).
+Highlights now belong to a book through `(user_email, google_id)`. `book_hash` is
+optional file metadata, so changing a KOReader link does not detach saved records.
+KOReader keeps its existing request format, and every import is a quote. In the
+app, records can be created or reclassified as quotes or research notes, with
+separate tabs in `/highlights` and the book's highlights dialog.
 
 ## 📄 License
 

@@ -193,19 +193,17 @@ class BookRepository {
       .execute()
   }
 
-  async updateBookHashByGoogleId(
-    googleId: string,
-    userEmail: string,
+  async findBookByHashAndDevice(
     hash: string,
-  ): Promise<void> {
-    await db
-      .updateTable("readit_books")
-      .set({
-        book_hash: hash,
-      })
-      .where("google_id", "=", googleId)
-      .where("user_email", "=", userEmail)
-      .execute()
+    deviceCode: string,
+  ): Promise<{ google_id: string; user_email: string } | undefined> {
+    return db
+      .selectFrom("readit_books as rb")
+      .innerJoin("readit_user_devices as rud", "rb.user_email", "rud.user_email")
+      .select(["rb.google_id", "rud.user_email"])
+      .where("rb.book_hash", "=", hash)
+      .where("rud.device_code", "=", deviceCode)
+      .executeTakeFirst()
   }
 
   async recordLastReadingInfo({

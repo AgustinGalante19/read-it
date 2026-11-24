@@ -52,6 +52,7 @@ CREATE TABLE
   );
 
 CREATE UNIQUE INDEX idx_readit_books_book_hash ON readit_books (book_hash);
+CREATE UNIQUE INDEX idx_readit_books_user_google_id ON readit_books (user_email, google_id);
 
 -- readit_user_devices definition
 CREATE TABLE
@@ -83,11 +84,16 @@ CREATE TABLE
     device_code TEXT,
     highlight_text TEXT,
     book_hash TEXT,
+    google_id TEXT NOT NULL,
+    user_email TEXT NOT NULL,
+    is_note INTEGER NOT NULL DEFAULT 0 CHECK (is_note IN (0, 1)),
     page NUMBER,
     created_at TEXT,
     FOREIGN KEY (device_code) REFERENCES readit_user_devices (device_code),
-    FOREIGN KEY (book_hash) REFERENCES readit_books (book_hash)
+    FOREIGN KEY (user_email, google_id) REFERENCES readit_books (user_email, google_id)
   );
+
+CREATE INDEX idx_readit_books_highlights_user_book ON readit_books_highlights (user_email, google_id);
 
 -- better-auth user definition
 CREATE TABLE

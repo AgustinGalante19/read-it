@@ -37,6 +37,10 @@ function Loading() {
         <Skeleton className='h-9 w-36 rounded-full' />
       </header>
       <div aria-hidden='true'>
+        <div className='mb-4 flex gap-2'>
+          <Skeleton className='h-10 w-28 rounded-lg' />
+          <Skeleton className='h-10 w-28 rounded-lg' />
+        </div>
         <div className={highlightsColumnsClassName}>
           {Array.from({ length: 6 }).map((_, i) => (
             <HighlightCardSkeleton key={i} />

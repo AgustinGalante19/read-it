@@ -84,6 +84,7 @@ export function highlightAdapter(
     page: Number(row.page),
     created_at: String(row.created_at),
     highlight_text: String(row.highlight_text),
+    is_note: row.is_note === 1,
   }));
 }
 
@@ -98,6 +99,7 @@ export function highlightWithBookAdapter(
     page: Number(row.page),
     created_at: String(row.created_at),
     highlight_text: String(row.highlight_text),
+    is_note: row.is_note === 1,
     google_id: String(row.google_id),
     thumbnail_url: row.thumbnail_url ?? null,
   }));

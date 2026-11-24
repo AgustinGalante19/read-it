@@ -2,10 +2,8 @@
 
 import { BookHighlightWithBook } from '@/types/BookHighlight';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Trash, BookOpen } from 'lucide-react';
-import { deleteBookHighlight } from '@/services/BookHighlightService';
-import { toast } from 'sonner';
+import { BookOpen } from 'lucide-react';
+import HighlightActions from '@/components/book/highlight-actions';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -14,15 +12,6 @@ interface HighlightCardProps {
 }
 
 function HighlightCard({ highlight }: HighlightCardProps) {
-  const handleDelete = async () => {
-    try {
-      await deleteBookHighlight(highlight.highlight_id);
-      toast.success('Highlight deleted');
-    } catch {
-      toast.error('Failed to delete highlight');
-    }
-  };
-
   const formattedDate = new Date(highlight.created_at).toLocaleDateString(
     'es-ES',
     {
@@ -68,9 +57,15 @@ function HighlightCard({ highlight }: HighlightCardProps) {
 
       {/* Highlight text */}
       <div className='relative pl-4 border-l-2 border-primary/40 mb-4'>
-        <blockquote className='text-base leading-relaxed text-foreground/90 italic wrap-anywhere min-[1024px]:not-italic'>
-          &ldquo;{highlight.highlight_text}&rdquo;
-        </blockquote>
+        {highlight.is_note ? (
+          <p className='text-base leading-relaxed text-foreground/90 whitespace-pre-line wrap-anywhere'>
+            {highlight.highlight_text}
+          </p>
+        ) : (
+          <blockquote className='text-base leading-relaxed text-foreground/90 whitespace-pre-line wrap-anywhere'>
+            &ldquo;{highlight.highlight_text}&rdquo;
+          </blockquote>
+        )}
       </div>
 
       {/* Footer with metadata and actions */}
@@ -81,15 +76,7 @@ function HighlightCard({ highlight }: HighlightCardProps) {
           </Badge>
           <time className='text-xs text-muted-foreground'>{formattedDate}</time>
         </div>
-        <Button
-          aria-label={`Delete highlight from ${highlight.title}`}
-          onClick={handleDelete}
-          variant='ghost'
-          size='icon'
-          className='size-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 min-[1024px]:opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 transition-opacity'
-        >
-          <Trash className='w-4 h-4' />
-        </Button>
+        <HighlightActions highlight={highlight} />
       </div>
     </article>
   );

@@ -1,7 +1,7 @@
 "use server"
 
 import {
-  BookHighlightInput,
+  KoreaderBookHighlightInput,
   BookHighlightPreview,
   BookHighlightWithBook,
 } from "@/types/BookHighlight"
@@ -9,13 +9,49 @@ import { Result } from "@/types/Result"
 import bookHighlightsRepository from "./repositories/BookHighlightsRepository"
 import bookRepository from "./repositories/BookRepository"
 import { revalidatePath } from "next/cache"
-import { getUserEmail, isAuthenticated } from "./UserService"
+import { getUserEmail } from "./UserService"
+
+function validHighlight(text: string, page: number): boolean {
+  return typeof text === "string" && text.trim().length > 0 &&
+    Number.isInteger(page) && page >= 0
+}
+
+function revalidateHighlights(googleId: string) {
+  revalidatePath("/highlights")
+  revalidatePath(`/book/${googleId}`)
+}
 
 export async function addBookHighlight(
-  highlightData: BookHighlightInput,
-): Promise<Result<string>> {
+  highlightData: KoreaderBookHighlightInput,
+): Promise<Result<string> & { status?: number }> {
   try {
-    await bookHighlightsRepository.createHighlight(highlightData)
+    const page = typeof highlightData.page === "number"
+      ? highlightData.page
+      : typeof highlightData.page === "string" && highlightData.page.trim()
+        ? Number(highlightData.page)
+        : NaN
+    if (!validHighlight(highlightData.highlight_text, page) ||
+      typeof highlightData.book_hash !== "string" || !highlightData.book_hash.trim() ||
+      typeof highlightData.device_code !== "string" || !highlightData.device_code.trim()) {
+      return { success: false, error: "Invalid highlight data", status: 400 }
+    }
+
+    const book = await bookRepository.findBookByHashAndDevice(
+      highlightData.book_hash,
+      highlightData.device_code,
+    )
+    if (!book) {
+      return { success: false, error: "Book not linked to this device", status: 404 }
+    }
+
+    await bookHighlightsRepository.createHighlight({
+      ...highlightData,
+      page,
+      google_id: book.google_id,
+      user_email: book.user_email,
+      is_note: false,
+    })
+    revalidateHighlights(book.google_id)
     return { success: true, data: "Book highlight added successfully" }
   } catch (error) {
     console.error(error)
@@ -27,42 +63,39 @@ export async function addManualBookHighlight({
   googleId,
   highlightText,
   page,
+  isNote = false,
 }: {
   googleId: string
   highlightText: string
   page: number
+  isNote?: boolean
 }): Promise<Result<string>> {
   try {
     const userEmail = await getUserEmail()
-    await isAuthenticated(userEmail)
+    if (!userEmail) return { success: false, error: "User not authenticated" }
+    if (typeof googleId !== "string" || !googleId.trim() ||
+      !validHighlight(highlightText, page) || typeof isNote !== "boolean") {
+      return { success: false, error: "Invalid highlight data" }
+    }
 
     const book = await bookRepository.findBookByGoogleId(googleId, userEmail)
     if (!book) {
       return { success: false, error: "Book not found" }
     }
 
-    const bookHash =
-      book.book_hash ?? `manual-${crypto.randomUUID().replace(/-/g, "")}`
-
-    if (!book.book_hash) {
-      await bookRepository.updateBookHashByGoogleId(
-        googleId,
-        userEmail,
-        bookHash,
-      )
-    }
-
     await bookHighlightsRepository.createHighlight({
       id: 0,
       device_code: null,
-      highlight_text: highlightText,
-      book_hash: bookHash,
+      highlight_text: highlightText.trim(),
+      book_hash: null,
+      google_id: googleId,
+      user_email: userEmail,
+      is_note: isNote,
       page,
       created_at: new Date(),
     })
 
-    revalidatePath("/highlights")
-    revalidatePath(`/book/${googleId}`)
+    revalidateHighlights(googleId)
 
     return { success: true, data: "Book highlight added successfully" }
   } catch (error) {
@@ -76,7 +109,7 @@ export async function deleteBookHighlight(
 ): Promise<Result<string>> {
   try {
     const userEmail = await getUserEmail()
-    await isAuthenticated(userEmail)
+    if (!userEmail) return { success: false, error: "User not authenticated" }
 
     const highlight = await bookHighlightsRepository.getHighlightById(
       highlightId,
@@ -86,13 +119,35 @@ export async function deleteBookHighlight(
       return { success: false, error: "Highlight not found" }
     }
 
-    await bookHighlightsRepository.deleteHighlight(highlightId)
-    revalidatePath("/book/[slug]")
-    revalidatePath("/highlights")
+    await bookHighlightsRepository.deleteHighlight(highlightId, userEmail)
+    revalidateHighlights(highlight.google_id)
     return { success: true, data: "Book highlight deleted successfully" }
   } catch (error) {
     console.error(error)
     return { success: false, error: "Failed to delete book highlight" }
+  }
+}
+
+export async function updateBookHighlightType(
+  highlightId: number,
+  isNote: boolean,
+): Promise<Result<string>> {
+  try {
+    const userEmail = await getUserEmail()
+    if (!userEmail) return { success: false, error: "User not authenticated" }
+    if (!Number.isInteger(highlightId) || typeof isNote !== "boolean") {
+      return { success: false, error: "Invalid highlight data" }
+    }
+
+    const highlight = await bookHighlightsRepository.getHighlightById(highlightId, userEmail)
+    if (!highlight) return { success: false, error: "Highlight not found" }
+
+    await bookHighlightsRepository.updateHighlightType(highlightId, userEmail, isNote)
+    revalidateHighlights(highlight.google_id)
+    return { success: true, data: "Highlight category updated successfully" }
+  } catch (error) {
+    console.error(error)
+    return { success: false, error: "Failed to update highlight category" }
   }
 }
 
@@ -101,7 +156,7 @@ export async function getBookHighlights(
 ): Promise<Result<BookHighlightPreview[]>> {
   try {
     const userEmail = await getUserEmail()
-    await isAuthenticated(userEmail)
+    if (!userEmail) return { success: false, error: "User not authenticated" }
 
     const highlights = await bookHighlightsRepository.getHighlights(
       googleId,
@@ -119,7 +174,7 @@ export async function getAllHighlights(): Promise<
 > {
   try {
     const userEmail = await getUserEmail()
-    await isAuthenticated(userEmail)
+    if (!userEmail) return { success: false, error: "User not authenticated" }
 
     const highlights =
       await bookHighlightsRepository.getAllUserHighlights(userEmail)

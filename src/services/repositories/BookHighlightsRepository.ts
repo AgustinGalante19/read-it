@@ -11,7 +11,7 @@ import {
 
 class BookHighlightsRepository {
   async createHighlight(bookHighlight: BookHighlightInput): Promise<void> {
-    const { book_hash, created_at, device_code, highlight_text, page } =
+    const { book_hash, google_id, user_email, is_note, created_at, device_code, highlight_text, page } =
       bookHighlight;
 
     const createdAt =
@@ -30,16 +30,29 @@ class BookHighlightsRepository {
         device_code,
         highlight_text,
         book_hash,
+        google_id,
+        user_email,
+        is_note: is_note ? 1 : 0,
         page: page.toString(),
         created_at: createdAt.toISOString(),
       })
       .execute();
   }
 
-  async deleteHighlight(highlightId: number): Promise<void> {
+  async deleteHighlight(highlightId: number, userEmail: string): Promise<void> {
     await db
       .deleteFrom('readit_books_highlights')
       .where('id', '=', highlightId)
+      .where('user_email', '=', userEmail)
+      .execute();
+  }
+
+  async updateHighlightType(highlightId: number, userEmail: string, isNote: boolean): Promise<void> {
+    await db
+      .updateTable('readit_books_highlights')
+      .set({ is_note: isNote ? 1 : 0 })
+      .where('id', '=', highlightId)
+      .where('user_email', '=', userEmail)
       .execute();
   }
 
@@ -51,8 +64,9 @@ class BookHighlightsRepository {
       .selectFrom('readit_books as rb')
       .innerJoin(
         'readit_books_highlights as rbh',
-        'rb.book_hash',
-        'rbh.book_hash',
+        (join) => join
+          .onRef('rb.google_id', '=', 'rbh.google_id')
+          .onRef('rb.user_email', '=', 'rbh.user_email'),
       )
       .select([
         'rb.id as book_id',
@@ -62,6 +76,7 @@ class BookHighlightsRepository {
         'rbh.highlight_text',
         'rbh.page',
         'rbh.created_at',
+        'rbh.is_note',
       ])
       .where('rb.google_id', '=', googleId)
       .where('rb.user_email', '=', userEmail)
@@ -77,8 +92,9 @@ class BookHighlightsRepository {
       .selectFrom('readit_books as rb')
       .innerJoin(
         'readit_books_highlights as rbh',
-        'rb.book_hash',
-        'rbh.book_hash',
+        (join) => join
+          .onRef('rb.google_id', '=', 'rbh.google_id')
+          .onRef('rb.user_email', '=', 'rbh.user_email'),
       )
       .select([
         'rb.id as book_id',
@@ -90,6 +106,7 @@ class BookHighlightsRepository {
         'rbh.highlight_text',
         'rbh.page',
         'rbh.created_at',
+        'rbh.is_note',
       ])
       .where('rb.user_email', '=', userEmail)
       .orderBy('rbh.created_at', 'desc')
@@ -100,13 +117,14 @@ class BookHighlightsRepository {
   async getHighlightById(
     highlightId: number,
     userEmail: string,
-  ): Promise<BookHighlightWithBook> {
+  ): Promise<BookHighlightWithBook | undefined> {
     const result = await db
       .selectFrom('readit_books as rb')
       .innerJoin(
         'readit_books_highlights as rbh',
-        'rb.book_hash',
-        'rbh.book_hash',
+        (join) => join
+          .onRef('rb.google_id', '=', 'rbh.google_id')
+          .onRef('rb.user_email', '=', 'rbh.user_email'),
       )
       .select([
         'rb.id as book_id',
@@ -118,6 +136,7 @@ class BookHighlightsRepository {
         'rbh.highlight_text',
         'rbh.page',
         'rbh.created_at',
+        'rbh.is_note',
       ])
       .where('rb.user_email', '=', userEmail)
       .where('rbh.id', '=', highlightId)

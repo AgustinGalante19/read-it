@@ -15,6 +15,9 @@ vi.mock('@/services/database/kysely', () => ({
 const highlight = {
   id: 0,
   book_hash: 'hash',
+  google_id: 'g1',
+  user_email: 'user@test.com',
+  is_note: false,
   device_code: 'dev',
   highlight_text: 'Turno de noche. No se movía ni un alma.',
   page: 403,
@@ -37,6 +40,9 @@ describe('BookHighlightsRepository.createHighlight', () => {
 
     expect(values).toHaveBeenCalledWith({
       book_hash: 'hash',
+      google_id: 'g1',
+      user_email: 'user@test.com',
+      is_note: 0,
       device_code: 'dev',
       highlight_text: highlight.highlight_text,
       page: '403',

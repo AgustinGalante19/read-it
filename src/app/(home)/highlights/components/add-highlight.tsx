@@ -24,7 +24,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Field, FieldGroup, FieldSet } from "@/components/ui/field"
+import { Field, FieldGroup } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
@@ -33,6 +33,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { Textarea } from "@/components/ui/textarea"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import { Spinner } from "@/components/ui/spinner"
 import { addManualBookHighlight } from "@/services/BookHighlightService"
 import { getMyBooks } from "@/services/BookService"
 import { Book, BookStatus } from "@/types/Book"
@@ -55,6 +57,7 @@ function AddHighlight() {
   const [bookQuery, setBookQuery] = useState("")
   const [highlight, setHighlight] = useState("")
   const [page, setPage] = useState("0")
+  const [isNote, setIsNote] = useState(false)
 
   useEffect(() => {
     startLoadingBooks(async () => {
@@ -86,6 +89,7 @@ function AddHighlight() {
     setBookQuery("")
     setHighlight("")
     setPage("0")
+    setIsNote(false)
     setIsPickerOpen(false)
   }
 
@@ -100,13 +104,13 @@ function AddHighlight() {
 
     const highlightText = highlight.trim()
     if (!highlightText) {
-      toast.error("Highlight text is required")
+      toast.error(isNote ? "Note text is required" : "Quote text is required")
       return
     }
 
     const pageNumber = Number(page)
-    if (!Number.isFinite(pageNumber) || pageNumber < 0) {
-      toast.error("Page must be a positive number")
+    if (!Number.isInteger(pageNumber) || pageNumber < 0) {
+      toast.error("Page must be a non-negative whole number")
       return
     }
 
@@ -115,6 +119,7 @@ function AddHighlight() {
         googleId: selectedGoogleId,
         highlightText,
         page: pageNumber,
+        isNote,
       })
 
       if (!result.success) {
@@ -122,7 +127,7 @@ function AddHighlight() {
         return
       }
 
-      toast.success("Highlight added successfully")
+      toast.success(isNote ? "Note added successfully" : "Quote added successfully")
       refresh()
       setIsOpen(false)
       resetForm()
@@ -134,19 +139,33 @@ function AddHighlight() {
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
           <Button variant={"secondary"}>
-            <PlusIcon />
+            <PlusIcon data-icon='inline-start' />
             Add Highlight
           </Button>
         </DialogTrigger>
-        <DialogContent className='sm:max-w-sm'>
+        <DialogContent className='max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-sm'>
           <form onSubmit={handleSubmit}>
             <DialogHeader>
-              <DialogTitle>New book highlight</DialogTitle>
+              <DialogTitle>{isNote ? "New book note" : "New book quote"}</DialogTitle>
               <DialogDescription>
-                Add a new highlight to your book.
+                Save a quote you enjoyed or a note to research later.
               </DialogDescription>
             </DialogHeader>
             <FieldGroup>
+              <Field className='mt-2'>
+                <Label id='highlight-type-label'>Type</Label>
+                <ToggleGroup
+                  type='single'
+                  variant='outline'
+                  value={isNote ? "note" : "quote"}
+                  onValueChange={(value) => { if (value) setIsNote(value === "note") }}
+                  aria-labelledby='highlight-type-label'
+                  disabled={isSaving}
+                >
+                  <ToggleGroupItem value='quote'>Quote</ToggleGroupItem>
+                  <ToggleGroupItem value='note'>Note</ToggleGroupItem>
+                </ToggleGroup>
+              </Field>
               <div className='flex items-center justify-between gap-2 mt-2'>
                 <Field>
                   <Label htmlFor='book-1'>Book</Label>
@@ -225,11 +244,11 @@ function AddHighlight() {
                 </Field>
               </div>
               <Field>
-                <Label htmlFor='highlight-1'>Highlight</Label>
+                <Label htmlFor='highlight-1'>{isNote ? "Note" : "Quote"}</Label>
                 <Textarea
                   id='highlight-1'
                   name='highlight'
-                  placeholder={placeholders[1]}
+                  placeholder={isNote ? "A painting, a place, or an idea to research later…" : placeholders[1]}
                   value={highlight}
                   onChange={(event) => setHighlight(event.target.value)}
                 />
@@ -243,10 +262,10 @@ function AddHighlight() {
               </DialogClose>
               <Button
                 type='submit'
-                isLoading={isSaving}
-                disabled={isBooksLoading || books.length === 0}
+                disabled={isSaving || isBooksLoading || books.length === 0}
               >
-                Save changes
+                {isSaving && <Spinner data-icon='inline-start' />}
+                {isNote ? "Save note" : "Save quote"}
               </Button>
             </DialogFooter>
             {!isBooksLoading && books.length === 0 && (

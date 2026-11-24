@@ -9,7 +9,8 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty';
 import { Button } from '@/components/ui/button';
-import { Highlighter } from 'lucide-react';
+import { Highlighter, NotebookPen } from 'lucide-react';
+import HighlightTabs from '@/components/book/highlight-tabs';
 import Link from 'next/link';
 import { highlightsColumnsClassName } from './highlights-layout';
 
@@ -17,18 +18,19 @@ interface HighlightsListProps {
   highlights: BookHighlightWithBook[];
 }
 
-function HighlightsList({ highlights }: HighlightsListProps) {
+function HighlightGroup({ highlights, isNote }: HighlightsListProps & { isNote: boolean }) {
   if (highlights.length === 0) {
     return (
       <Empty className='mt-8'>
         <EmptyHeader>
           <EmptyMedia variant='icon'>
-            <Highlighter />
+            {isNote ? <NotebookPen /> : <Highlighter />}
           </EmptyMedia>
-          <EmptyTitle>No highlights yet</EmptyTitle>
+          <EmptyTitle>{isNote ? 'No notes yet' : 'No quotes yet'}</EmptyTitle>
           <EmptyDescription>
-            Start reading and highlighting passages from your books. Your
-            highlights will appear here.
+            {isNote
+              ? 'Save a painting, a place, or an idea from your books to research later.'
+              : 'Save passages manually or sync your highlights from KOReader.'}
           </EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
@@ -46,6 +48,19 @@ function HighlightsList({ highlights }: HighlightsListProps) {
         <HighlightCard key={highlight.highlight_id} highlight={highlight} />
       ))}
     </div>
+  );
+}
+
+function HighlightsList({ highlights }: HighlightsListProps) {
+  const quotes = highlights.filter((highlight) => !highlight.is_note);
+  const notes = highlights.filter((highlight) => highlight.is_note);
+  return (
+    <HighlightTabs
+      quoteCount={quotes.length}
+      noteCount={notes.length}
+      quotes={<HighlightGroup highlights={quotes} isNote={false} />}
+      notes={<HighlightGroup highlights={notes} isNote />}
+    />
   );
 }
 

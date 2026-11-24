@@ -38,6 +38,9 @@ export interface ReaditBooks {
 
 export interface ReaditBooksHighlights {
   book_hash: string | null;
+  google_id: string;
+  user_email: string;
+  is_note: Generated<number>;
   created_at: string | null;
   device_code: string | null;
   highlight_text: string | null;
@@ -145,6 +148,7 @@ export interface ReadItDB {
 
 export type BookRow = Selectable<ReaditBooks>;
 export type BookHighlightRow = Selectable<{
+  is_note: number;
   authors: string | null;
   title: string | null;
   created_at: string | null;
@@ -155,6 +159,7 @@ export type BookHighlightRow = Selectable<{
 }>;
 
 export type BookHighlightWithBookRow = Selectable<{
+  is_note: number;
   authors: string | null;
   title: string | null;
   created_at: string | null;

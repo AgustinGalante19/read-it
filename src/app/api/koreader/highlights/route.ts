@@ -31,5 +31,6 @@ export async function POST(request: Request) {
     page,
   })
 
-  return Response.json(result, { status: result.success ? 200 : 500 })
+  const { status, ...response } = result
+  return Response.json(response, { status: result.success ? 200 : status ?? 500 })
 }
