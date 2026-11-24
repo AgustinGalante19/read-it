@@ -66,6 +66,7 @@ describe('POST /api/koreader/highlights', () => {
       highlight_text: 'Text',
       id: 0,
       page: 10,
+      isNote: false,
     });
   });
 
@@ -96,18 +97,44 @@ describe('POST /api/koreader/highlights', () => {
     });
   });
 
-  it('returns 404 when the book is not linked and does not accept a category from KOReader', async () => {
+  it('returns 404 when the book is not linked and ignores client-provided ownership', async () => {
     mockedValidate.mockResolvedValue({ valid: true });
     mockedAddHighlight.mockResolvedValue({ success: false, error: 'Book not linked to this device', status: 404 });
     const response = await POST(new Request('http://localhost', {
       method: 'POST',
       body: JSON.stringify({ book_hash: 'unknown', device_code: 'dev', created_at: '2026-11-24T10:00:00Z',
-        page: 10, highlight_text: 'Text', is_note: true, google_id: 'forged', user_email: 'forged' }),
+        page: 10, highlight_text: 'Text', isNote: true, google_id: 'forged', user_email: 'forged' }),
     }));
     expect(response.status).toBe(404);
     expect(await response.json()).toEqual({ success: false, error: 'Book not linked to this device' });
     expect(mockedAddHighlight).toHaveBeenCalledWith(expect.not.objectContaining({ is_note: expect.anything() }));
     expect(mockedAddHighlight).toHaveBeenCalledWith(expect.not.objectContaining({ google_id: expect.anything() }));
+    expect(mockedAddHighlight).toHaveBeenCalledWith(expect.not.objectContaining({ user_email: expect.anything() }));
+    expect(mockedAddHighlight).toHaveBeenCalledWith(expect.objectContaining({ book_hash: 'unknown', isNote: true }));
+  });
+
+  it.each([true, false])('accepts isNote=%s while keeping the hash-based request format', async (isNote) => {
+    mockedValidate.mockResolvedValue({ valid: true });
+    mockedAddHighlight.mockResolvedValue({ success: true });
+    const response = await POST(new Request('http://localhost', {
+      method: 'POST',
+      body: JSON.stringify({ book_hash: 'hash', device_code: 'dev', created_at: '2026-11-24T10:00:00Z',
+        page: 10, highlight_text: 'Text', isNote }),
+    }));
+    expect(response.status).toBe(200);
+    expect(mockedAddHighlight).toHaveBeenCalledWith(expect.objectContaining({ book_hash: 'hash', isNote }));
+  });
+
+  it.each(['true', 'false', null, 0, 1, {}, []])('returns 400 for non-boolean isNote=%j without saving', async (isNote) => {
+    mockedValidate.mockResolvedValue({ valid: true });
+    const response = await POST(new Request('http://localhost', {
+      method: 'POST',
+      body: JSON.stringify({ book_hash: 'hash', device_code: 'dev', created_at: '2026-11-24T10:00:00Z',
+        page: 10, highlight_text: 'Text', isNote }),
+    }));
+    expect(response.status).toBe(400);
+    expect(await response.json()).toEqual({ success: false, error: 'isNote must be a boolean' });
+    expect(mockedAddHighlight).not.toHaveBeenCalled();
   });
 
   it.each(['not-a-date', '', null, undefined, 0, true, {}, []])(

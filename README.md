@@ -165,9 +165,32 @@ before resuming writes with the updated app.
 
 Highlights now belong to a book through `(user_email, google_id)`. `book_hash` is
 optional file metadata, so changing a KOReader link does not detach saved records.
-KOReader keeps its existing request format, and every import is a quote. In the
+KOReader identifies books by hash and can classify imports with `isNote`. In the
 app, records can be created or reclassified as quotes or research notes, with
 separate tabs in `/highlights` and the book's highlights dialog.
+
+### Sending quotes and notes from KOReader
+
+`POST /api/koreader/highlights` accepts the existing fields and an optional
+boolean `isNote`:
+
+```json
+{
+  "book_hash": "the-linked-book-hash",
+  "device_code": "your-device-code",
+  "highlight_text": "Investigate Las meninas",
+  "page": 42,
+  "created_at": "2026-11-24T10:00:00Z",
+  "isNote": true
+}
+```
+
+Use `true` for a research note or `false` for a quote. Omitting `isNote` defaults
+to `false`, so existing plugin versions continue to create quotes. It must be a
+JSON boolean; strings such as `"true"`, numbers and `null` return HTTP 400.
+The server resolves the book and owner from `book_hash` and `device_code` and
+stores the category in `is_note`. The book must already be linked to that device's
+user. No additional database migration is required for this API parameter.
 
 ## 📄 License
 

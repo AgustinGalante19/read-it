@@ -68,13 +68,20 @@ describe('BookHighlightService', () => {
     expect(highlightsRepository.createHighlight).not.toHaveBeenCalled();
   });
 
-  it('resolves KOReader ownership from the device and always stores a quote', async () => {
-    // Ignore attempted category/owner overrides, including calls to the server action.
-    await addBookHighlight({ ...imported, is_note: true, user_email: 'other@test.com', google_id: 'wrong' } as typeof imported);
+  it.each([true, false, undefined])('resolves KOReader ownership and persists isNote=%s as is_note', async (isNote) => {
+    // Ownership and the stored category come from the validated fields, not raw database fields.
+    await addBookHighlight({ ...imported, isNote, is_note: !isNote, user_email: 'other@test.com', google_id: 'wrong' } as typeof imported);
     expect(bookRepository.findBookByHashAndDevice).toHaveBeenCalledWith('hash', 'dev');
     expect(highlightsRepository.createHighlight).toHaveBeenCalledWith({
-      ...imported, google_id: 'g1', user_email: user, is_note: false,
+      ...imported, google_id: 'g1', user_email: user, is_note: isNote ?? false,
     });
+  });
+
+  it.each(['true', 'false', null, 0, 1, {}, []])('rejects non-boolean KOReader isNote=%j before accessing the book', async (isNote) => {
+    const result = await addBookHighlight({ ...imported, isNote } as Parameters<typeof addBookHighlight>[0]);
+    expect(result).toEqual({ success: false, error: 'isNote must be a boolean', status: 400 });
+    expect(bookRepository.findBookByHashAndDevice).not.toHaveBeenCalled();
+    expect(highlightsRepository.createHighlight).not.toHaveBeenCalled();
   });
 
   it('rejects an unknown hash or a book owned by another device user', async () => {

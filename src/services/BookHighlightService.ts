@@ -25,6 +25,10 @@ export async function addBookHighlight(
   highlightData: KoreaderBookHighlightInput,
 ): Promise<Result<string> & { status?: number }> {
   try {
+    const { isNote = false, ...highlight } = highlightData
+    if (typeof isNote !== "boolean") {
+      return { success: false, error: "isNote must be a boolean", status: 400 }
+    }
     const page = typeof highlightData.page === "number"
       ? highlightData.page
       : typeof highlightData.page === "string" && highlightData.page.trim()
@@ -45,11 +49,11 @@ export async function addBookHighlight(
     }
 
     await bookHighlightsRepository.createHighlight({
-      ...highlightData,
+      ...highlight,
       page,
       google_id: book.google_id,
       user_email: book.user_email,
-      is_note: false,
+      is_note: isNote,
     })
     revalidateHighlights(book.google_id)
     return { success: true, data: "Book highlight added successfully" }

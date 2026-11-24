@@ -21,6 +21,7 @@ export type KoreaderBookHighlightInput = Omit<
   book_hash: string
   device_code: string
   page: number | string
+  isNote?: boolean
 }
 
 export interface BookHighlightPreview {
