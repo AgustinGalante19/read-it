@@ -20,7 +20,7 @@ vi.mock('@/services/database/kysely', () => {
 });
 
 vi.mock('@/services/StorageService', () => ({
-  uploadBookThumbnail: vi.fn().mockResolvedValue('https://cdn.test/thumb.jpg'),
+  uploadBookThumbnail: vi.fn().mockResolvedValue({ url: 'https://cdn.test/thumb.jpg', key: null }),
   removeBookThumbnail: vi.fn(),
 }));
 

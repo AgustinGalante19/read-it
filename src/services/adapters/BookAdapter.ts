@@ -10,13 +10,14 @@ import {
   BookHighlightWithBookRow,
   BookRow,
 } from '@/types/ReadItDatabase';
+import { resolveThumbnailUrl } from '../storage/thumbnail-urls';
 
 function mapBaseBookProperties(book: BookRow): Book {
   return {
     id: book.id ?? 0,
     google_id: book.google_id,
     title: book.title,
-    thumbnail_url: book.thumbnail_url ?? '',
+    thumbnail_url: resolveThumbnailUrl(book.thumbnail_key, book.thumbnail_url) ?? '',
     authors: book.authors ?? '',
     publish_date: book.publish_date ?? '',
     page_count: book.page_count ?? 0,
@@ -101,6 +102,6 @@ export function highlightWithBookAdapter(
     highlight_text: String(row.highlight_text),
     is_note: row.is_note === 1,
     google_id: String(row.google_id),
-    thumbnail_url: row.thumbnail_url ?? null,
+    thumbnail_url: resolveThumbnailUrl(row.thumbnail_key, row.thumbnail_url),
   }));
 }
