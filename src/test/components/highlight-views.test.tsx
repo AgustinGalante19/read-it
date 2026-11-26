@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import HighlightsList from '@/app/(home)/highlights/components/highlights-list';
 import HighlightsModal from '@/components/book/highlights-modal';
@@ -81,18 +82,52 @@ describe('highlight categories and actions', () => {
   });
 
   it('creates a research note from the manual form with its book and page', async () => {
+    const user = userEvent.setup();
     render(<AddHighlight />);
-    fireEvent.click(screen.getByRole('button', { name: 'Add Highlight' }));
-    const picker = await screen.findByRole('combobox', { name: 'Book' });
-    await waitFor(() => expect(picker).toHaveTextContent('Select a currently reading book'));
-    fireEvent.click(picker);
-    fireEvent.click(await screen.findByRole('button', { name: `${quote.title} - ${quote.author}` }));
+    await user.click(screen.getByRole('button', { name: 'Add Highlight' }));
+    const picker = await screen.findByRole('button', { name: 'Book Select a book' });
+    await user.click(picker);
+    const search = screen.getByRole('searchbox', { name: 'Search books by title or author' });
+    expect(search).toHaveFocus();
+    await user.type(search, quote.author);
+    await user.tab();
+    expect(screen.getByRole('button', { name: `${quote.title}, ${quote.author}` })).toHaveFocus();
+    await user.keyboard('{Enter}');
+    expect(picker).toHaveFocus();
     fireEvent.click(screen.getByRole('radio', { name: 'Note' }));
     fireEvent.change(screen.getByLabelText('Note'), { target: { value: 'Investigate Las meninas' } });
     fireEvent.change(screen.getByLabelText('Page'), { target: { value: '42' } });
     fireEvent.click(screen.getByRole('button', { name: 'Save note' }));
     await waitFor(() => expect(addManualBookHighlight).toHaveBeenCalledWith({
       googleId: 'g1', highlightText: 'Investigate Las meninas', page: 42, isNote: true,
+    }));
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+  });
+
+  it('shows field and save errors in the dialog and can retry a quote without a page', async () => {
+    const user = userEvent.setup();
+    vi.mocked(addManualBookHighlight).mockResolvedValueOnce({ success: false, error: 'Failed to save' });
+    render(<AddHighlight />);
+    await user.click(screen.getByRole('button', { name: 'Add Highlight' }));
+    const picker = await screen.findByRole('button', { name: 'Book Select a book' });
+    const save = screen.getByRole('button', { name: 'Save quote' });
+    await user.click(save);
+    expect(picker).toHaveAccessibleDescription('Choose a book.');
+    expect(picker).toHaveFocus();
+    await user.click(picker);
+    await user.click(screen.getByRole('button', { name: `${quote.title}, ${quote.author}` }));
+    await user.click(save);
+    const editor = screen.getByRole('textbox', { name: 'Quote' });
+    expect(editor).toHaveAccessibleDescription('Enter a quote.');
+    expect(editor).toHaveFocus();
+    await user.type(editor, quote.highlight_text);
+    await user.click(save);
+    expect(await screen.findByRole('alert')).toHaveTextContent('Failed to save');
+    expect(editor).toHaveValue(quote.highlight_text);
+
+    await user.click(save);
+    await waitFor(() => expect(addManualBookHighlight).toHaveBeenLastCalledWith({
+      googleId: 'g1', highlightText: quote.highlight_text, page: 0, isNote: false,
     }));
     await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
   });

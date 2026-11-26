@@ -1,19 +1,12 @@
 "use client"
 
-import { useEffect, useMemo, useState, useTransition } from "react"
+import { useCallback, useEffect, useId, useRef, useState, useTransition } from "react"
+import type { FormEvent } from "react"
 import { useRouter } from "next/navigation"
-import { cn } from "@/lib/utils"
+import { BookOpen, Check, ChevronDown, NotebookPen, PlusIcon, Quote, Search } from "lucide-react"
 import { toast } from "sonner"
-import { Check, ChevronsUpDown, PlusIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-} from "@/components/ui/combobox"
+import { ComboboxEmpty, ComboboxItem, ComboboxList } from "@/components/ui/combobox"
 import {
   Dialog,
   DialogClose,
@@ -24,106 +17,155 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Field, FieldGroup } from "@/components/ui/field"
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Spinner } from "@/components/ui/spinner"
 import { Textarea } from "@/components/ui/textarea"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import { Spinner } from "@/components/ui/spinner"
 import { addManualBookHighlight } from "@/services/BookHighlightService"
 import { getMyBooks } from "@/services/BookService"
-import { Book, BookStatus } from "@/types/Book"
+import { cn } from "@/lib/utils"
+import { BookStatus, type Book } from "@/types/Book"
 
-const placeholders = [
-  "“Equivocamos esa paz con la muerte y creemos anhelar nuestro fin y anhelamos el sueño y la indiferencia”",
-  "“Las cosas que lo rodeaban, la tierra, el río, los árboles, parecían tener alma suficiente para dialogar sin intermediarios con su necesidad de infinito.”",
-  "“La oscuridad era algo vivo que la asfixió con sus lóbregos besos.”",
-]
+const focusClassName = "focus-visible:ring-0 focus-visible:shadow-none"
+const fieldControlClassName = cn(
+  "rounded-xl border border-outline bg-surface-container text-foreground shadow-none",
+  "focus-visible:border-outline aria-invalid:border-destructive!",
+  focusClassName,
+)
+const segmentClassName = cn(
+  "h-[42px] min-w-0 flex-1 rounded-none text-muted-foreground max-[600px]:h-12",
+  "first:rounded-s-full last:rounded-e-full last:border-s last:border-outline hover:bg-foreground/8",
+  "data-[state=on]:bg-secondary-container data-[state=on]:text-secondary-container-foreground",
+  "data-[state=on]:hover:bg-[color-mix(in_oklch,var(--color-secondary-container-foreground)_8%,var(--color-secondary-container))] data-[state=on]:hover:text-secondary-container-foreground",
+  focusClassName,
+)
+const textButtonClassName = cn("min-w-12 text-primary active:scale-none max-[600px]:h-12", focusClassName)
+
+function fitVisualViewport(dialog: HTMLDivElement | null) {
+  const viewport = window.visualViewport
+  if (!dialog || !viewport) return
+
+  const fit = () => {
+    if (viewport.scale !== 1) {
+      dialog.style.removeProperty("--dialog-viewport-height")
+      dialog.style.removeProperty("--dialog-viewport-center")
+      return
+    }
+
+    dialog.style.setProperty("--dialog-viewport-height", `${viewport.height}px`)
+    dialog.style.setProperty("--dialog-viewport-center", `${viewport.offsetTop + viewport.height / 2}px`)
+  }
+
+  fit()
+  viewport.addEventListener("resize", fit)
+  viewport.addEventListener("scroll", fit)
+  return () => {
+    viewport.removeEventListener("resize", fit)
+    viewport.removeEventListener("scroll", fit)
+  }
+}
 
 function AddHighlight() {
   const { refresh } = useRouter()
+  const id = useId()
+  const bookControl = useRef<HTMLButtonElement>(null)
+  const pageControl = useRef<HTMLInputElement>(null)
+  const textControl = useRef<HTMLTextAreaElement>(null)
   const [isOpen, setIsOpen] = useState(false)
   const [isPickerOpen, setIsPickerOpen] = useState(false)
   const [isSaving, startSaving] = useTransition()
   const [isBooksLoading, startLoadingBooks] = useTransition()
-
   const [books, setBooks] = useState<Book[]>([])
+  const [booksError, setBooksError] = useState("")
   const [selectedBookGoogleId, setSelectedBookGoogleId] = useState("")
   const [bookQuery, setBookQuery] = useState("")
   const [highlight, setHighlight] = useState("")
-  const [page, setPage] = useState("0")
+  const [page, setPage] = useState("")
   const [isNote, setIsNote] = useState(false)
+  const [invalidField, setInvalidField] = useState<"book" | "page" | "text" | null>(null)
+  const [saveError, setSaveError] = useState("")
 
-  useEffect(() => {
+  const loadBooks = useCallback(() => {
     startLoadingBooks(async () => {
-      const response = await getMyBooks(BookStatus.READING)
-      if (!response.success || !response.data) {
-        toast.error(response.error || "Failed to load books")
-        return
+      try {
+        const response = await getMyBooks(BookStatus.READING)
+        if (response.success && response.data) {
+          setBooks(response.data)
+          setBooksError("")
+        } else {
+          setBooksError(response.error || "Couldn’t load your books.")
+        }
+      } catch {
+        setBooksError("Couldn’t load your books.")
       }
-
-      setBooks(response.data)
     })
   }, [])
 
-  const filteredBooks = useMemo(() => {
-    if (!bookQuery) return books
-    return books.filter((book) =>
-      `${book.title} ${book.authors}`
-        .toLowerCase()
-        .includes(bookQuery.toLowerCase()),
-    )
-  }, [books, bookQuery])
+  useEffect(loadBooks, [loadBooks])
 
-  const selectedBook = books.find(
-    (book) => book.google_id === selectedBookGoogleId,
+  const query = bookQuery.trim().toLowerCase()
+  const filteredBooks = books.filter((book) =>
+    `${book.title} ${book.authors}`.toLowerCase().includes(query),
   )
+  const selectedBook = books.find((book) => book.google_id === selectedBookGoogleId)
+  const kind = isNote ? "note" : "quote"
+  const KindIcon = isNote ? NotebookPen : Quote
+  const bookUnavailable = isBooksLoading || books.length === 0
+
+  const changePickerOpen = (open: boolean) => {
+    setIsPickerOpen(open)
+    if (!open) setBookQuery("")
+  }
 
   const resetForm = () => {
     setSelectedBookGoogleId("")
-    setBookQuery("")
     setHighlight("")
-    setPage("0")
+    setPage("")
     setIsNote(false)
-    setIsPickerOpen(false)
+    setInvalidField(null)
+    setSaveError("")
+    changePickerOpen(false)
   }
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    if (isSaving || bookUnavailable) return
+    setSaveError("")
 
     if (!selectedBook?.google_id) {
-      toast.error("Select a currently reading book")
-      return
-    }
-    const selectedGoogleId = selectedBook.google_id
-
-    const highlightText = highlight.trim()
-    if (!highlightText) {
-      toast.error(isNote ? "Note text is required" : "Quote text is required")
+      setInvalidField("book")
+      bookControl.current?.focus()
       return
     }
 
     const pageNumber = Number(page)
-    if (!Number.isInteger(pageNumber) || pageNumber < 0) {
-      toast.error("Page must be a non-negative whole number")
+    if (pageControl.current?.validity.badInput || !Number.isInteger(pageNumber) || pageNumber < 0) {
+      setInvalidField("page")
+      pageControl.current?.focus()
       return
     }
 
-    startSaving(async () => {
-      const result = await addManualBookHighlight({
-        googleId: selectedGoogleId,
-        highlightText,
-        page: pageNumber,
-        isNote,
-      })
+    const highlightText = highlight.trim()
+    if (!highlightText) {
+      setInvalidField("text")
+      textControl.current?.focus()
+      return
+    }
 
-      if (!result.success) {
-        toast.error(result.error || "Failed to save highlight")
+    const googleId = selectedBook.google_id
+    setInvalidField(null)
+    startSaving(async () => {
+      try {
+        const result = await addManualBookHighlight({ googleId, highlightText, page: pageNumber, isNote })
+        if (!result.success) {
+          setSaveError(result.error || `Couldn’t save your ${kind}. Try again.`)
+          return
+        }
+      } catch {
+        setSaveError(`Couldn’t save your ${kind}. Try again.`)
         return
       }
 
@@ -135,148 +177,218 @@ function AddHighlight() {
   }
 
   return (
-    <div>
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogTrigger asChild>
-          <Button variant={"secondary"}>
-            <PlusIcon data-icon='inline-start' />
-            Add Highlight
-          </Button>
-        </DialogTrigger>
-        <DialogContent className='max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-sm'>
-          <form onSubmit={handleSubmit}>
-            <DialogHeader>
-              <DialogTitle>{isNote ? "New book note" : "New book quote"}</DialogTitle>
-              <DialogDescription>
-                Save a quote you enjoyed or a note to research later.
-              </DialogDescription>
-            </DialogHeader>
-            <FieldGroup>
-              <Field className='mt-2'>
-                <Label id='highlight-type-label'>Type</Label>
-                <ToggleGroup
-                  type='single'
-                  variant='outline'
-                  value={isNote ? "note" : "quote"}
-                  onValueChange={(value) => { if (value) setIsNote(value === "note") }}
-                  aria-labelledby='highlight-type-label'
-                  disabled={isSaving}
-                >
-                  <ToggleGroupItem value='quote'>Quote</ToggleGroupItem>
-                  <ToggleGroupItem value='note'>Note</ToggleGroupItem>
-                </ToggleGroup>
-              </Field>
-              <div className='flex items-center justify-between gap-2 mt-2'>
-                <Field>
-                  <Label htmlFor='book-1'>Book</Label>
-                  <Popover open={isPickerOpen} onOpenChange={setIsPickerOpen}>
+    <Dialog open={isOpen} onOpenChange={(open) => {
+      if (isSaving) return
+      setIsOpen(open)
+      if (!open) changePickerOpen(false)
+    }}>
+      <DialogTrigger asChild>
+        <Button variant='secondary'>
+          <PlusIcon data-icon='inline-start' />
+          Add Highlight
+        </Button>
+      </DialogTrigger>
+      <DialogContent
+        ref={fitVisualViewport}
+        showCloseButton={false}
+        className={cn(
+          "top-[var(--dialog-viewport-center,50%)] flex max-h-[calc(var(--dialog-viewport-height,100dvh)-2rem)] w-[calc(100%-2rem)] max-w-[520px] flex-col gap-0 sm:max-w-[520px]",
+          "overflow-hidden rounded-3xl border-0 bg-surface-container-high p-0 shadow-md [@media(height<420px)]:overflow-y-auto",
+          "[--dialog-padding:1rem] min-[600px]:[--dialog-padding:1.5rem]",
+        )}
+      >
+        <form onSubmit={handleSubmit} noValidate aria-busy={isSaving} className='flex min-h-0 flex-col [@media(height<420px)]:flex-none'>
+          <DialogHeader className='flex-none flex-row items-center gap-3 px-(--dialog-padding) pt-5 pb-5 text-start min-[600px]:pt-6 sm:text-start'>
+            <span className='grid size-12 flex-none place-items-center rounded-2xl bg-primary-container text-primary-container-foreground' aria-hidden='true'>
+              <KindIcon className='size-[22px]' />
+            </span>
+            <div className='min-w-0'>
+              <DialogTitle className='text-2xl/8 font-normal'>New book {kind}</DialogTitle>
+              <DialogDescription>Save to a book you’re currently reading.</DialogDescription>
+            </div>
+          </DialogHeader>
+
+          <div className='overflow-auto overscroll-contain scroll-py-2 px-(--dialog-padding) pt-1 pb-5 [@media(height<420px)]:overflow-visible'>
+            <FieldGroup className='gap-5'>
+              <ToggleGroup
+                type='single'
+                role='radiogroup'
+                aria-label='Highlight type'
+                value={kind}
+                onValueChange={(value) => { if (value) setIsNote(value === "note") }}
+                disabled={isSaving}
+                className='w-full gap-0 rounded-full border border-outline'
+              >
+                <ToggleGroupItem value='quote' className={segmentClassName}>
+                  {isNote ? <Quote aria-hidden='true' /> : <Check aria-hidden='true' />}
+                  Quote
+                </ToggleGroupItem>
+                <ToggleGroupItem value='note' className={segmentClassName}>
+                  {isNote ? <Check aria-hidden='true' /> : <NotebookPen aria-hidden='true' />}
+                  Note
+                </ToggleGroupItem>
+              </ToggleGroup>
+
+              <div className='grid grid-cols-[minmax(0,1fr)_96px] gap-x-3 gap-y-2 max-[600px]:grid-cols-[minmax(0,1fr)_84px]'>
+                <Field className='min-w-0 gap-2' data-invalid={invalidField === "book"}>
+                  <FieldLabel id={`${id}-book-label`} htmlFor={`${id}-book`}>Book</FieldLabel>
+                  <Popover open={isPickerOpen} onOpenChange={changePickerOpen}>
                     <PopoverTrigger asChild>
                       <Button
-                        id='book-1'
+                        ref={bookControl}
+                        id={`${id}-book`}
                         type='button'
-                        variant='outline'
-                        role='combobox'
-                        className='w-full justify-between'
+                        variant='ghost'
+                        disabled={bookUnavailable || isSaving}
+                        aria-labelledby={`${id}-book-label ${id}-book-value`}
+                        aria-invalid={invalidField === "book"}
+                        aria-describedby={invalidField === "book" ? `${id}-book-error` : undefined}
+                        className={cn(
+                          fieldControlClassName,
+                          "h-13 justify-start px-3 text-start hover:border-primary hover:bg-surface-container active:scale-none [&>svg]:text-muted-foreground data-[state=open]:border-primary",
+                        )}
                       >
-                        {selectedBook
-                          ? `${selectedBook.title} - ${selectedBook.authors}`
-                          : isBooksLoading
-                            ? "Loading books..."
-                            : "Select a currently reading book"}
-                        <ChevronsUpDown className='opacity-50' />
+                        {isBooksLoading ? <Spinner data-icon='inline-start' /> : <BookOpen data-icon='inline-start' aria-hidden='true' />}
+                        <span id={`${id}-book-value`} className='flex min-w-0 flex-1 flex-col items-start'>
+                          <span className='max-w-full truncate'>
+                            {selectedBook?.title || (isBooksLoading ? "Loading books…" : "Select a book")}
+                          </span>
+                          {selectedBook?.authors && <span className='max-w-full truncate text-xs text-muted-foreground'>{selectedBook.authors}</span>}
+                        </span>
+                        <ChevronDown data-icon='inline-end' aria-hidden='true' />
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className='w-(--radix-popover-trigger-width) p-0'>
-                      <Combobox>
-                        <ComboboxInput
-                          placeholder='Search by title or author'
+                    <PopoverContent
+                      align='start'
+                      collisionPadding={16}
+                      sideOffset={8}
+                      aria-label='Choose a book'
+                      className='flex max-h-[var(--radix-popover-content-available-height)] w-[max(15rem,var(--radix-popover-trigger-width))] max-w-[calc(100vw-2rem)] flex-col gap-1 rounded-2xl p-2'
+                    >
+                      <InputGroup className='h-11 flex-none focus-within:shadow-none focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-solid focus-within:outline-ring has-[[data-slot=input-group-control]:focus-visible]:ring-0'>
+                        <InputGroupAddon><Search aria-hidden='true' /></InputGroupAddon>
+                        <InputGroupInput
+                          type='search'
+                          aria-label='Search books by title or author'
+                          placeholder='Search title or author'
+                          className='focus-visible:outline-none! md:text-base'
                           value={bookQuery}
                           onChange={(event) => setBookQuery(event.target.value)}
                         />
-                        <ComboboxContent className='border-0 rounded-none'>
-                          <ComboboxList>
-                            {filteredBooks.length === 0 ? (
-                              <ComboboxEmpty>
-                                No currently reading books found.
-                              </ComboboxEmpty>
-                            ) : (
-                              filteredBooks.map((book) => (
-                                <li key={book.id}>
-                                  <ComboboxItem
-                                    onClick={() => {
-                                      setSelectedBookGoogleId(book.google_id)
-                                      setBookQuery("")
-                                      setIsPickerOpen(false)
-                                    }}
-                                    className='flex items-center justify-between gap-2'
-                                  >
-                                    <span className='truncate'>
-                                      {book.title} - {book.authors}
-                                    </span>
-                                    <Check
-                                      className={cn(
-                                        "h-4 w-4",
-                                        selectedBookGoogleId === book.google_id
-                                          ? "opacity-100"
-                                          : "opacity-0",
-                                      )}
-                                    />
-                                  </ComboboxItem>
-                                </li>
-                              ))
-                            )}
-                          </ComboboxList>
-                        </ComboboxContent>
-                      </Combobox>
+                      </InputGroup>
+                      {filteredBooks.length > 0 ? (
+                        <ComboboxList className='min-h-0 overscroll-contain'>
+                          {filteredBooks.map((book) => (
+                            <li key={book.id}>
+                              <ComboboxItem
+                                aria-label={book.authors ? `${book.title}, ${book.authors}` : book.title}
+                                aria-current={selectedBookGoogleId === book.google_id ? "true" : undefined}
+                                className={cn(
+                                  "flex min-h-12 items-center gap-2 text-popover-foreground hover:bg-foreground/8 hover:text-popover-foreground",
+                                  "aria-[current=true]:bg-primary-container aria-[current=true]:text-primary-container-foreground",
+                                  focusClassName,
+                                )}
+                                onClick={() => {
+                                  setSelectedBookGoogleId(book.google_id)
+                                  if (invalidField === "book") setInvalidField(null)
+                                  changePickerOpen(false)
+                                }}
+                              >
+                                <span className='flex min-w-0 flex-1 flex-col'>
+                                  <span className='line-clamp-2'>{book.title}</span>
+                                  {book.authors && <span className='truncate text-xs'>{book.authors}</span>}
+                                </span>
+                                {selectedBookGoogleId === book.google_id && <Check size={18} aria-hidden='true' />}
+                              </ComboboxItem>
+                            </li>
+                          ))}
+                        </ComboboxList>
+                      ) : (
+                        <ComboboxEmpty role='status'>No matching books.</ComboboxEmpty>
+                      )}
                     </PopoverContent>
                   </Popover>
+                  {invalidField === "book" && <FieldError id={`${id}-book-error`}>Choose a book.</FieldError>}
                 </Field>
-                <Field className='w-fit'>
-                  <Label htmlFor='page-1'>Page</Label>
+
+                <Field className='min-w-0 gap-2' data-invalid={invalidField === "page"}>
+                  <div className='flex items-baseline justify-between gap-1'>
+                    <FieldLabel htmlFor={`${id}-page`}>Page</FieldLabel>
+                    <span id={`${id}-page-hint`} className='text-xs text-muted-foreground'>Optional</span>
+                  </div>
                   <Input
-                    className='max-w-28'
-                    id='page-1'
+                    ref={pageControl}
+                    className={cn(fieldControlClassName, "h-13")}
+                    id={`${id}-page`}
                     type='number'
+                    inputMode='numeric'
                     min={0}
+                    step={1}
+                    placeholder='—'
                     value={page}
-                    onChange={(event) => setPage(event.target.value)}
+                    readOnly={isSaving}
+                    aria-invalid={invalidField === "page"}
+                    aria-describedby={invalidField === "page" ? `${id}-page-error` : `${id}-page-hint`}
+                    onChange={(event) => {
+                      setPage(event.target.value)
+                      if (invalidField === "page") setInvalidField(null)
+                    }}
                   />
                 </Field>
+                {invalidField === "page" && <FieldError id={`${id}-page-error`} className='col-span-full justify-self-end'>Enter a non-negative whole page number.</FieldError>}
+                {!isBooksLoading && books.length === 0 && (
+                  <div className='col-span-full flex flex-wrap items-center gap-2'>
+                    {booksError ? (
+                      <>
+                        <FieldError>{booksError}</FieldError>
+                        <Button type='button' variant='ghost' className={textButtonClassName} onClick={loadBooks}>Retry</Button>
+                      </>
+                    ) : (
+                      <FieldDescription role='status'>You have no books marked as Currently Reading.</FieldDescription>
+                    )}
+                  </div>
+                )}
               </div>
-              <Field>
-                <Label htmlFor='highlight-1'>{isNote ? "Note" : "Quote"}</Label>
+
+              <Field className='gap-2' data-invalid={invalidField === "text"}>
+                <FieldLabel htmlFor={`${id}-text`}>{isNote ? "Note" : "Quote"}</FieldLabel>
                 <Textarea
-                  id='highlight-1'
+                  ref={textControl}
+                  id={`${id}-text`}
                   name='highlight'
-                  placeholder={isNote ? "A painting, a place, or an idea to research later…" : placeholders[1]}
+                  required
+                  readOnly={isSaving}
+                  className={cn(fieldControlClassName, "min-h-36 max-h-70 resize-y bg-surface-container! px-3.5 py-3 text-base/6.5 placeholder:text-muted-foreground md:text-base/6.5")}
+                  placeholder={isNote ? "Write a thought, idea, or question…" : "Write or paste a passage…"}
                   value={highlight}
-                  onChange={(event) => setHighlight(event.target.value)}
+                  aria-invalid={invalidField === "text"}
+                  aria-describedby={invalidField === "text" ? `${id}-text-error` : undefined}
+                  onChange={(event) => {
+                    setHighlight(event.target.value)
+                    if (invalidField === "text") setInvalidField(null)
+                  }}
                 />
+                {invalidField === "text" && <FieldError id={`${id}-text-error`}>Enter a {kind}.</FieldError>}
               </Field>
             </FieldGroup>
-            <DialogFooter className='mt-2'>
+          </div>
+
+          <DialogFooter className='flex-none flex-col px-(--dialog-padding) pb-(--dialog-padding) sm:flex-col'>
+            {saveError && <FieldError className='text-left'>{saveError}</FieldError>}
+            <div className='flex flex-wrap items-center justify-end gap-2'>
               <DialogClose asChild>
-                <Button type='button' variant='outline' onClick={resetForm}>
+                <Button type='button' variant='ghost' disabled={isSaving} className={textButtonClassName} onClick={resetForm}>
                   Cancel
                 </Button>
               </DialogClose>
-              <Button
-                type='submit'
-                disabled={isSaving || isBooksLoading || books.length === 0}
-              >
-                {isSaving && <Spinner data-icon='inline-start' />}
-                {isNote ? "Save note" : "Save quote"}
+              <Button type='submit' className={cn("min-w-[108px] active:scale-none max-[600px]:h-12", focusClassName)} disabled={bookUnavailable} isLoading={isSaving}>
+                {isSaving ? "Saving…" : `Save ${kind}`}
               </Button>
-            </DialogFooter>
-            {!isBooksLoading && books.length === 0 && (
-              <p className='text-sm text-muted-foreground'>
-                No currently reading books found.
-              </p>
-            )}
-          </form>
-        </DialogContent>
-      </Dialog>
-    </div>
+            </div>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }
 
