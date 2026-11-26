@@ -1,0 +1,29 @@
+services:
+  readit-thumbnails:
+    image: nginx:stable-alpine
+    restart: unless-stopped
+    user: "${THUMBNAIL_UID:-1000}:${THUMBNAIL_GID:-1000}"
+    entrypoint: [nginx, '-g', 'daemon off;']
+    read_only: true
+    tmpfs:
+      - /tmp
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - type: bind
+        source: ${THUMBNAIL_DIRECTORY:?Set THUMBNAIL_DIRECTORY}
+        target: /data/thumbnails
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${THUMBNAIL_PASSWORD_FILE:?Set THUMBNAIL_PASSWORD_FILE}
+        target: /etc/nginx/thumbnail.htpasswd
+        read_only: true
+        bind:
+          create_host_path: false
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
+    name: ${THUMBNAIL_DOCKER_NETWORK:?Set THUMBNAIL_DOCKER_NETWORK}

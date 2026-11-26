@@ -33,6 +33,7 @@ CREATE TABLE
     google_id TEXT NOT NULL,
     title TEXT NOT NULL,
     thumbnail_url TEXT,
+    thumbnail_key TEXT,
     authors TEXT,
     publish_date TEXT,
     page_count INTEGER,

@@ -71,14 +71,17 @@ class BookRepository {
   }
 
   async createBook(bookData: Book): Promise<void> {
-    let thumbnailUrl = bookData.thumbnail_url
+    let thumbnailUrl: string | null = bookData.thumbnail_url
+    let thumbnailKey: string | null = null
 
     if (thumbnailUrl?.trim()) {
       try {
-        thumbnailUrl = await uploadBookThumbnail(
+        const uploaded = await uploadBookThumbnail(
           bookData.google_id,
           thumbnailUrl,
         )
+        thumbnailUrl = uploaded.url
+        thumbnailKey = uploaded.key
       } catch {
         thumbnailUrl = bookData.thumbnail_url
       }
@@ -90,6 +93,7 @@ class BookRepository {
         google_id: bookData.google_id,
         title: bookData.title,
         thumbnail_url: thumbnailUrl,
+        thumbnail_key: thumbnailKey,
         authors: bookData.authors,
         publish_date: bookData.publish_date,
         page_count: bookData.page_count,
@@ -163,12 +167,18 @@ class BookRepository {
   }
 
   async deleteBook(googleId: string, userEmail: string): Promise<void> {
-    await db
+    const deleted = await db
       .deleteFrom("readit_books")
       .where("google_id", "=", googleId)
       .where("user_email", "=", userEmail)
-      .execute()
-    removeBookThumbnail(googleId)
+      .returning("thumbnail_key")
+      .executeTakeFirst()
+    if (deleted) {
+      await removeBookThumbnail(googleId, deleted.thumbnail_key).catch((error) => {
+        const message = error instanceof Error ? error.message : String(error)
+        process.stderr.write(`Error removing book thumbnail: ${message}\n`)
+      })
+    }
   }
 
   async updateHash(

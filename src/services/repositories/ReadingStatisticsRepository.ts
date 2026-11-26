@@ -1,5 +1,6 @@
 import { Book } from '@/types/Book';
 import BookAdapter from '../adapters/BookAdapter';
+import { resolveThumbnailUrl } from '../storage/thumbnail-urls';
 import { db } from '../database/kysely';
 import { sql } from 'kysely';
 
@@ -137,7 +138,8 @@ class ReadingStatisticsRepository {
           'title', b.title,
           'start_date', b.start_date,
           'duration', psd.duration,
-          'thumbnail_url', b.thumbnail_url
+          'thumbnail_url', b.thumbnail_url,
+          'thumbnail_key', b.thumbnail_key
         ))`.as('details_json'),
       ])
       .where('b.user_email', '=', userEmail);
@@ -176,6 +178,7 @@ class ReadingStatisticsRepository {
         start_date: string;
         duration: number;
         thumbnail_url?: string;
+        thumbnail_key?: string;
       }[];
 
       // Aggregate sessions by bookId
@@ -190,12 +193,15 @@ class ReadingStatisticsRepository {
         }
       >();
 
-      rawDetails.forEach((item) => {
+      rawDetails.forEach(({ thumbnail_key, ...item }) => {
         if (bookMap.has(item.bookId)) {
           const existing = bookMap.get(item.bookId)!;
           existing.duration += item.duration;
         } else {
-          bookMap.set(item.bookId, { ...item });
+          bookMap.set(item.bookId, {
+            ...item,
+            thumbnail_url: resolveThumbnailUrl(thumbnail_key, item.thumbnail_url) ?? undefined,
+          });
         }
       });
 

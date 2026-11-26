@@ -32,6 +32,7 @@ export interface ReaditBooks {
   start_date: string | null;
   tags: string | null;
   thumbnail_url: string | null;
+  thumbnail_key: string | null;
   title: string;
   user_email: string | null;
 }
@@ -169,4 +170,5 @@ export type BookHighlightWithBookRow = Selectable<{
   highlight_id: number | null;
   google_id: string | null;
   thumbnail_url: string | null;
+  thumbnail_key: string | null;
 }>;
